@@ -58,7 +58,6 @@ const TeacherAvailabilityPage = lazy(
   () => import("../../features/admin/pages/TeacherAvailability"),
 );
 const SubjectsPage = lazy(() => import("../../features/admin/pages/Subjects"));
-const LMSCoursesPage = lazy(() => import("../../features/admin/pages/LMSCourses/LMSCourses"));
 const SettingsPage = lazy(() => import("../../features/admin/pages/Settings"));
 
 export const dashboardRoutes: RouteConfig[] = [
@@ -67,21 +66,6 @@ export const dashboardRoutes: RouteConfig[] = [
     label: "sidebar_dashboard",
     icon: Home,
     path: "",
-  },
-  {
-    id: "lms",
-    label: "sidebar_lms",
-    icon: PlayCircle,
-    path: "lms",
-    subItems: [
-      {
-        id: "lms-courses",
-        label: "sidebar_courses",
-        icon: Play,
-        path: "lms-courses",
-        element: <LMSCoursesPage />,
-      },
-    ],
   },
   {
     id: "users",

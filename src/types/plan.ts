@@ -18,6 +18,9 @@ export type Plan = {
   currencyId: string;
   active: boolean;
   bestSeller: boolean;
+  isGroup: boolean;
+  maxStudents: string;
+  planType: 'individual' | 'group';
   currency?: Currency;
   createdAt: string;
   updatedAt: string;

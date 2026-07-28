@@ -39,6 +39,7 @@ export default function Assignments() {
     view: { ar: 'عرض', en: 'View' },
     noResults: { ar: 'لا توجد واجبات تطابق بحثك', en: 'No assignments match your search' },
     attachmentsCol: { ar: 'المرفقات', en: 'Attachments' },
+    gradeCol: { ar: 'الدرجة', en: 'Grade' },
   };
 
   const stats = useMemo(() => [
@@ -165,6 +166,14 @@ export default function Assignments() {
       render: (_: any, record: HomeworkItem) => (
         <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-bold border uppercase tracking-widest ${getStatusStyle(record.status)}`}>
           {getStatusLabel(record.status)}
+        </span>
+      ),
+    },
+    {
+      title: text.gradeCol[language],
+      render: (_: any, record: HomeworkItem) => (
+        <span className="text-sm font-bold text-gray-700">
+          {record.grade !== null && record.grade !== undefined ? record.grade : '—'}
         </span>
       ),
     },

@@ -3,7 +3,10 @@ import { Course } from "./courses";
 export type ScheduleType = 'full' | 'half';
 
 export interface CreateSchedulePayload {
-    studentId: string;
+    studentId?: string;
+    studentIds?: string[];
+    isGroup?: boolean;
+    maxStudents?: string;
     teacherId: string;
     courseId: string;
     title: string;
@@ -39,7 +42,10 @@ export type DayOfWeek =
     | 'Friday';
 
 export interface CreateRecurringSchedulePayload {
-    studentId: string;
+    studentId?: string;
+    studentIds?: string[];
+    isGroup?: boolean;
+    maxStudents?: string;
     teacherId: string;
     courseId: string;
     description: string;

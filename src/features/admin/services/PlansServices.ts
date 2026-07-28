@@ -36,6 +36,8 @@ export interface UpdatePlanPayload {
   currencyId?: string;
   features?: string[];
   type?: string;
+  isGroup?: boolean;
+  maxStudents?: string;
 }
 
 // update plan

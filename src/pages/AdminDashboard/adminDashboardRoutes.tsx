@@ -23,7 +23,10 @@ import {
   ShieldCheck,
   Repeat,
   Trophy,
-  HelpCircle
+  HelpCircle,
+  Tag,
+  ShoppingCart,
+  Star
 } from 'lucide-react';
 import TransactionRequests from "../../features/admin/pages/TransactionRequests";
 
@@ -43,6 +46,7 @@ const StudentsPage = lazy(() => import("../../features/admin/pages/Students"));
 const TeachersPage = lazy(() => import("../../features/admin/pages/Teachers"));
 const ParentsPage = lazy(() => import("../../features/admin/pages/Parents"));
 const SessionsPage = lazy(() => import("../../features/admin/pages/Sessions"));
+const ReviewsPage = lazy(() => import("../../features/admin/pages/Reviews"));
 const AgendaPage = lazy(() => import("../../features/admin/pages/Agenda"));
 const ExamsPage = lazy(() => import("../../features/admin/pages/Exams"));
 const AssignmentsPage = lazy(() => import("../../features/admin/pages/Assignments"));
@@ -55,7 +59,8 @@ const TransactionsPage = lazy(() => import("../../features/admin/pages/Transacti
 const TeacherRequestsPage = lazy(() => import("../../features/admin/pages/TeacherRequests"));
 const TeacherAvailabilityPage = lazy(() => import("../../features/admin/pages/TeacherAvailability"));
 const SubjectsPage = lazy(() => import("../../features/admin/pages/Subjects"));
-const LMSCoursesPage = lazy(() => import("../../features/admin/pages/LMSCourses/LMSCourses"));
+const CategoriesPage = lazy(() => import("../../features/admin/pages/Categories"));
+const CoursePurchaseRequestsPage = lazy(() => import("../../features/admin/pages/CoursePurchaseRequests"));
 const SettingsPage = lazy(() => import("../../features/admin/pages/Settings"));
 const RolesPage = lazy(() => import("../../features/admin/pages/Roles"));
 const RequestsPage = lazy(() => import("../../features/admin/pages/Requests"));
@@ -73,21 +78,6 @@ export const adminDashboardRoutes: RouteConfig[] = [
     label: "sidebar_dashboard",
     icon: Home,
     path: "",
-  },
-  {
-    id: "lms",
-    label: "sidebar_lms",
-    icon: PlayCircle,
-    path: "lms",
-    subItems: [
-      {
-        id: "lms-courses",
-        label: "sidebar_courses",
-        icon: Play,
-        path: "lms-courses",
-        element: <LMSCoursesPage />,
-      },
-    ],
   },
   {
     id: "users",
@@ -175,11 +165,25 @@ export const adminDashboardRoutes: RouteConfig[] = [
         element: <SessionsPage />,
       },
       {
+        id: "reviews",
+        label: "Session Reviews",
+        icon: Star,
+        path: "reviews",
+        element: <ReviewsPage />,
+      },
+      {
         id: "curriculum",
         label: "Curriculum Shelf",
         icon: Layers,
         path: "curriculum/:courseId?",
         element: <CurriculumPage />,
+      },
+      {
+        id: "categories",
+        label: "Course Categories",
+        icon: Tag,
+        path: "categories",
+        element: <CategoriesPage />,
       },
       {
         id: "library",
@@ -244,6 +248,13 @@ export const adminDashboardRoutes: RouteConfig[] = [
         icon: Package,
         path: "plans",
         element: <PlansPage />,
+      },
+      {
+        id: "course-purchase-requests",
+        label: "Course Purchase Requests",
+        icon: ShoppingCart,
+        path: "course-purchase-requests",
+        element: <CoursePurchaseRequestsPage />,
       },
     ],
   },

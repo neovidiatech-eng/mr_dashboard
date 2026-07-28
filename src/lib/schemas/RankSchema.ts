@@ -7,5 +7,6 @@ export const rankSchema = z.object({
         minAge: z.number().positive('Min age must be positive'),
         maxAge: z.number().positive('Max age must be positive'),
     }),
+    stageName: z.string().optional(),
 });
 export type RankSchema = z.infer<typeof rankSchema>;

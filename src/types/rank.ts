@@ -9,6 +9,7 @@ export interface RankItem {
   slug: string;
   color: string;
   ageRange: AgeRange;
+  stageName?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -42,10 +43,12 @@ export interface CreateRankBody {
   name: string;
   color: string;
   ageRange: AgeRange;
+  stageName?: string;
 }
 
 export interface UpdateRankBody {
   name?: string;
   color?: string;
   ageRange?: AgeRange;
+  stageName?: string;
 }

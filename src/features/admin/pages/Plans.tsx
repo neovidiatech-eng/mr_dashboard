@@ -21,6 +21,8 @@ interface Plan {
   type: "quarterly" | "halfAnnually" | "annually";
   features: string[];
   status: "active" | "inactive";
+  isGroup: boolean;
+  maxStudents: string;
 }
 
 export default function Plans() {
@@ -50,6 +52,8 @@ export default function Plans() {
     type: item.type || 'full',
     features: item.features || [],
     status: (item.active ? "active" : "inactive") as "active" | "inactive",
+    isGroup: item.isGroup || false,
+    maxStudents: item.maxStudents || '1',
   })) || [];
 
   const text = {
@@ -83,7 +87,12 @@ export default function Plans() {
         active: planData.status === "active",
         currencyId: planData.currencyId,
         type: planData.type,
+        isGroup: planData.isGroup,
       };
+
+      if (planData.isGroup && planData.maxStudents) {
+        payload.maxStudents = planData.maxStudents;
+      }
 
       if (planData.description && planData.description.trim() !== "") {
         payload.description = planData.description;

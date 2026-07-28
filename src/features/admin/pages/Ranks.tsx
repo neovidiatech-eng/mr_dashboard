@@ -206,6 +206,17 @@ function EnhancedRankCard({ rank }: { rank: RankItem }) {
                 </p>
 
                 <div className="space-y-3 pt-4 border-t border-gray-50">
+                    {rank.stageName && (
+                        <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-gray-500 flex items-center gap-2">
+                                <Users className="w-3.5 h-3.5" />
+                                Study Stage
+                            </span>
+                            <span className="text-xs font-bold text-gray-900 bg-indigo-50 text-indigo-700 px-2 py-1 rounded-lg">
+                                {rank.stageName}
+                            </span>
+                        </div>
+                    )}
                     <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-gray-500 flex items-center gap-2">
                             <Users className="w-3.5 h-3.5" />

@@ -31,6 +31,7 @@ export default function Assignments() {
     columnDescription: { ar: 'الوصف', en: 'Description' },
     columnDueDate: { ar: 'تاريخ التسليم', en: 'Due Date' },
     columnStatus: { ar: 'الحالة', en: 'Status' },
+    columnGrade: { ar: 'الدرجة', en: 'Grade' },
     pending: { ar: 'قيد الانتظار', en: 'Pending' },
     submitted: { ar: 'تم التسليم', en: 'Submitted' },
     graded: { ar: 'تم التصحيح', en: 'Graded' },
@@ -143,6 +144,7 @@ export default function Assignments() {
                   <th className="px-6 py-4 text-start text-sm font-semibold text-gray-900">{text.columnTeacher[language]}</th>
                   <th className="px-6 py-4 text-start text-sm font-semibold text-gray-900">{text.columnDueDate[language]}</th>
                   <th className="px-6 py-4 text-start text-sm font-semibold text-gray-900">{text.columnStatus[language]}</th>
+                  <th className="px-6 py-4 text-start text-sm font-semibold text-gray-900">{text.columnGrade[language]}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -167,6 +169,20 @@ export default function Assignments() {
                         }`}>
                         {text[assignment.status as keyof typeof text] ? (text[assignment.status as keyof typeof text] as any)[language] : assignment.status}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 text-start">
+                      {assignment.grade !== null && assignment.grade !== undefined ? (
+                        <div>
+                          <span className="font-bold text-gray-900">{assignment.grade}</span>
+                          {assignment.feedback && (
+                            <p className="text-xs text-gray-400 mt-0.5 max-w-[160px] truncate" title={assignment.feedback}>
+                              {assignment.feedback}
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-gray-300">—</span>
+                      )}
                     </td>
                   </tr>
                 ))}

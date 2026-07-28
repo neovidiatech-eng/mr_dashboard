@@ -6,6 +6,8 @@ export const getCourseSchema = (t: TFunc) => z.object({
   title: z.string().min(3, t("validation.min", { count: 3 })),
   description: z.string().min(5, t("validation.required")),
   rankId: z.string().min(1, t("validation.required")),
+  categoryId: z.string().optional(),
+  price: z.string().optional(),
   image: z.any().optional(),
 });
 

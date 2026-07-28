@@ -1,8 +1,9 @@
 import { Modal, Button, Upload, Select } from 'antd';
 import { useCreateCourse, useUpdateCourse } from '../../../hooks/useCourses';
 import { useQueryClient } from '@tanstack/react-query';
-import { BookOpen, AlignLeft, Trophy, Image, Upload as UploadIcon } from 'lucide-react';
+import { BookOpen, AlignLeft, Trophy, Image, Upload as UploadIcon, Tag, DollarSign } from 'lucide-react';
 import { useGetRanks } from '../hooks/useRank';
+import { useCategories } from '../hooks/useCategories';
 import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,6 +23,7 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
     const { mutate: createCourse, isPending: isCreating } = useCreateCourse();
     const { mutate: updateCourse, isPending: isUpdating } = useUpdateCourse();
     const { data: ranksData, isLoading: ranksLoading } = useGetRanks();
+    const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
 
     const isEditMode = !!course;
 
@@ -31,6 +33,8 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
             title: '',
             description: '',
             rankId: '',
+            categoryId: '',
+            price: '',
         }
     });
 
@@ -41,6 +45,8 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                     title: course.title,
                     description: course.description,
                     rankId: course.rankId,
+                    categoryId: course.categoryId || '',
+                    price: course.price !== undefined && course.price !== null ? String(course.price) : '',
                 });
                 if (course.image) {
                     setFileList([{
@@ -57,6 +63,8 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                     title: '',
                     description: '',
                     rankId: '',
+                    categoryId: '',
+                    price: '',
                 });
                 setFileList([]);
             }
@@ -68,6 +76,13 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
         formData.append('title', values.title);
         formData.append('description', values.description);
         formData.append('rankId', values.rankId);
+
+        if (values.categoryId) {
+            formData.append('categoryId', values.categoryId);
+        }
+        if (values.price !== undefined && values.price !== '') {
+            formData.append('price', String(values.price));
+        }
 
         if (fileList.length > 0 && fileList[0].originFileObj) {
             formData.append('image', fileList[0].originFileObj);
@@ -170,6 +185,44 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                         )}
                     />
                     {errors.rankId && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.rankId.message}</p>}
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
+                            <Tag size={14} className="text-indigo-500" /> Category
+                        </label>
+                        <Controller
+                            name="categoryId"
+                            control={control}
+                            render={({ field }) => (
+                                <Select
+                                    {...field}
+                                    allowClear
+                                    placeholder="Select category (optional)"
+                                    loading={categoriesLoading}
+                                    className="w-full h-12 rounded-xl"
+                                    options={categoriesData?.categories?.map((cat: any) => ({
+                                        label: cat.name_ar,
+                                        value: cat.id,
+                                    }))}
+                                />
+                            )}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
+                            <DollarSign size={14} className="text-indigo-500" /> Price
+                        </label>
+                        <input
+                            type="number"
+                            min={0}
+                            {...register('price')}
+                            placeholder="Leave empty if included in plans"
+                            className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                        />
+                    </div>
                 </div>
 
                 <div>

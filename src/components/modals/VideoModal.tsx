@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import ReactPlayer from "react-player";
@@ -8,6 +9,8 @@ interface VideoModalProps {
   sessionName: string;
   videoUrl: string;
   onEnded?: () => void;
+  startPosition?: number;
+  onProgress?: (playedSeconds: number, durationSeconds: number) => void;
 }
 
 export default function VideoModal({
@@ -16,7 +19,16 @@ export default function VideoModal({
   sessionName,
   videoUrl,
   onEnded,
+  startPosition,
+  onProgress,
 }: VideoModalProps) {
+  const playerRef = useRef<any>(null);
+  const seekedRef = useRef(false);
+
+  useEffect(() => {
+    if (isOpen) seekedRef.current = false;
+  }, [isOpen, videoUrl]);
+
   if (!isOpen) return null;
 
   return createPortal(
@@ -52,13 +64,25 @@ export default function VideoModal({
           ) : (
             /* @ts-ignore */
             <ReactPlayer
+              ref={playerRef}
               url={videoUrl}
               width="100%"
               height="100%"
               className="absolute top-0 left-0"
               controls
               playing
+              progressInterval={5000}
               onEnded={onEnded}
+              onReady={() => {
+                if (!seekedRef.current && startPosition && startPosition > 0) {
+                  playerRef.current?.seekTo?.(startPosition, "seconds");
+                  seekedRef.current = true;
+                }
+              }}
+              onProgress={((state: any) => {
+                const duration = playerRef.current?.getDuration?.() || 0;
+                onProgress?.(state.playedSeconds, duration);
+              }) as any}
             />
           )}
         </div>

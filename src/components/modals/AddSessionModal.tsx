@@ -115,6 +115,9 @@ export default function AddSessionModal({
       type: 'full',
       notification_Time: '10',
       studentId: '',
+      isGroup: false,
+      studentIds: [],
+      maxStudents: '',
       teacherId: '',
       courseId: '',
       title: '',
@@ -136,9 +139,41 @@ export default function AddSessionModal({
   const watchTitle = watch('title');
   const watchCourse = watch('courseId');
   const watchStudent = watch('studentId');
+  const watchIsGroup = watch('isGroup');
+  const watchStudentIds = (watch('studentIds') as string[]) || [];
   const watchType = watch('type');
   const watchStartTime = watch('startTime');
   const watchPlatform = watch('platform');
+
+  const [groupStudentSearch, setGroupStudentSearch] = useState('');
+
+  // Only students subscribed to a group-type plan are eligible for group sessions
+  const groupEligibleStudents = useMemo(() => {
+    const students = (allStudents || []).filter(
+      (s: Student) => (s as any)?.plan?.isGroup
+    );
+    if (!groupStudentSearch) return students;
+    const term = groupStudentSearch.toLowerCase();
+    return students.filter((s: Student) =>
+      s.user.name.toLowerCase().includes(term)
+    );
+  }, [allStudents, groupStudentSearch]);
+
+  const toggleGroupStudent = (studentId: string) => {
+    const current = watchStudentIds;
+    const next = current.includes(studentId)
+      ? current.filter((id) => id !== studentId)
+      : [...current, studentId];
+    setValue('studentIds', next, { shouldValidate: true });
+  };
+
+  useEffect(() => {
+    if (watchIsGroup) {
+      setValue('studentId', '');
+    } else {
+      setValue('studentIds', []);
+    }
+  }, [watchIsGroup, setValue]);
 
   const watchSelectedDays =
     (watch('selectedDays') as DayOfWeek[]) || [];
@@ -347,40 +382,76 @@ export default function AddSessionModal({
           {/* LEFT */}
           <div className="w-full lg:w-[58%] p-8 overflow-y-auto custom-scrollbar">
 
+            {/* Group Session Toggle */}
+            <label className="mb-6 p-4 rounded-2xl border border-indigo-100 bg-indigo-50/50 flex items-center justify-between cursor-pointer">
+              <div>
+                <p className="text-xs font-black text-indigo-700 uppercase tracking-widest">
+                  Group Session
+                </p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  One session shared by multiple students on a group plan
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                {...register('isGroup')}
+                className="w-5 h-5 rounded accent-indigo-600"
+              />
+            </label>
+
             {/* Student + Teacher */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
 
-              {/* Student */}
-              <div>
-                <label className="label">
-                  <Search className="w-3.5 h-3.5" />
-                  Student
-                </label>
+              {/* Student (single mode) */}
+              {!watchIsGroup && (
+                <div>
+                  <label className="label">
+                    <Search className="w-3.5 h-3.5" />
+                    Student
+                  </label>
 
-                <Controller
-                  name="studentId"
-                  control={control}
-                  render={({ field }) => (
-                    <CustomSelect
-                      options={
-                        (allStudents || []).map((student: Student) => ({
-                          value: String(student.id),
-                          label: student.user.name,
-                        }))
-                      }
-                      value={field.value}
-                      onChange={field.onChange}
-                      placeholder="Select Student"
-                    />
+                  <Controller
+                    name="studentId"
+                    control={control}
+                    render={({ field }) => (
+                      <CustomSelect
+                        options={
+                          (allStudents || []).map((student: Student) => ({
+                            value: String(student.id),
+                            label: student.user.name,
+                          }))
+                        }
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Select Student"
+                      />
+                    )}
+                  />
+
+                  {errors.studentId && (
+                    <p className="error-text">
+                      {errors.studentId.message as string}
+                    </p>
                   )}
-                />
+                </div>
+              )}
 
-                {errors.studentId && (
-                  <p className="error-text">
-                    {errors.studentId.message as string}
-                  </p>
-                )}
-              </div>
+              {/* Max Students (group mode) */}
+              {watchIsGroup && (
+                <div>
+                  <label className="label">
+                    <Layers className="w-3.5 h-3.5" />
+                    Max Students
+                  </label>
+
+                  <input
+                    type="text"
+                    {...register('maxStudents')}
+                    placeholder="e.g. 5 or unlimited"
+                    className="input"
+                  />
+                </div>
+              )}
 
               {/* Teacher */}
               <div>
@@ -417,8 +488,64 @@ export default function AddSessionModal({
               </div>
             </div>
 
+            {/* Group Students Picker */}
+            {watchIsGroup && (
+              <div className="mb-6">
+                <label className="label">
+                  <Search className="w-3.5 h-3.5" />
+                  Group Students ({watchStudentIds.length} selected)
+                </label>
+
+                <input
+                  type="text"
+                  value={groupStudentSearch}
+                  onChange={(e) => setGroupStudentSearch(e.target.value)}
+                  placeholder="Search students..."
+                  className="input mb-2"
+                />
+
+                <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-2xl divide-y divide-gray-100">
+                  {groupEligibleStudents.length === 0 && (
+                    <p className="p-4 text-xs text-gray-400">
+                      No students on a group plan found.
+                    </p>
+                  )}
+
+                  {groupEligibleStudents.map((student: Student) => (
+                    <label
+                      key={student.id}
+                      className="flex items-center justify-between px-4 py-2.5 cursor-pointer hover:bg-gray-50"
+                    >
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">
+                          {student.user.name}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {student.plan?.name || 'No Plan'}
+                        </p>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={watchStudentIds.includes(String(student.id))}
+                        onChange={() => toggleGroupStudent(String(student.id))}
+                        className="w-4 h-4 rounded accent-indigo-600"
+                      />
+                    </label>
+                  ))}
+                </div>
+
+                {errors.studentIds && (
+                  <p className="error-text">
+                    {errors.studentIds.message as string}
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Plan Card */}
-            <StudentPlanCard studentPlanInfo={studentPlanInfo} />
+            {!watchIsGroup && (
+              <StudentPlanCard studentPlanInfo={studentPlanInfo} />
+            )}
 
             {/* Title */}
             {schedulingMode === 'single' && (

@@ -13,6 +13,11 @@ export const getPlanSchema = (t: TFunc) => z.object({
   type: z.enum(['quarterly', 'halfAnnually', 'annually'], { message: t("validation.required") }),
   features: z.array(z.string()).optional(),
   status: z.enum(['active', 'inactive']),
+  isGroup: z.boolean().default(false),
+  maxStudents: z.string().optional(),
+}).refine((data) => !data.isGroup || (data.maxStudents && data.maxStudents.trim() !== ''), {
+  message: t("validation.required"),
+  path: ["maxStudents"],
 });
 
 export type PlanFormData = z.infer<ReturnType<typeof getPlanSchema>>;

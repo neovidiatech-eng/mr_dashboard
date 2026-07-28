@@ -26,7 +26,8 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
     defaultValues: {
       name: '',
       color: '#4F46E5',
-      ageRange: { minAge: 6, maxAge: 12 }
+      ageRange: { minAge: 6, maxAge: 12 },
+      stageName: '',
     }
   });
 
@@ -41,13 +42,15 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
           ageRange: {
             minAge: rank.ageRange.minAge,
             maxAge: rank.ageRange.maxAge
-          }
+          },
+          stageName: rank.stageName || '',
         });
       } else {
         reset({
           name: '',
           color: '#4F46E5',
-          ageRange: { minAge: 6, maxAge: 12 }
+          ageRange: { minAge: 6, maxAge: 12 },
+          stageName: '',
         });
       }
     }
@@ -129,6 +132,23 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
                 />
               </div>
               {errors.color && <p className="text-xs text-red-500 font-bold px-2">{errors.color.message}</p>}
+            </div>
+
+            {/* Stage Name Input */}
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                {language === 'ar' ? 'المرحلة الدراسية' : 'Study Stage'}
+              </label>
+              <input
+                type="text"
+                className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-start"
+                placeholder={language === 'ar' ? 'مثل: الصف الأول الابتدائي (اختياري)' : 'e.g. Grade 1 (optional)'}
+                {...register('stageName')}
+              />
+              <p className="text-xs text-gray-400 px-2">
+                {language === 'ar' ? 'اسم توضيحي للمرحلة، بجانب السن اللي تحته' : 'A friendly label for this stage, alongside the age range below'}
+              </p>
             </div>
 
             {/* Age Range Inputs */}

@@ -28,3 +28,11 @@ export const deleteLecture = async (id: string): Promise<void> => {
 export const completeLecture = async (id: string): Promise<void> => {
   await api.post(`/materials/lectures/${id}/complete`);
 };
+
+export const updateLectureProgress = async (
+  id: string,
+  position: number,
+  duration?: number,
+): Promise<void> => {
+  await api.patch(`/materials/lectures/${id}/progress`, { position, duration });
+};

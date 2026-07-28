@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, lazy } from 'react';
-import { Search, Eye, Pencil, Trash2, Plus, Users, UserCheck, UserX } from 'lucide-react';
+import { Search, Eye, Pencil, Trash2, Plus, Users, UserCheck, UserX, Star } from 'lucide-react';
 import WhatsAppPhone from '../../../components/ui/WhatsAppPhone';
 import Pagination from '../../../components/ui/Pagination';
 import { useTranslation } from 'react-i18next';
@@ -230,6 +230,7 @@ export default function Teachers() {
                     <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">  Password</th>
                     <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">Phone</th>
                     <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">Price</th>
+                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">Rating</th>
                     <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">Status</th>
                     <th className="px-8 py-5 text-end text-xs font-black uppercase tracking-widest text-gray-400">Actions</th>
                   </tr>
@@ -272,6 +273,17 @@ export default function Teachers() {
                             {currencyLookup[teacher.currencyId] || 'USD'}
                           </span>
                         </div>
+                      </td>
+                      <td className="px-8 py-5">
+                        {(teacher as any).totalReviews > 0 ? (
+                          <div className="flex items-center gap-1.5">
+                            <Star size={14} className="fill-amber-400 text-amber-400" />
+                            <span className="text-sm font-black text-gray-900">{(teacher as any).avgRating?.toFixed(1)}</span>
+                            <span className="text-[10px] font-bold text-gray-400">({(teacher as any).totalReviews})</span>
+                          </div>
+                        ) : (
+                          <span className="text-xs font-bold text-gray-300">—</span>
+                        )}
                       </td>
                       <td className="px-8 py-5">
                         <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${

@@ -18,11 +18,21 @@ export interface Courses{
   name: string,
 }
 
+export interface CourseCategory {
+  id: string;
+  name_ar: string;
+  name_en?: string;
+  color: string;
+}
+
 export interface Course {
   id: string;
   title: string;
   description: string;
   rankId: string;
+  categoryId?: string | null;
+  category?: CourseCategory | null;
+  price?: number | null;
   image:string;
   createdAt: string;
   updatedAt: string;

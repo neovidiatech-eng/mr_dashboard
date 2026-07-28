@@ -51,6 +51,8 @@ export interface Assignment {
     dueDate: string;
     teacherId: string;
     subjectId: string;
+    grade?: number | null;
+    feedback?: string | null;
     createdAt: string;
     updatedAt: string;
     student: StudentInAssignment;
@@ -99,6 +101,8 @@ export interface HomeworkItem {
   dueDate: string;
   studentId: string;
   teacherId: string;
+  grade?: number | null;
+  feedback?: string | null;
   attachments: Attachment[] | null;
   createdAt: string;
   updatedAt: string;

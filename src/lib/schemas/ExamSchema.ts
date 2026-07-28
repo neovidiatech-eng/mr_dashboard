@@ -4,13 +4,12 @@ type TFunc = (key: string, options?: any) => string;
 
 export const getExamSchema = (t: TFunc) => z.object({
   title: z.string().min(3, t("validation.min", { count: 3 })),
-  subject: z.string().min(1, t("validation.required")),
-  teacher: z.string().min(1, t("validation.required")),
-  studentName: z.string().min(1, t("validation.required")),
+  subject: z.string().optional(),
+  studentId: z.string().min(1, t("validation.required")),
+  teacherId: z.string().optional(),
   dueDate: z.string().min(1, t("validation.required")),
-  duration: z.coerce.string().min(1, t("validation.required")), 
-  grade: z.coerce.number().min(0).max(1000),
-  status: z.enum(['upcoming', 'completed']),
+  duration: z.coerce.number().min(1, t("validation.required")),
+  totalMarks: z.coerce.number().min(1).default(100),
 });
 
 export type ExamFormData = z.infer<ReturnType<typeof getExamSchema>>;

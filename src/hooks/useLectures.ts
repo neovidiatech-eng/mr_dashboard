@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { completeLecture, createLecture, deleteLecture, getAllLectures, getLectureById, updateLecture } from "../services/LecturesServices";
+import { completeLecture, createLecture, deleteLecture, getAllLectures, getLectureById, updateLecture, updateLectureProgress } from "../services/LecturesServices";
 import ErrorService from "../utils/ErrorService";
 import { Lecture } from "../types/lectures";
 
@@ -62,5 +62,12 @@ export const useCompleteLecture = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["student-progress"] });
     },
+  });
+};
+
+export const useUpdateLectureProgress = () => {
+  return useMutation({
+    mutationFn: ({ id, position, duration }: { id: string; position: number; duration?: number }) =>
+      updateLectureProgress(id, position, duration),
   });
 };

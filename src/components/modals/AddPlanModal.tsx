@@ -31,10 +31,13 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData, cur
       type: 'quarterly',
       features: [''],
       status: 'active',
+      isGroup: false,
+      maxStudents: '',
     },
   });
 
   const features = watch('features');
+  const watchIsGroup = watch('isGroup');
   
   const addFeature = () => {
     setValue('features', [...features, '']);
@@ -67,6 +70,8 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData, cur
           type: 'quarterly',
           features: [''],
           status: 'active',
+          isGroup: false,
+          maxStudents: '',
         });
       }
     }
@@ -300,6 +305,34 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData, cur
                       )}
                     />
                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <label className="bg-slate-50 rounded-2xl px-6 py-4 flex items-center justify-between cursor-pointer">
+                    <div>
+                      <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Group Plan</p>
+                      <p className="text-xs font-bold text-slate-400 mt-0.5">Shared class with multiple students</p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      {...register('isGroup')}
+                      className="w-5 h-5 rounded accent-indigo-600"
+                    />
+                  </label>
+
+                  {watchIsGroup && (
+                    <div>
+                      <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
+                        Max Students
+                      </label>
+                      <input
+                        {...register('maxStudents')}
+                        placeholder="e.g. 5 or unlimited"
+                        className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all"
+                      />
+                      {errors.maxStudents && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.maxStudents.message}</p>}
+                    </div>
+                  )}
                 </div>
               </div>
 

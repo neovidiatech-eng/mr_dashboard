@@ -50,6 +50,8 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
     description: { ar: 'الوصف', en: 'Description' },
     dueDate: { ar: 'تاريخ التسليم', en: 'Due Date' },
     status: { ar: 'الحالة', en: 'Status' },
+    grade: { ar: 'الدرجة', en: 'Grade' },
+    feedback: { ar: 'ملاحظات المعلم', en: 'Feedback' },
     pending: { ar: 'قيد الانتظار', en: 'Pending' },
     submitted: { ar: 'تم التسليم', en: 'Submitted' },
     graded: { ar: 'تم التصحيح', en: 'Graded' },
@@ -67,6 +69,8 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
           description: initialData.description || '',
           dueDate: initialData.dueDate ? initialData.dueDate.split('T')[0] : '',
           status: (initialData.status as any) || 'pending',
+          grade: initialData.grade ?? '',
+          feedback: initialData.feedback || '',
         });
       } else {
         reset({
@@ -75,6 +79,8 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
           description: '',
           dueDate: '',
           status: 'pending',
+          grade: '',
+          feedback: '',
         });
       }
     }
@@ -82,13 +88,21 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
 
   const handleOnSubmit = (data: AssignmentFormData) => {
     if (initialData) {
-      updateMutation.mutate({ id: initialData.id, ...data } as any, {
+      const payload: any = { ...data };
+      if (payload.grade === '' || payload.grade === undefined) {
+        delete payload.grade;
+      }
+      if (!payload.feedback) {
+        delete payload.feedback;
+      }
+      updateMutation.mutate({ id: initialData.id, ...payload }, {
         onSuccess: () => {
           onClose();
         }
       });
     } else {
-      createMutation.mutate(data, {
+      const { grade, feedback, ...createData } = data;
+      createMutation.mutate(createData, {
         onSuccess: () => {
           onClose();
         }
@@ -196,6 +210,38 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
                 />
               </div>
             </div>
+
+            {/* Grade + Feedback (only when grading an existing, already-submitted assignment) */}
+            {initialData && initialData.status !== 'pending' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="text-start">
+                  <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                    {text.grade[language]}
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    step="0.5"
+                    {...register('grade')}
+                    placeholder={language === 'ar' ? 'أدخل الدرجة' : 'Enter grade'}
+                    className={`w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ${errors.grade ? 'ring-red-500/20' : 'ring-transparent'} focus:ring-indigo-500/10 transition-all placeholder:text-gray-300`}
+                  />
+                  {errors.grade && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.grade.message as string}</p>}
+                </div>
+
+                <div className="text-start">
+                  <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                    {text.feedback[language]}
+                  </label>
+                  <input
+                    type="text"
+                    {...register('feedback')}
+                    placeholder={language === 'ar' ? 'ملاحظات للطالب (اختياري)' : 'Notes for the student (optional)'}
+                    className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all placeholder:text-gray-300"
+                  />
+                </div>
+              </div>
+            )}
 
             {/* Footer Actions */}
             <div className="flex items-center gap-4 mt-8 pt-4 border-t border-gray-100 bg-white/80 backdrop-blur-md">

@@ -188,7 +188,7 @@ import VideoModal from "../../../../components/modals/VideoModal";
 
 import { useQuery } from "@tanstack/react-query";
 import { getStudentProgress } from "../../../../services/CoursesServices";
-import { useCompleteLecture } from "../../../../hooks/useLectures";
+import { useCompleteLecture, useUpdateLectureProgress } from "../../../../hooks/useLectures";
 import { SiOpen3D } from "react-icons/si";
 
 export default function CurriculumDetails() {
@@ -200,12 +200,24 @@ export default function CurriculumDetails() {
   const [selectedVideoName, setSelectedVideoName] = useState("");
   const [selectedVideoUrl, setSelectedVideoUrl] = useState("");
   const [selectedLectureId, setSelectedLectureId] = useState<string | null>(null);
+  const [selectedStartPosition, setSelectedStartPosition] = useState(0);
 
   const completeLectureMutation = useCompleteLecture();
+  const updateProgressMutation = useUpdateLectureProgress();
 
   const handleVideoEnded = () => {
     if (selectedLectureId) {
       completeLectureMutation.mutate(selectedLectureId);
+    }
+  };
+
+  const handleVideoProgress = (playedSeconds: number, durationSeconds: number) => {
+    if (selectedLectureId && playedSeconds > 0) {
+      updateProgressMutation.mutate({
+        id: selectedLectureId,
+        position: playedSeconds,
+        duration: durationSeconds || undefined,
+      });
     }
   };
 
@@ -262,6 +274,22 @@ export default function CurriculumDetails() {
           <h1 className="text-3xl font-bold text-slate-800 mb-8">
             {courseTitle}
           </h1>
+
+          {progressData?.hasCourseAccess === false && (
+            <div className="mb-8 flex items-center gap-4 p-5 bg-amber-50 border border-amber-100 rounded-2xl">
+              <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                <Lock size={20} className="text-amber-600" />
+              </div>
+              <div>
+                <p className="font-bold text-amber-800">
+                  الكورس ده مش ضمن اشتراكك الحالي
+                </p>
+                <p className="text-sm text-amber-700 mt-0.5">
+                  اطلب شراء الكورس ده من متجر الكورسات عشان تقدر تشوف المحاضرات.
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Lectures */}
           <div className="space-y-4">
@@ -385,6 +413,7 @@ export default function CurriculumDetails() {
                                 );
 
                                 setSelectedLectureId(lecture.id);
+                                setSelectedStartPosition(lecture.lastPosition || 0);
 
                                 setIsVideoModalOpen(
                                   true
@@ -464,6 +493,8 @@ export default function CurriculumDetails() {
             sessionName={selectedVideoName}
             videoUrl={selectedVideoUrl}
             onEnded={handleVideoEnded}
+            startPosition={selectedStartPosition}
+            onProgress={handleVideoProgress}
           />
         </>
       )}

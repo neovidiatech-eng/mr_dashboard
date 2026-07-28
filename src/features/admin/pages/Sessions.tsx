@@ -108,10 +108,10 @@ export default function Sessions() {
     data: SessionFormData | MultipleSessionsPayload,
   ) => {
     try {
-      if ("studentId" in data) {
+      if ("sessionDate" in data) {
         // Single Session
+        const isGroup = (data as any).isGroup;
         const singlePayload: any = {
-          studentId: data.studentId,
           teacherId: data.teacherId,
           courseId: data.courseId,
           title: data.title,
@@ -127,6 +127,16 @@ export default function Sessions() {
           videoUrl: data.videoUrl,
         };
 
+        if (isGroup) {
+          singlePayload.isGroup = true;
+          singlePayload.studentIds = (data as any).studentIds || [];
+          if ((data as any).maxStudents) {
+            singlePayload.maxStudents = (data as any).maxStudents;
+          }
+        } else {
+          singlePayload.studentId = data.studentId;
+        }
+
         // Only include description if it has a value
         if (data.description) {
           singlePayload.description = data.description;
@@ -141,8 +151,8 @@ export default function Sessions() {
       } else {
         // Batch Session
         const { formData } = data;
+        const isGroup = (formData as any).isGroup;
         const batchPayload: any = {
-          studentId: formData.studentId,
           teacherId: formData.teacherId,
           courseId: formData.courseId,
           link: formData.link || "",
@@ -154,6 +164,16 @@ export default function Sessions() {
           notification_Time: formData.notification_Time || "10",
           language: formData.language,
         };
+
+        if (isGroup) {
+          batchPayload.isGroup = true;
+          batchPayload.studentIds = (formData as any).studentIds || [];
+          if ((formData as any).maxStudents) {
+            batchPayload.maxStudents = (formData as any).maxStudents;
+          }
+        } else {
+          batchPayload.studentId = formData.studentId;
+        }
 
         // Only include description if it has a value
         if (formData.description) {

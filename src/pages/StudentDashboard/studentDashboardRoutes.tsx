@@ -10,7 +10,8 @@ import {
   User,
   MessageSquare,
   Send,
-  CreditCard
+  CreditCard,
+  ShoppingCart
 } from "lucide-react";
 
 export interface StudentRouteConfig {
@@ -29,13 +30,11 @@ const SessionsPage = lazy(
 );
 const AgendaPage = lazy(() => import("../../features/student/pages/Agenda"));
 const ExamsPage = lazy(() => import("../../features/student/pages/Exams"));
+const TakeExamPage = lazy(() => import("../../features/student/pages/TakeExam"));
 const AssignmentsPage = lazy(
   () => import("../../features/student/pages/Assignments"),
 );
 const ProfilePage = lazy(() => import("../../features/student/pages/Profile"));
-const LMSCoursesPage = lazy(
-  () => import("../../features/student/pages/LMSCourses/LMSCourses"),
-);
 const ChatPage = lazy(() => import("../../features/student/pages/Chat/Chat"));
 const RequestsPage = lazy(
   () => import("../../features/student/pages/Requests"),
@@ -55,6 +54,9 @@ const RecordedVideos = lazy(
 const SubscriptionPage = lazy(
   () => import("../../features/student/pages/Subscription"),
 );
+const CoursesStorePage = lazy(
+  () => import("../../features/student/pages/CoursesStore"),
+);
 
 export const studentDashboardRoutes: StudentRouteConfig[] = [
   {
@@ -71,19 +73,11 @@ export const studentDashboardRoutes: StudentRouteConfig[] = [
     element: <SubscriptionPage />,
   },
   {
-    id: "student-lms",
-    label: "sidebar_lms",
-    icon: PlayCircle,
-    path: "lms",
-    subItems: [
-      {
-        id: "student-lms-courses",
-        label: "sidebar_courses",
-        icon: Play,
-        path: "lms-courses",
-        element: <LMSCoursesPage />,
-      },
-    ],
+    id: "student-courses-store",
+    label: "sidebar_courses_store",
+    icon: ShoppingCart,
+    path: "courses-store",
+    element: <CoursesStorePage />,
   },
   {
     id: "student-content",
@@ -165,5 +159,11 @@ export const studentDashboardRoutes: StudentRouteConfig[] = [
     label: "Recorded Videos",
     path: "recorded-videos",
     element: <RecordedVideos />,
+  },
+  {
+    id: "student-take-exam",
+    label: "Take Exam",
+    path: "exams/:examId",
+    element: <TakeExamPage />,
   },
 ];
