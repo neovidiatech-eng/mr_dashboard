@@ -26,7 +26,7 @@ export default function ViewReportModal({ isOpen, onClose, reportData }: ViewRep
       width={650}
       centered
       className="view-report-modal"
-      styles={{ body: { padding: 0 }, content: { padding: 0 } }}
+      styles={{ body: { padding: 0 } }}
     >
       <div className="relative overflow-hidden rounded-2xl" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         {/* Header Section */}
