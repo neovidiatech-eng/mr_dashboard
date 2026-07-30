@@ -80,7 +80,7 @@ export default function ViewSessionModal({ isOpen, onClose, session, groupedSess
         <div className="px-8 py-5 border-b border-gray-100 flex items-start justify-between bg-white shrink-0">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-[14px] bg-indigo-50 flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-[#6366f1]" />
+              <Calendar className="w-6 h-6 text-[#800020]" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900 leading-tight">{t('sessionDetails')}</h2>

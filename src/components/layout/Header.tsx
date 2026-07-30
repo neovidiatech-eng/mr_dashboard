@@ -49,7 +49,7 @@ export default function Header({
       return {
         name: profileData?.user?.name || userName || "---",
         subtext: profileData?.plan?.name || "Free Plan",
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData?.user?.name || userName || "U")}&background=random`,
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData?.user?.name || userName || "U")}&background=800020&color=fff&bold=true`,
         path: "/student-dashboard/profile"
       };
     }
@@ -57,7 +57,7 @@ export default function Header({
       return {
         name: teacherData?.name || userName || "---",
         subtext: "Teacher",
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherData?.name || userName || "T")}&background=random`,
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(teacherData?.name || userName || "T")}&background=800020&color=fff&bold=true`,
         path: "/teacher-dashboard/profile"
       };
     }
@@ -73,7 +73,7 @@ export default function Header({
     return {
       name: userName || "---",
       subtext: roleDisplayName,
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(userName || "U")}&background=1e1b4b&color=fff`,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(userName || "U")}&background=800020&color=fff&bold=true`,
       path: "/dashboard"
     };
   }, [isStudent, isTeacher, profileData, teacherData, userName, userRole]);
@@ -112,13 +112,6 @@ export default function Header({
               else navigate("/");
             }}
           >
-            <div className="flex flex-row items-center gap-2">
-              {/* <div className={`flex items-center justify-center rounded-[10px] w-8 h-8 md:w-[39px] md:h-[39px] ${isStudent ? 'bg-[#2049BF]' : 'bg-indigo-600'}`}>
-                <span className="text-white text-lg md:text-xl font-bold">M</span>
-              </div>
-              <span className="text-black text-lg md:text-xl font-bold hidden xs:block">Mr Mahmoud</span> */}
-              <img src="/logo.png" alt="logo" className="w-[50px] h-[50px]" />
-            </div>
           </div>
         </div>
 
@@ -160,13 +153,13 @@ export default function Header({
                 className="flex items-center gap-2 cursor-pointer md:pl-4 md:border-l border-gray-100 group"
               >
                 <div className="hidden md:block text-right">
-                  <p className="text-xs font-bold text-gray-900 leading-none group-hover:text-indigo-600 transition-colors">{userInfo.name}</p>
+                  <p className="text-xs font-bold text-gray-900 leading-none group-hover:text-primary transition-colors">{userInfo.name}</p>
                   <p className="text-[9px] text-gray-500 font-bold mt-1 uppercase tracking-tighter">{userInfo.subtext}</p>
                 </div>
                 <img
                   src={userInfo.avatar}
                   alt="User"
-                  className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover ring-2 ring-transparent group-hover:ring-indigo-100 transition-all"
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover ring-2 ring-transparent group-hover:ring-primary/20 transition-all"
                 />
               </div>
             </div>
@@ -196,7 +189,7 @@ const DesktopProfile = ({
 }) => (
   <div className={`flex items-center gap-2 md:gap-4 ${className}`}>
     {!compact && (
-      <button className="p-2.5 md:p-3 bg-white rounded-xl md:rounded-2xl text-slate-400 hover:text-[#2563eb] hover:bg-blue-50 transition-all border border-slate-100 relative">
+      <button className="p-2.5 md:p-3 bg-white rounded-xl md:rounded-2xl text-slate-400 hover:text-primary hover:bg-primary-light transition-all border border-slate-100 relative">
         <Bell size={18} className="md:w-5 md:h-5" />
         <div className="absolute top-2 right-2 w-1.5 h-1.5 md:w-2 md:h-2 bg-red-500 rounded-full border-2 border-white" />
       </button>

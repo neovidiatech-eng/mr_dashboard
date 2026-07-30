@@ -257,7 +257,7 @@ const ClassesPage: React.FC = () => {
           type="primary"
           icon={<Pencil size={14} />}
           onClick={() => handleOpenFeedback(record)}
-          className="bg-[#2563eb] h-9 w-9 flex items-center justify-center rounded-lg shadow-blue-500/20"
+          className="bg-primary h-9 w-9 flex items-center justify-center rounded-lg shadow-primary/20"
         />
       ),
     },

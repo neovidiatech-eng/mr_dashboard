@@ -29,7 +29,7 @@ const tabs: { id: Tab; label: string; icon: any }[] = [
 ];
 
 export default function SettingsPage() {
-  const primaryColor = '#2563eb';
+  const primaryColor = '#800020';
   const { settings: apiSettings, isLoading, updateSettings: apiUpdateSettings } = useSettings();
 
   const [activeTab, setActiveTab] = useState<Tab>('general');

@@ -111,10 +111,10 @@ export default function RecordedVideos() {
           >
             {/* Thumbnail */}
             <div
-              className="w-full aspect-[16/9] bg-[#2563eb] flex items-center justify-center cursor-pointer relative overflow-hidden"
+              className="w-full aspect-[16/9] bg-primary flex items-center justify-center cursor-pointer relative overflow-hidden"
               onClick={() => handleWatchVideo(video.name)}
             >
-              <div className="absolute inset-0 bg-blue-700/0 group-hover:bg-blue-700/20 transition-colors duration-300"></div>
+              <div className="absolute inset-0 bg-primary-dark/0 group-hover:bg-primary-dark/20 transition-colors duration-300"></div>
               <Play
                 size={64}
                 className="text-white opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300"

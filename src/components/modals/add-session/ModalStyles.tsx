@@ -62,7 +62,7 @@ export default function ModalStyles() {
 
           .active-toggle {
             background:white;
-            color:#4f46e5;
+            color:#800020;
             box-shadow:0 1px 3px rgba(0,0,0,.08);
           }
 
@@ -101,7 +101,7 @@ export default function ModalStyles() {
           }
 
           .primary-btn {
-            background:#4f46e5;
+            background:#800020;
             color:white;
             padding:12px 24px;
             border-radius:18px;

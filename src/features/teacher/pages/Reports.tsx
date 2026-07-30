@@ -250,7 +250,7 @@ export default function ReportsPage() {
               <button 
                 type="submit"
                 disabled={isSubmitting}
-                className=" flex flex-row items-center justify-center bg-[#2563eb] text-white px-12 py-4 rounded-xl font-bold shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all h-[45px] w-full max-w-[250px] text-[12px] lg:text-[15px] disabled:opacity-50 "
+                className=" flex flex-row items-center justify-center bg-primary text-white px-12 py-4 rounded-xl font-bold shadow-xl shadow-primary/20 hover:bg-primary-dark transition-all h-[45px] w-full max-w-[250px] text-[12px] lg:text-[15px] disabled:opacity-50 "
               >
                 {isSubmitting ? (
                   <Loader2 className="animate-spin mr-2" size={20} />

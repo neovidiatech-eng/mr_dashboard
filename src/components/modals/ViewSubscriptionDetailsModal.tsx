@@ -95,20 +95,20 @@ export default function ViewSubscriptionDetailsModal({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh]  overflow-y-auto no-scrollbar">
-        <div className="sticky top-0 bg-primary border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl">
-          <h2 className="text-2xl font-bold text-gray-900">{text.title[language]}</h2>
+        <div className="sticky top-0 bg-primary border-b border-primary-dark px-6 py-4 flex items-center justify-between rounded-t-2xl text-white">
+          <h2 className="text-2xl font-bold text-white">{text.title[language]}</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
           >
-            <X className="w-6 h-6 text-gray-500" />
+            <X className="w-6 h-6 text-white" />
           </button>
         </div>
 
         <div className="p-6 space-y-6">
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
+          <div className="bg-primary-light border border-primary/20 rounded-xl p-5">
             <div className="flex items-center gap-3 mb-4">
-              <User className="w-6 h-6 text-blue-600" />
+              <User className="w-6 h-6 text-primary" />
               <h3 className="text-lg font-bold text-gray-900">{text.studentInfo[language]}</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -119,9 +119,9 @@ export default function ViewSubscriptionDetailsModal({
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-5">
+          <div className="bg-primary-light/60 border border-primary/20 rounded-xl p-5">
             <div className="flex items-center gap-3 mb-4">
-              <GraduationCap className="w-6 h-6 text-green-600" />
+              <GraduationCap className="w-6 h-6 text-primary" />
               <h3 className="text-lg font-bold text-gray-900">{text.teacherInfo[language]}</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -164,20 +164,20 @@ export default function ViewSubscriptionDetailsModal({
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-xl p-5">
+          <div className="bg-primary-light/40 border border-primary/20 rounded-xl p-5">
             <h3 className="text-lg font-bold text-gray-900 mb-4">{text.sessionsInfo[language]}</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white rounded-lg p-4 border border-purple-200">
+              <div className="bg-white rounded-lg p-4 border border-primary/20">
                 <p className="text-sm text-gray-600 mb-1">{text.totalSessions[language]}</p>
-                <p className="text-2xl font-bold text-purple-600">{subscription.totalSessions}</p>
+                <p className="text-2xl font-bold text-primary">{subscription.totalSessions}</p>
               </div>
               <div className="bg-white rounded-lg p-4 border border-green-200">
                 <p className="text-sm text-gray-600 mb-1">{text.completedSessions[language]}</p>
                 <p className="text-2xl font-bold text-green-600">{completedSessions.length}</p>
               </div>
-              <div className="bg-white rounded-lg p-4 border border-blue-200">
+              <div className="bg-white rounded-lg p-4 border border-primary/20">
                 <p className="text-sm text-gray-600 mb-1">{text.remainingSessions[language]}</p>
-                <p className="text-2xl font-bold text-blue-600">{subscription.sessionsRemaining}</p>
+                <p className="text-2xl font-bold text-primary">{subscription.sessionsRemaining}</p>
               </div>
             </div>
           </div>

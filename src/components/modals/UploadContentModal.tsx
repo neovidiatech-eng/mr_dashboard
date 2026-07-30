@@ -93,7 +93,7 @@ export default function UploadContentModal({ open, onCancel }: UploadContentModa
           </Button>
           <Button 
             type="primary" 
-            className="h-11 px-8 rounded-xl font-bold bg-[#4F46E5] hover:!bg-[#3e37bc] shadow-md shadow-indigo-100"
+            className="h-11 px-8 rounded-xl font-bold bg-primary hover:!bg-primary-dark shadow-md shadow-primary/10"
           >
             Upload & Save
           </Button>

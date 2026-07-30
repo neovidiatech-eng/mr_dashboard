@@ -121,7 +121,7 @@ export default function Reports() {
       key: 'teacher',
       render: (_: unknown, record: TeacherReport) => (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-xs">
+          <div className="w-8 h-8 rounded-full bg-primary-light flex items-center justify-center text-primary font-bold text-xs">
             {record.teacher?.user?.name ? record.teacher.user.name.charAt(0).toUpperCase() : '?'}
           </div>
           <div className="flex flex-col">
@@ -188,9 +188,9 @@ export default function Reports() {
       title: t('status') || 'Status',
       key: 'status',
       render: () => (
-        <Tag color="blue" className="rounded-full px-3 py-0.5 border-none text-[10px] font-bold uppercase tracking-widest">
+        <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-primary-light text-primary border border-primary/20">
           {t('submitted') || 'Submitted'}
-        </Tag>
+        </span>
       ),
     },
     {
@@ -281,7 +281,7 @@ export default function Reports() {
               placeholder={t('searchReports') || 'Search by teacher name...'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-3 bg-white border border-gray-100 rounded-2xl text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:border-transparent transition-all placeholder:text-gray-400 shadow-sm`}
+              className={`w-full ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-3 bg-white border border-gray-100 rounded-2xl text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent transition-all placeholder:text-gray-400 shadow-sm`}
             />
           </div>
         </div>
@@ -337,8 +337,8 @@ export default function Reports() {
           padding: 16px 24px !important;
         }
         .ant-pagination-item-active {
-          border-color: #6366f1 !important;
-          background: #6366f1 !important;
+          border-color: #800020 !important;
+          background: #800020 !important;
         }
         .ant-pagination-item-active a {
           color: white !important;

@@ -173,7 +173,7 @@ export default function TakeExam() {
                       <label
                         key={o.id}
                         className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
-                          answers[q.id] === o.id ? 'border-blue-500 bg-blue-50' : 'border-slate-200 hover:bg-slate-50'
+                          answers[q.id] === o.id ? 'border-primary bg-primary-light' : 'border-slate-200 hover:bg-slate-50'
                         }`}
                       >
                         <input
@@ -181,7 +181,7 @@ export default function TakeExam() {
                           name={`question-${q.id}`}
                           checked={answers[q.id] === o.id}
                           onChange={() => setAnswers((a) => ({ ...a, [q.id]: o.id }))}
-                          className="w-4 h-4 accent-blue-600"
+                          className="w-4 h-4 accent-primary"
                         />
                         <span className="text-sm text-slate-700">{o.text}</span>
                       </label>

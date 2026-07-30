@@ -386,7 +386,7 @@ export default function Sessions() {
       render: (_: unknown, record: GroupedSchedule) => (
         <div className="flex items-center gap-3">
           <img
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(record.teacher?.user?.name || "T")}&background=f3f4f6&color=4b5563`}
+            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(record.teacher?.user?.name || "T")}&background=fdf2f4&color=800020&bold=true`}
             alt="Instructor"
             className="w-8 h-8 rounded-full object-cover border border-gray-100"
           />
@@ -415,7 +415,7 @@ export default function Sessions() {
         return (
           <div className="flex flex-col">
             <span
-              className={`text-sm font-bold ${isRescheduled ? "text-[#6366f1]" : "text-gray-900"}`}
+              className={`text-sm font-bold ${isRescheduled ? "text-[#800020]" : "text-gray-900"}`}
             >
               {isRescheduled ? "Rescheduled" : date}
             </span>
@@ -457,7 +457,7 @@ export default function Sessions() {
                 href={record.link}
                 target="_blank"
                 rel="noreferrer"
-                className="text-sm text-[#6366f1] font-bold hover:underline flex items-center gap-1.5"
+                className="text-sm text-[#800020] font-bold hover:underline flex items-center gap-1.5"
               >
                 {record.link.includes("zoom")
                   ? "Join Zoom"
@@ -572,7 +572,7 @@ export default function Sessions() {
           <div className="mt-4 md:mt-0 flex items-center gap-3">
             <button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-2 px-5 py-2.5 bg-[#6366f1] hover:bg-[#4f46e5] text-white rounded-full transition-colors font-bold text-sm shadow-sm"
+              className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-full transition-colors font-bold text-sm shadow-sm"
             >
               <Plus className="w-4 h-4" />
               Create Session
@@ -589,7 +589,7 @@ export default function Sessions() {
               placeholder="Search by student, instructor, or subject..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border-none rounded-full text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:bg-white transition-colors placeholder:text-gray-400"
+              className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border-none rounded-full text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#800020] focus:bg-white transition-colors placeholder:text-gray-400"
             />
           </div>
           <div className="flex flex-col md:flex-row gap-5 items-start md:items-center justify-between">
@@ -644,7 +644,7 @@ export default function Sessions() {
                 key={i}
                 onClick={() => handlePageChange(i + 1)}
                 className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold transition-colors ${currentPage === i + 1
-                    ? "bg-[#6366f1] text-white shadow-sm"
+                    ? "bg-[#800020] text-white shadow-sm"
                     : "text-gray-500 hover:bg-gray-50"
                   }`}
               >
@@ -713,7 +713,7 @@ export default function Sessions() {
             </h3>
             <Link
               to="/dashboard/teacher-availability"
-              className="text-xs text-[#6366f1] font-bold hover:underline"
+              className="text-xs text-[#800020] font-bold hover:underline"
             >
               View Calendar
             </Link>
@@ -746,7 +746,7 @@ export default function Sessions() {
                     <div className="flex items-center gap-4">
                       <div className="relative">
                         <img
-                          src={`https://ui-avatars.com/api/?name=${encodeURIComponent(instructor.user?.name || "T")}&background=f3f4f6&color=6366f1&bold=true`}
+                          src={`https://ui-avatars.com/api/?name=${encodeURIComponent(instructor.user?.name || "T")}&background=fdf2f4&color=800020&bold=true`}
                           alt="Instructor"
                           className="w-11 h-11 rounded-full object-cover border-2 border-white shadow-sm"
                         />
@@ -755,7 +755,7 @@ export default function Sessions() {
                         ></div>
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-gray-900 group-hover:text-[#6366f1] transition-colors">
+                        <p className="text-sm font-bold text-gray-900 group-hover:text-[#800020] transition-colors">
                           {instructor.user?.name}
                         </p>
                         <div className="flex items-center gap-2 mt-0.5">
@@ -789,7 +789,7 @@ export default function Sessions() {
         </div>
 
         {/* Admin Notification Card */}
-        <div className="bg-[#6366f1] rounded-[24px] shadow-sm p-7 text-white relative overflow-hidden flex flex-col justify-between min-h-[220px]">
+        <div className="bg-[#800020] rounded-[24px] shadow-sm p-7 text-white relative overflow-hidden flex flex-col justify-between min-h-[220px]">
           {/* Subtle decoration */}
           <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none translate-x-[20%] translate-y-[20%]">
             <div className="w-64 h-64 border-[24px] border-white rounded-full"></div>
@@ -808,7 +808,7 @@ export default function Sessions() {
             </p>
           </div>
           <div className="relative z-10 mt-6">
-            <button className="px-6 py-2.5 bg-white text-[#6366f1] text-xs font-bold rounded-full hover:bg-gray-50 transition-colors shadow-sm">
+            <button className="px-6 py-2.5 bg-white text-[#800020] text-xs font-bold rounded-full hover:bg-gray-50 transition-colors shadow-sm">
               Review Attendance
             </button>
           </div>

@@ -148,25 +148,26 @@ export default function Curriculum() {
         {/* Detail Header */}
         <div className="mb-8 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-4">
-            <Button
-              icon={<ArrowLeft size={18} />}
+            <button
               onClick={handleBack}
-              className="rounded-xl h-10 w-10 flex items-center justify-center border-gray-200 text-gray-400 hover:text-indigo-600 hover:border-indigo-100"
-            />
+              className="rounded-xl h-10 w-10 flex items-center justify-center border border-gray-200 text-gray-400 hover:text-primary hover:border-primary/30 transition-colors bg-white"
+            >
+              <ArrowLeft size={18} />
+            </button>
             <div>
               <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
-                Curriculum <ChevronRight size={10} /> <span className="text-indigo-600">{selectedCourse.title}</span>
+                Curriculum <ChevronRight size={10} /> <span className="text-primary">{selectedCourse.title}</span>
               </div>
               <h1 className="text-2xl font-bold text-gray-900">{selectedCourse.title}</h1>
             </div>
           </div>
-          <Button
-            icon={<Plus size={16} />}
+          <button
             onClick={() => setIsAddLectureModalVisible(true)}
-            className="rounded-xl font-bold text-gray-600 border-gray-200"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-white bg-primary hover:bg-primary-dark transition-all shadow-md shadow-primary/20 active:scale-95"
           >
+            <Plus size={16} />
             Add Lecture
-          </Button>
+          </button>
         </div>
 
         <div className="flex-1 flex overflow-hidden gap-6">
@@ -181,19 +182,19 @@ export default function Curriculum() {
                   lectures.map((lecture: Lecture) => (
                     <div
                       key={lecture.id}
-                      className={`flex items-center justify-between p-4 cursor-pointer transition-all border-b border-gray-50 last:border-0 ${selectedLessonId === lecture.id ? 'bg-indigo-50/50' : 'hover:bg-gray-50'}`}
+                      className={`flex items-center justify-between p-4 cursor-pointer transition-all border-b border-gray-50 last:border-0 ${selectedLessonId === lecture.id ? 'bg-primary-light/60' : 'hover:bg-gray-50'}`}
                       onClick={() => setSelectedLessonId(lecture.id)}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${selectedLessonId === lecture.id ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${selectedLessonId === lecture.id ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400'}`}>
                           {lecture.order}
                         </div>
                         <div className="flex flex-col">
-                          <span className={`text-sm font-bold ${selectedLessonId === lecture.id ? 'text-indigo-600' : 'text-gray-700'}`}>
+                          <span className={`text-sm font-bold ${selectedLessonId === lecture.id ? 'text-primary' : 'text-gray-700'}`}>
                             {lecture.title}
                           </span>
                           <div className="flex items-center gap-2 mt-1">
-                            <Video size={10} className={selectedLessonId === lecture.id ? 'text-indigo-400' : 'text-gray-300'} />
+                            <Video size={10} className={selectedLessonId === lecture.id ? 'text-primary' : 'text-gray-300'} />
                             <span className="text-[10px] text-gray-400 font-medium">Lecture</span>
                           </div>
                         </div>
@@ -216,22 +217,19 @@ export default function Curriculum() {
                             onClick={(e) => e.stopPropagation()}
                           />
                         </Dropdown>
-                        <ChevronRight size={14} className={selectedLessonId === lecture.id ? 'text-indigo-400' : 'text-gray-300'} />
+                        <ChevronRight size={14} className={selectedLessonId === lecture.id ? 'text-primary' : 'text-gray-300'} />
                       </div>
                     </div>
                   ))
                 ) : (
                   <div className="p-8 text-center">
                     <Empty description="No lectures yet" image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                    <Button
-                      type="primary"
-                      ghost
-                      size="small"
-                      className="mt-2 rounded-lg text-[10px] h-8"
+                    <button
                       onClick={() => setIsAddLectureModalVisible(true)}
+                      className="mt-2 px-4 py-1.5 rounded-lg text-[11px] font-bold text-white bg-primary hover:bg-primary-dark transition-all shadow-sm"
                     >
                       + Add First Lecture
-                    </Button>
+                    </button>
                   </div>
                 )}
               </div>
@@ -243,7 +241,7 @@ export default function Curriculum() {
             <div className="flex-1 bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col overflow-hidden">
               <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
                 <div>
-                  <span className="inline-block px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-bold uppercase tracking-widest mb-2">Current Lecture</span>
+                  <span className="inline-block px-3 py-1 rounded-full bg-primary-light text-primary text-[10px] font-bold uppercase tracking-widest mb-2">Current Lecture</span>
                   <h2 className="text-xl font-bold text-gray-900">
                     {activeLecture?.title || 'No Lecture Selected'}
                   </h2>
@@ -261,7 +259,7 @@ export default function Curriculum() {
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 text-gray-600">
-                          <Video size={16} className="text-red-600" />
+                          <Video size={16} className="text-primary" />
                           <span className="text-sm font-bold">Video Content</span>
                         </div>
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
@@ -293,14 +291,14 @@ export default function Curriculum() {
                         <div className="aspect-video rounded-2xl bg-gray-100 flex flex-col items-center justify-center border-2 border-dashed border-gray-200">
                           <Video size={48} className="text-gray-300 mb-4" />
                           <p className="text-gray-400 font-medium">No video uploaded for this lecture</p>
-                          <Button className="mt-4 rounded-xl font-bold text-indigo-600">Upload Video</Button>
+                          <Button className="mt-4 rounded-xl font-bold text-primary border-primary/20">Upload Video</Button>
                         </div>
                       )}
                     </div>
 
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 text-gray-600">
-                        <FileText size={16} className="text-indigo-600" />
+                        <FileText size={16} className="text-primary" />
                         <span className="text-sm font-bold">Lecture Description</span>
                       </div>
                       <div className="p-6 rounded-2xl bg-white border border-gray-100 text-gray-600 leading-relaxed">
@@ -311,23 +309,23 @@ export default function Curriculum() {
                     {activeLecture.pdfUrl && (
                       <div className="space-y-4">
                         <div className="flex items-center gap-2 text-gray-600">
-                          <FileText size={16} className="text-red-500" />
+                          <FileText size={16} className="text-primary" />
                           <span className="text-sm font-bold">Lecture Resources (PDF)</span>
                         </div>
                         <a
                           href={activeLecture.pdfUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-4 p-4 rounded-2xl bg-red-50 border border-red-100 group hover:bg-red-100 transition-all cursor-pointer"
+                          className="flex items-center gap-4 p-4 rounded-2xl bg-primary-light border border-primary/20 group hover:bg-primary-light/80 transition-all cursor-pointer"
                         >
-                          <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-red-500 shadow-sm">
+                          <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm">
                             <FileText size={24} />
                           </div>
                           <div className="flex-1">
-                            <p className="text-sm font-bold text-gray-900 group-hover:text-red-600 transition-colors">Download Lecture Notes</p>
+                            <p className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">Download Lecture Notes</p>
                             <p className="text-[11px] text-gray-500">PDF Document • Click to view or download</p>
                           </div>
-                          <Button type="text" icon={<ChevronRight size={18} />} className="text-red-400 group-hover:text-red-600" />
+                          <Button type="text" icon={<ChevronRight size={18} />} className="text-primary/60 group-hover:text-primary" />
                         </a>
                       </div>
                     )}
@@ -413,7 +411,7 @@ export default function Curriculum() {
           icon={<Plus size={18} />}
           type="primary"
           onClick={() => setIsAddModalVisible(true)}
-          className="h-11 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 border-none font-bold shadow-lg shadow-indigo-100 flex items-center"
+          className="h-11 px-6 rounded-xl bg-primary hover:!bg-primary-dark border-none font-bold shadow-lg shadow-primary/20 flex items-center"
         >
           New Course
         </Button>

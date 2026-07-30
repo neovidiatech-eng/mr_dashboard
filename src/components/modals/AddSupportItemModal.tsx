@@ -49,7 +49,7 @@ export default function AddSupportItemModal({ isOpen, onClose, onSubmit, categor
                 <div className="px-8 py-6 border-b border-slate-50 flex items-center justify-between bg-white sticky top-0 z-10">
                     <div>
                         <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
-                            <HelpCircle className="w-6 h-6 text-indigo-600" />
+                            <HelpCircle className="w-6 h-6 text-primary" />
                             <span>Create Resource</span>
                         </h2>
                         <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">Add New Help Item</p>

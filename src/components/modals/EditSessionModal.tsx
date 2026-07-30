@@ -85,7 +85,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
         <div className="px-8 py-5 border-b border-gray-100 flex items-start justify-between bg-white shrink-0">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-[14px] bg-indigo-50 flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-[#6366f1]" />
+              <Calendar className="w-6 h-6 text-[#800020]" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900 leading-tight">{t('editSession')}</h2>
@@ -106,7 +106,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
             {/* Read-only info */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               <div className="flex items-start gap-3 bg-gray-50 rounded-2xl p-4 border border-gray-100">
-                <div className="p-2 rounded-xl bg-blue-50 text-blue-500">
+                <div className="p-2 rounded-xl bg-primary-light text-primary">
                   <User className="w-4 h-4" />
                 </div>
                 <div>
@@ -115,7 +115,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
                 </div>
               </div>
               <div className="flex items-start gap-3 bg-gray-50 rounded-2xl p-4 border border-gray-100">
-                <div className="p-2 rounded-xl bg-emerald-50 text-emerald-500">
+                <div className="p-2 rounded-xl bg-primary-light text-primary">
                   <GraduationCap className="w-4 h-4" />
                 </div>
                 <div>
@@ -135,7 +135,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
                   type="text"
                   value={formData.title}
                   onChange={(e) => handleChange('title', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all placeholder:text-gray-300"
+                  className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-primary/20 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-primary/10 transition-all placeholder:text-gray-300"
                 />
               </div>
               <div className="text-start">
@@ -146,7 +146,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
                   value={formData.description}
                   onChange={(e) => handleChange('description', e.target.value)}
                   rows={2}
-                  className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all placeholder:text-gray-300 resize-none"
+                  className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-primary/20 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-primary/10 transition-all placeholder:text-gray-300 resize-none"
                 />
               </div>
             </div>
@@ -172,25 +172,25 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
             </div>
 
             {/* Start & End Time */}
-            <div className="bg-emerald-50/40 border border-emerald-100/50 rounded-3xl p-6 mb-6">
+            <div className="bg-primary-light/40 border border-primary/20 rounded-3xl p-6 mb-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-[11px] font-bold text-emerald-900/40 mb-2 uppercase tracking-wider">{t('startTime')}</label>
+                  <label className="block text-[11px] font-bold text-primary/70 mb-2 uppercase tracking-wider">{t('startTime')}</label>
                   <input
                     type="datetime-local"
                     value={formData.start_time}
                     onChange={(e) => handleChange('start_time', e.target.value)}
-                    className="w-full px-4 py-3 bg-white border border-emerald-50 rounded-2xl text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/10"
+                    className="w-full px-4 py-3 bg-white border border-primary/20 rounded-2xl text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/10"
                     dir="ltr"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-emerald-900/40 mb-2 uppercase tracking-wider">{t('endTime')}</label>
+                  <label className="block text-[11px] font-bold text-primary/70 mb-2 uppercase tracking-wider">{t('endTime')}</label>
                   <input
                     type="datetime-local"
                     value={formData.end_time}
                     onChange={(e) => handleChange('end_time', e.target.value)}
-                    className="w-full px-4 py-3 bg-white border border-emerald-50 rounded-2xl text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/10"
+                    className="w-full px-4 py-3 bg-white border border-primary/20 rounded-2xl text-sm font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/10"
                     dir="ltr"
                   />
                 </div>
@@ -222,7 +222,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
                   type="url"
                   value={formData.link}
                   onChange={(e) => handleChange('link', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all placeholder:text-gray-300"
+                  className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-primary/20 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-primary/10 transition-all placeholder:text-gray-300"
                   dir="ltr"
                   placeholder="https://zoom.us/..."
                 />
@@ -238,7 +238,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
                 value={formData.notes}
                 onChange={(e) => handleChange('notes', e.target.value)}
                 rows={3}
-                className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all placeholder:text-gray-300 resize-none"
+                className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-primary/20 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-primary/10 transition-all placeholder:text-gray-300 resize-none"
               />
             </div>
           </div>
@@ -247,7 +247,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
           <div className="w-full lg:w-[42%] bg-[#fcfdfe] border-l border-gray-100/80 flex flex-col overflow-hidden">
             <div className="p-6 border-b border-gray-100/50 flex items-center justify-between bg-white/50 backdrop-blur-sm shrink-0">
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-indigo-500" />
+                <Clock className="w-4 h-4 text-primary" />
                 <h3 className="font-bold text-gray-900 text-sm">{language === 'ar' ? 'معاينة التعديلات' : 'Edit Preview'}</h3>
               </div>
             </div>
@@ -256,7 +256,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
               {/* Preview Card */}
               <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-black text-sm">
+                  <div className="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center text-primary font-black text-sm">
                     {formData.title?.charAt(0)?.toUpperCase() || 'S'}
                   </div>
                   <div>
@@ -267,9 +267,9 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{t('status')}</span>
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-bold border uppercase tracking-widest ${formData.status === 'completed' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-bold border uppercase tracking-widest ${formData.status === 'completed' ? 'bg-primary-light text-primary border-primary/20' :
                         formData.status === 'cancelled' ? 'bg-red-50 text-red-600 border-red-100' :
-                          'bg-blue-50 text-blue-600 border-blue-100'
+                          'bg-primary-light text-primary border-primary/20'
                       }`}>
                       {t(formData.status)}
                     </span>
@@ -284,7 +284,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
                   {formData.link && (
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{t('meetingLink')}</span>
-                      <a href={formData.link} target="_blank" rel="noopener noreferrer" className="text-indigo-500 hover:text-indigo-700">
+                      <a href={formData.link} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary-dark">
                         <Video className="w-3.5 h-3.5" />
                       </a>
                     </div>
@@ -295,7 +295,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
               {/* Teacher Card */}
               <div className="bg-white border border-gray-100 rounded-2xl p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 font-black text-sm">
+                  <div className="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center text-primary font-black text-sm">
                     {session.teacher?.user?.name?.charAt(0)?.toUpperCase() || 'T'}
                   </div>
                   <div>
@@ -336,7 +336,7 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
           <button
             type="submit"
             onClick={handleSubmit}
-            className="flex-1 px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-2xl transition-all shadow-[0_10px_20px_-5px_rgba(79,70,229,0.3)] active:scale-95"
+            className="flex-1 px-8 py-3 bg-primary hover:!bg-primary-dark text-white text-xs font-bold rounded-2xl transition-all shadow-[0_10px_20px_-5px_rgba(128,0,32,0.3)] active:scale-95"
           >
             {t('saveChanges')}
           </button>

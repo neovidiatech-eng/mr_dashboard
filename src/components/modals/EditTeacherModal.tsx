@@ -66,7 +66,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
         <div className="px-8 py-6 border-b border-slate-50 flex items-center justify-between bg-white sticky top-0 z-10">
           <div>
             <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
-              <Users className="w-6 h-6 text-amber-600" />
+              <Users className="w-6 h-6 text-primary" />
               <span>{t('editTeacher')}</span>
             </h2>
             <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">Update Instructor Profile</p>
@@ -83,7 +83,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
               
               {/* Basic Info Section */}
               <div className="space-y-5">
-                <h3 className="text-[10px] font-black text-amber-600 uppercase tracking-[0.2em] mb-4">Basic Information</h3>
+                <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4">Basic Information</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="text-start">
@@ -95,7 +95,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
                       type="text"
                       placeholder="Full Name"
                       {...register('name')}
-                      className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                     />
                     {errors.name && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.name.message}</p>}
                   </div>
@@ -109,7 +109,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
                       type="email"
                       placeholder="instructor@example.com"
                       {...register('email')}
-                      className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                     />
                     {errors.email && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.email.message}</p>}
                   </div>
@@ -126,7 +126,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
                         type={showPassword ? 'text' : 'password'}
                         placeholder="••••••••"
                         {...register('password')}
-                        className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+                        className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                       />
                       <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute end-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -145,7 +145,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
                       type="tel"
                       placeholder="+20 123 456 7890"
                       {...register('phone')}
-                      className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                     />
                     {errors.phone && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.phone.message}</p>}
                   </div>
@@ -159,7 +159,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
                       type="number"
                       placeholder="Enter Age"
                       {...register('age', { valueAsNumber: true })}
-                      className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                     />
                     {errors.age && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.age.message}</p>}
                   </div>
@@ -168,7 +168,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
 
               {/* Professional Details Section */}
               <div className="space-y-5">
-                <h3 className="text-[10px] font-black text-amber-600 uppercase tracking-[0.2em] mb-4">Professional Details</h3>
+                <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4">Professional Details</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                    <div className="text-start">
@@ -199,7 +199,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
                       type="number"
                       placeholder="0.00"
                       {...register('hourlyRate', { valueAsNumber: true })}
-                      className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                     />
                     {errors.hourlyRate && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.hourlyRate.message}</p>}
                   </div>
@@ -267,7 +267,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
           <button
             form="edit-teacher-form"
             type="submit"
-            className="flex-[2] px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white rounded-2xl transition-all font-black text-xs uppercase tracking-widest shadow-lg shadow-amber-100"
+            className="flex-[2] px-8 py-4 bg-primary hover:bg-primary-dark text-white rounded-2xl transition-all font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20"
           >
             {t('saveChanges')}
           </button>

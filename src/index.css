@@ -5,11 +5,14 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #2563eb;
-  --color-primary-dark: #1d4ed8;
-  --color-primary-light: #eff6ff;
+  --color-primary: #800020;
+  --color-primary-dark: #500014;
+  --color-primary-light: #fdf2f4;
 
-  --color-secondary: #8b5cf6;
+  --color-secondary: #500014;
+  --color-secondary-dark: #38000e;
+  --color-secondary-light: #800020;
+
   --color-bg-primary: #ffffff;
   --color-bg-secondary: #f8fafc;
   --color-bg-tertiary: #f1f5f9;
@@ -107,6 +110,12 @@
 }
 
 /* Ant Design styles */
+.ant-modal-content {
+  padding: 0 !important;
+  border-radius: 1.5rem !important;
+  overflow: hidden !important;
+}
+
 .ant-select-dropdown {
   padding: 8px !important;
   border-radius: 12px !important;
@@ -127,6 +136,26 @@
   align-items: center !important;
 }
 
+/* Ant Design Buttons Theme Override */
+.ant-btn-default:hover,
+.ant-btn-default:focus,
+.ant-btn-default:active {
+  color: #800020 !important;
+  border-color: #800020 !important;
+}
+
+.ant-btn-primary {
+  background-color: #800020 !important;
+  border-color: #800020 !important;
+}
+
+.ant-btn-primary:hover,
+.ant-btn-primary:focus,
+.ant-btn-primary:active {
+  background-color: #500014 !important;
+  border-color: #500014 !important;
+}
+
 .custom-time-popup .ant-picker-time-panel-column {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -138,4 +167,74 @@
 
 .custom-time-popup .ant-picker-time-panel-column {
   overflow-y: auto;
+}
+
+/* Global Form Controls & Pagination Theme Overrides */
+input[type="checkbox"],
+input[type="radio"],
+input[type="color"] {
+  accent-color: #800020 !important;
+}
+
+/* Ant Design Radio Buttons */
+.ant-radio-checked .ant-radio-inner {
+  border-color: #800020 !important;
+  background-color: #ffffff !important;
+}
+
+.ant-radio-checked .ant-radio-inner::after {
+  background-color: #800020 !important;
+}
+
+.ant-radio-wrapper:hover .ant-radio-inner,
+.ant-radio:hover .ant-radio-inner {
+  border-color: #800020 !important;
+}
+
+.ant-radio-input:focus + .ant-radio-inner {
+  box-shadow: 0 0 0 3px rgba(128, 0, 32, 0.12) !important;
+}
+
+/* Ant Design Checkboxes */
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #800020 !important;
+  border-color: #800020 !important;
+}
+
+.ant-checkbox-wrapper:hover .ant-checkbox-inner,
+.ant-checkbox:hover .ant-checkbox-inner {
+  border-color: #800020 !important;
+}
+
+/* Ant Design Switches */
+.ant-switch-checked {
+  background-color: #800020 !important;
+}
+
+.ant-switch:hover:not(.ant-switch-disabled) {
+  background-color: rgba(128, 0, 32, 0.8) !important;
+}
+
+/* Ant Design Pagination */
+.ant-pagination-item-active {
+  border-color: #800020 !important;
+  background-color: #800020 !important;
+}
+
+.ant-pagination-item-active a {
+  color: #ffffff !important;
+}
+
+.ant-pagination-item:hover {
+  border-color: #800020 !important;
+}
+
+.ant-pagination-item:hover a {
+  color: #800020 !important;
+}
+
+.ant-pagination-prev:hover .ant-pagination-item-link,
+.ant-pagination-next:hover .ant-pagination-item-link {
+  color: #800020 !important;
+  border-color: #800020 !important;
 }

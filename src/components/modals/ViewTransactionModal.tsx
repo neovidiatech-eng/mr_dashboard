@@ -36,10 +36,12 @@ export default function ViewTransactionModal({ isOpen, onClose, transaction }: V
 
   if (!isOpen) return null;
 
-  const isIncome = transaction.type === 'credit' || transaction.type === 'subscription';
+  const typeLower = (transaction.type || '').toLowerCase();
+  const isIncome = typeLower === 'credit' || typeLower === 'subscription' || typeLower === 'income';
 
   const getTransactionLabel = (type: string) => {
-    switch (type) {
+    const tLower = (type || '').toLowerCase();
+    switch (tLower) {
       case 'credit': return text.credit[language];
       case 'debit': return text.debit[language];
       case 'subscription': return text.subscription[language];
@@ -49,7 +51,8 @@ export default function ViewTransactionModal({ isOpen, onClose, transaction }: V
   };
 
   const getStatusLabel = (status: string) => {
-    switch (status) {
+    const sLower = (status || '').toLowerCase();
+    switch (sLower) {
       case 'completed': return text.completed[language];
       case 'pending': return text.pending[language];
       case 'failed': return text.failed[language];
@@ -60,8 +63,7 @@ export default function ViewTransactionModal({ isOpen, onClose, transaction }: V
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto no-scrollbar" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-        <div className={`sticky top-0 px-6 py-5 flex items-center justify-between rounded-t-2xl ${isIncome ? 'bg-gradient-to-r from-green-600 to-emerald-600' : 'bg-gradient-to-r from-orange-500 to-amber-600'
-          } text-white`}>
+        <div className="sticky top-0 px-6 py-5 flex items-center justify-between rounded-t-2xl bg-gradient-to-r from-primary to-primary-dark text-white">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-white bg-opacity-20 rounded-lg">
               {isIncome ? <TrendingUp className="w-6 h-6" /> : <TrendingDown className="w-6 h-6" />}
@@ -77,9 +79,9 @@ export default function ViewTransactionModal({ isOpen, onClose, transaction }: V
         </div>
 
         <div className="p-6 space-y-5">
-          <div className={`rounded-xl p-5 text-center ${isIncome ? 'bg-green-50 border border-green-200' : 'bg-orange-50 border border-orange-200'}`}>
+          <div className="rounded-xl p-5 text-center bg-primary-light border border-primary/20">
             <p className="text-sm text-gray-600 mb-2">{text.amount[language]}</p>
-            <p className={`text-5xl font-bold ${isIncome ? 'text-green-600' : 'text-orange-600'}`}>
+            <p className="text-5xl font-bold text-primary">
               {(transaction.originalAmount || transaction.amount).toFixed(2)} <span className="text-2xl">{originalSymbol}</span>
             </p>
 

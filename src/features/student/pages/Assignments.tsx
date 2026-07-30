@@ -164,7 +164,7 @@ export default function Assignments() {
                       <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${assignment.status === 'pending'
                           ? 'bg-yellow-100 text-yellow-800'
                           : assignment.status === 'submitted'
-                            ? 'bg-blue-100 text-blue-800'
+                            ? 'bg-primary-light text-primary border border-primary/20'
                             : 'bg-green-100 text-green-800'
                         }`}>
                         {text[assignment.status as keyof typeof text] ? (text[assignment.status as keyof typeof text] as any)[language] : assignment.status}

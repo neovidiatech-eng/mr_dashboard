@@ -88,7 +88,7 @@ import { useTeacherProfile } from '../hooks/useTeacherProfile';
 export default function TeacherProfile() {
   const { i18n } = useTranslation();
   const isRtl = i18n.language.split('-')[0] === 'ar';
-  const primaryColor = '#2563eb';
+  const primaryColor = '#800020';
   const accentColor = '#06b6d4';
   // const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
 

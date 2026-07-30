@@ -139,7 +139,7 @@ export default function EditStudentModal({
         <div className="px-8 py-5 border-b border-gray-100 flex items-start justify-between bg-white">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-[14px] bg-indigo-50 flex items-center justify-center">
-              <GraduationCap className="w-6 h-6 text-[#6366f1]" />
+              <GraduationCap className="w-6 h-6 text-[#800020]" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900 leading-tight">{t('editStudent')}</h2>

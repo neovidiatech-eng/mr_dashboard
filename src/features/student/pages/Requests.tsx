@@ -19,7 +19,7 @@ interface StudentRequest {
 export default function StudentRequests() {
   const { i18n, t } = useTranslation();
   const isRtl = i18n.language.split('-')[0] === 'ar';
-  const primaryColor = '#2563eb';
+  const primaryColor = '#800020';
 
   const [requests, setRequests] = useState<StudentRequest[]>([
     {

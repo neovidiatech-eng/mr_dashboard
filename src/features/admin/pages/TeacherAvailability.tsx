@@ -591,19 +591,11 @@ export default function TeacherAvailability() {
   const sessions = useMemo(() => mapTeachersToSessions(teachers), [teachers]);
 
   const UI_TEACHERS: Teacher[] = useMemo(() => {
-    return teachers.map((t, index) => ({
+    return teachers.map((t) => ({
       id: t.id,
       name: t.user?.name || "Unknown",
       subject: "General",
-      color: [
-        "bg-[#6366f1]",
-        "bg-[#8b5cf6]",
-        "bg-[#ec4899]",
-        "bg-[#f43f5e]",
-        "bg-[#06b6d4]",
-        "bg-[#10b981]",
-        "bg-[#f59e0b]",
-      ][index % 7],
+      color: "bg-primary",
     }));
   }, [teachers]);
 
@@ -742,13 +734,13 @@ export default function TeacherAvailability() {
         <div className="flex items-center gap-3 bg-gray-100/50 p-1 rounded-xl">
           <button
             onClick={() => setViewMode("week")}
-            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === "week" ? "bg-white text-[#6366f1] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === "week" ? "bg-white text-[#800020] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
           >
             {language === "ar" ? "عرض أسبوعي" : "Week View"}
           </button>
           <button
             onClick={() => setViewMode("teacher")}
-            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === "teacher" ? "bg-white text-[#6366f1] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+            className={`px-6 py-2 rounded-lg text-sm font-bold transition-all ${viewMode === "teacher" ? "bg-white text-[#800020] shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
           >
             {language === "ar" ? "عرض المعلمين" : "Teacher View"}
           </button>
@@ -857,7 +849,7 @@ export default function TeacherAvailability() {
                 <div className="flex items-center justify-between pt-1">
                   <button
                     onClick={() => setSelectedTeacherForModal(teacher)}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-indigo-50 text-[#6366f1] rounded-xl text-xs font-bold transition-all hover:bg-[#6366f1] hover:text-white"
+                    className="flex items-center gap-1.5 px-4 py-2 bg-indigo-50 text-[#800020] rounded-xl text-xs font-bold transition-all hover:bg-[#800020] hover:text-white"
                   >
                     <Eye className="w-3.5 h-3.5" />
                     {language === "ar" ? "عرض الجدول" : "View Schedule"}
@@ -887,7 +879,7 @@ export default function TeacherAvailability() {
             <div className="flex items-center gap-2 bg-white border border-gray-100 rounded-2xl px-4 py-2.5 shadow-sm">
               <button
                 onClick={() => setWeekOffset((w) => w - 1)}
-                className="p-1.5 hover:bg-gray-50 rounded-xl text-gray-400 hover:text-[#6366f1] transition-all"
+                className="p-1.5 hover:bg-gray-50 rounded-xl text-gray-400 hover:text-[#800020] transition-all"
               >
                 {language === 'ar' ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
               </button>
@@ -905,7 +897,7 @@ export default function TeacherAvailability() {
               </span>
               <button
                 onClick={() => setWeekOffset((w) => w + 1)}
-                className="p-1.5 hover:bg-gray-50 rounded-xl text-gray-400 hover:text-[#6366f1] transition-all"
+                className="p-1.5 hover:bg-gray-50 rounded-xl text-gray-400 hover:text-[#800020] transition-all"
               >
                 {language === 'ar' ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
               </button>

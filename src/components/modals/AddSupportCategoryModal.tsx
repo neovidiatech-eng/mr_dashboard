@@ -38,7 +38,7 @@ export default function AddSupportCategoryModal({ isOpen, onClose, onSubmit }: A
                 <div className="px-8 py-6 border-b border-slate-50 flex items-center justify-between bg-white sticky top-0 z-10">
                     <div>
                         <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
-                            <FolderPlus className="w-6 h-6 text-indigo-600" />
+                            <FolderPlus className="w-6 h-6 text-primary" />
                             <span>Add Category</span>
                         </h2>
                         <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">Support Section</p>
@@ -57,7 +57,7 @@ export default function AddSupportCategoryModal({ isOpen, onClose, onSubmit }: A
                             type="text"
                             placeholder="e.g. Technical Support"
                             {...register('title')}
-                            className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
+                            className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none"
                         />
                         {errors.title && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.title.message}</p>}
                     </div>
@@ -72,7 +72,7 @@ export default function AddSupportCategoryModal({ isOpen, onClose, onSubmit }: A
                         </button>
                         <button
                             type="submit"
-                            className="flex-[2] px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl transition-all font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-100"
+                            className="flex-[2] px-8 py-4 bg-primary hover:bg-primary-dark text-white rounded-2xl transition-all font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20"
                         >
                             Create Category
                         </button>

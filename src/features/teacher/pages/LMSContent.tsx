@@ -128,8 +128,8 @@ const LMSContent: React.FC = () => {
               key={rank.label}
               onClick={() => setSelectedRank(rank.label)}
               className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-4 rounded-2xl text-sm sm:text-base font-bold transition-all duration-300 ${rank.label === selectedRank
-                  ? "bg-[#2563eb] text-white shadow-xl shadow-blue-500/20 scale-[1.02]"
-                  : "bg-white text-[#2563eb] border border-gray-100 hover:bg-blue-50 shadow-sm"
+                  ? "bg-primary text-white shadow-xl shadow-primary/20 scale-[1.02]"
+                  : "bg-white text-primary border border-gray-100 hover:bg-primary-light shadow-sm"
                 } ${centerClasses}`}
             >
               <Icon size={22} />
@@ -155,7 +155,7 @@ const LMSContent: React.FC = () => {
                     style={{
                       backgroundImage: item.image
                         ? `url("https://agro-plus.net/${item.image}")`
-                        : "linear-gradient(to bottom right, #2563eb, #7c3aed)",
+                        : "linear-gradient(to bottom right, #800020, #500014)",
                     }}
                   >
                     {item.image && (
@@ -169,7 +169,7 @@ const LMSContent: React.FC = () => {
                     <div className="absolute inset-0 bg-black/20" />
 
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-20 h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-blue-600 shadow-lg">
+                      <div className="w-20 h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-primary shadow-lg">
                         <Video size={34} />
                       </div>
                     </div>
@@ -178,7 +178,7 @@ const LMSContent: React.FC = () => {
                   {/* Content */}
                   <div className="p-7">
                     <div className="flex items-center justify-between mb-4">
-                      <span className="px-4 py-1 rounded-full bg-blue-50 text-blue-600 text-[11px] font-bold uppercase tracking-wider">
+                      <span className="px-4 py-1 rounded-full bg-primary-light text-primary text-[11px] font-bold uppercase tracking-wider">
                         {item.rank?.name}
                       </span>
 
@@ -207,7 +207,7 @@ const LMSContent: React.FC = () => {
                       onClick={() =>
                         handleViewLectures(item.id)
                       }
-                      className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-[#2563eb] text-white font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100"
+                      className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-primary text-white font-bold hover:bg-primary-dark transition-all shadow-lg shadow-primary/10"
                     >
                       <Eye size={18} />
                       View Lectures
@@ -262,7 +262,7 @@ const LMSContent: React.FC = () => {
                   disabled={currentPage >= totalPages}
                   className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold transition-all ${currentPage >= totalPages
                       ? "bg-slate-100 text-slate-400 cursor-not-allowed"
-                      : "bg-[#2563eb] text-white hover:bg-blue-700 shadow-lg shadow-blue-100"
+                      : "bg-primary text-white hover:bg-primary-dark shadow-lg shadow-primary/10"
                     }`}
                 >
                   Next

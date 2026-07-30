@@ -130,7 +130,7 @@ export default function RenewSubscriptionModal({
         dir={language === "ar" ? "rtl" : "ltr"}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#2a286b] to-blue-600 px-6 py-5 flex items-center justify-between">
+        <div className="bg-gradient-to-r from-primary to-primary-dark px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
               <RefreshCw className="w-5 h-5 text-white" />
@@ -256,7 +256,7 @@ export default function RenewSubscriptionModal({
           <button
             onClick={handleSubmit}
             disabled={submitting || loadingData}
-            className="px-6 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-[#2a286b] to-blue-600 hover:opacity-90 rounded-xl transition-all flex items-center gap-2 shadow-md disabled:opacity-50"
+            className="px-6 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-primary to-primary-dark hover:opacity-90 rounded-xl transition-all flex items-center gap-2 shadow-md disabled:opacity-50"
           >
             {submitting ? (
               <>

@@ -144,10 +144,10 @@ export default function StudentDashboard() {
   const renderStudentHome = () => (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* 1. Main Welcome/Session Banner */}
-      <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-[#2563eb] to-[#1e40af] p-8 md:p-12 text-white shadow-2xl shadow-blue-500/20 group">
+      <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-primary to-primary-dark p-8 md:p-12 text-white shadow-2xl shadow-primary/20 group">
         {/* Background Decorative Circles */}
         <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl transition-transform group-hover:scale-110 duration-1000" />
-        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-blue-400/20 rounded-full blur-3xl transition-transform group-hover:scale-110 duration-1000" />
+        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-burgundy-light/20 rounded-full blur-3xl transition-transform group-hover:scale-110 duration-1000" />
 
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
           <div className="space-y-6 flex-1">
@@ -362,7 +362,7 @@ export default function StudentDashboard() {
                           {assignment.title}
                         </span>
                         <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider border shrink-0 ${assignment.status === 'completed' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
-                          assignment.status === 'submitted' ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-amber-50 text-amber-600 border-amber-100'
+                          assignment.status === 'submitted' ? 'bg-primary-light text-primary border-primary/20' : 'bg-amber-50 text-amber-600 border-amber-100'
                           }`}>
                           {language === 'ar' ?
                             (assignment.status === 'completed' ? 'مكتمل' : assignment.status === 'submitted' ? 'تم التسليم' : 'قيد الانتظار') :

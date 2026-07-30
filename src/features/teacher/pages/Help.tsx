@@ -121,10 +121,10 @@ const popularArticles = useMemo(() => {
       </div>
 
       {/* Still need help Banner */}
-      <div className="bg-[#E3EAF9] rounded-3xl border border-blue-100/30 p-12 text-center">
-         <h2 className="text-2xl font-bold text-[#2563EB] mb-3">Still need help?</h2>
+      <div className="bg-primary-light rounded-3xl border border-primary/20 p-12 text-center">
+         <h2 className="text-2xl font-bold text-primary mb-3">Still need help?</h2>
          <p className="text-gray-600/70 font-medium mb-8">Our support team is available 24/7 to assist you</p>
-         <button className="bg-[#2563eb] text-white px-10 py-4 rounded-3xl font-bold flex items-center gap-3 mx-auto shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all translate-y-2 text-[12px] lg:text-[16px]">
+         <button className="bg-primary text-white px-10 py-4 rounded-3xl font-bold flex items-center gap-3 mx-auto shadow-xl shadow-primary/20 hover:bg-primary-dark transition-all translate-y-2 text-[12px] lg:text-[16px]">
             <MessageCircle size={25} />
             Contact Support
          </button>

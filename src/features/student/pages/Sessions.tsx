@@ -93,14 +93,15 @@ export default function Sessions() {
       </div>
 
       {/* Search Bar - Optional but good for UX since it was in original */}
+      {/* Search Bar - Optional but good for UX since it was in original */}
       <div className="relative group max-w-md">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#2563eb] transition-colors" size={20} />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={20} />
         <input
           type="text"
           placeholder="Search sessions..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-100 rounded-2xl shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-[#2563eb] transition-all text-sm font-medium"
+          className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-100 rounded-2xl shadow-sm focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all text-sm font-medium"
         />
       </div>
 
@@ -127,7 +128,7 @@ export default function Sessions() {
                     <CheckCircle2 size={26} strokeWidth={2.5} />
                   </div>
                 ) : isPending ? (
-                  <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 font-black text-xl">
+                  <div className="w-14 h-14 rounded-2xl bg-burgundy-light flex items-center justify-center text-primary font-black text-xl">
                     {index + 1}
                   </div>
                 ) : (
@@ -139,7 +140,7 @@ export default function Sessions() {
 
               {/* Info */}
               <div className="flex-1 min-w-0 space-y-1.5">
-                <h3 className="text-xl font-bold text-slate-800 tracking-tight group-hover:text-[#2563eb] transition-colors truncate">
+                <h3 className="text-xl font-bold text-slate-800 tracking-tight group-hover:text-primary transition-colors truncate">
                   {session.title || `Data Structures - Session ${index + 1}`}
                 </h3>
                 <div className="flex items-center gap-4 text-sm font-bold text-slate-400">
@@ -160,7 +161,7 @@ export default function Sessions() {
                 {isCompleted ? (
                   <span className="px-5 py-2.5 rounded-full bg-emerald-50 text-emerald-600 text-[13px] font-bold tracking-tight">Completed</span>
                 ) : isPending ? (
-                  <span className="px-5 py-2.5 rounded-full bg-amber-50 text-amber-600 text-[13px] font-bold tracking-tight">Pending</span>
+                  <span className="px-5 py-2.5 rounded-full bg-burgundy-light text-primary text-[13px] font-bold tracking-tight">Pending</span>
                 ) : (
                   <span className="px-5 py-2.5 rounded-full bg-slate-100 text-slate-500 text-[13px] font-bold tracking-tight">Locked</span>
                 )}
@@ -169,7 +170,7 @@ export default function Sessions() {
                 <div className="flex items-center gap-3 w-full sm:w-auto">
                   {isCompleted ? (
                     <>
-                      <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#2563eb] text-white px-7 py-3 rounded-full text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-95 whitespace-nowrap">
+                      <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-primary text-white px-7 py-3 rounded-full text-sm font-bold hover:bg-primary-dark transition-all shadow-lg shadow-primary/20 active:scale-95 whitespace-nowrap">
                         <Play size={16} fill="currentColor" />
                         Watch Video
                       </button>

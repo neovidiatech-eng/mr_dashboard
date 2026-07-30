@@ -26,7 +26,7 @@ const AuthLayout = () => {
           <div className="flex items-center justify-center mb-6">
             <div className="bg-white rounded-3xl p-5 shadow-2xl shadow-primary/10 border border-white relative group">
               <div className="absolute inset-0 bg-primary/5 rounded-3xl scale-0 group-hover:scale-110 transition-transform duration-500" />
-              <img src="/logo.png" alt="Logo" className="w-14 h-14 text-primary relative z-10" />
+              {/* <img src="/logo.png" alt="Logo" className="w-14 h-14 text-primary relative z-10" /> */}
             </div>
           </div>
           <h1 className="text-2xl font-black text-gray-900 mb-2 tracking-tight">

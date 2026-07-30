@@ -88,7 +88,7 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
         <Modal
             title={
                 <div className="flex items-center gap-2 pb-2 border-b border-gray-50">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+                    <div className="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center text-primary">
                         <Video size={20} />
                     </div>
                     <div>
@@ -109,12 +109,12 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
             <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-5 text-start">
                 <div>
                     <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
-                        <Type size={14} className="text-indigo-500" /> Lecture Title
+                        <Type size={14} className="text-primary" /> Lecture Title
                     </label>
                     <input
                         {...register('title')}
                         placeholder="e.g. Introduction to React Hooks"
-                        className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                        className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                     {errors.title && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.title.message}</p>}
                 </div>
@@ -199,7 +199,7 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
                         type="primary"
                         htmlType="submit"
                         loading={isCreating || isUpdating}
-                        className="h-12 px-10 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 border-none shadow-lg shadow-indigo-100"
+                        className="h-12 px-10 rounded-xl font-bold bg-primary hover:!bg-primary-dark border-none shadow-lg shadow-primary/20"
                     >
                         {isEditMode ? 'Update Lecture' : 'Add Lecture'}
                     </Button>

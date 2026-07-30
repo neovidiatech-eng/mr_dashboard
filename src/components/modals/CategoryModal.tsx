@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { Category } from '../../types/category';
 
 export const COLORS = [
-  { id: '#6366f1', bg: 'bg-indigo-100', icon: 'text-indigo-600', border: 'border-indigo-200', labelKey: 'color_indigo' },
+  { id: '#800020', bg: 'bg-primary-light', icon: 'text-primary', border: 'border-primary/20', labelKey: 'color_burgundy' },
   { id: '#10b981', bg: 'bg-green-100', icon: 'text-green-600', border: 'border-green-200', labelKey: 'color_green' },
   { id: '#3b82f6', bg: 'bg-blue-100', icon: 'text-blue-600', border: 'border-blue-200', labelKey: 'color_blue' },
   { id: '#f97316', bg: 'bg-orange-100', icon: 'text-orange-600', border: 'border-orange-200', labelKey: 'color_orange' },
@@ -32,7 +32,7 @@ export default function CategoryForm({ initial, onSave, onCancel, title }: Categ
       name_ar: initial?.name_ar || '',
       name_en: initial?.name_en || '',
       active: initial?.active ?? true,
-      color: initial?.color || '#6366f1',
+      color: initial?.color || '#800020',
     }
   });
 
@@ -52,7 +52,7 @@ export default function CategoryForm({ initial, onSave, onCancel, title }: Categ
         name_ar: initial.name_ar || '',
         name_en: initial.name_en || '',
         active: initial.active ?? true,
-        color: initial.color || '#6366f1',
+        color: initial.color || '#800020',
       });
     }
   }, [initial, reset]);

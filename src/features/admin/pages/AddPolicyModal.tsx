@@ -29,7 +29,7 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
       description: '',
       content: '',
       icon: 'shield',
-      color: '#4f46e5',
+      color: '#800020',
       active: true,
     }
   });
@@ -42,7 +42,7 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
           description: editingPolicy.description || '',
           content: editingPolicy.content || '',
           icon: editingPolicy.icon || 'shield',
-          color: editingPolicy.color || '#4f46e5',
+          color: editingPolicy.color || '#800020',
           active: editingPolicy.active,
         });
       } else {
@@ -51,7 +51,7 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
           description: '',
           content: '',
           icon: 'shield',
-          color: '#4f46e5',
+          color: '#800020',
           active: true,
         });
       }
@@ -61,7 +61,7 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
   const onSubmit = async (values: PolicyFormData) => {
     const formattedValues = {
       ...values,
-      color: typeof values.color === 'string' ? values.color : (values.color as any)?.toHexString?.() || '#4f46e5',
+      color: typeof values.color === 'string' ? values.color : (values.color as any)?.toHexString?.() || '#800020',
     };
     
     if (isNotice) {
@@ -81,7 +81,7 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
     <Modal
       title={
         <div className="flex items-center gap-3 pb-3 border-b border-gray-50">
-          <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+          <div className="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center text-primary">
             {isNotice ? <FileText size={20} /> : <Shield size={20} />}
           </div>
           <div>
@@ -104,12 +104,12 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-6 text-start">
         <div>
           <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-            <Type size={14} className="text-indigo-500" /> Title
+            <Type size={14} className="text-primary" /> Title
           </label>
           <input 
             {...register('title')}
             placeholder="e.g. Attendance Policy" 
-            className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" 
+            className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20" 
           />
           {errors.title && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.title.message}</p>}
         </div>
@@ -118,19 +118,19 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-                <Info size={14} className="text-indigo-500" /> Icon Name
+                <Info size={14} className="text-primary" /> Icon Name
               </label>
               <input 
                 {...register('icon')}
                 placeholder="shield, clock, book" 
-                className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20" 
+                className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20" 
               />
               {errors.icon && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.icon.message}</p>}
             </div>
 
             <div>
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-                <Palette size={14} className="text-indigo-500" /> Theme Color
+                <Palette size={14} className="text-primary" /> Theme Color
               </label>
               <Controller
                 name="color"
@@ -151,26 +151,26 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
         {isNotice ? (
           <div>
             <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-              <Edit3 size={14} className="text-indigo-500" /> Notice Content
+              <Edit3 size={14} className="text-primary" /> Notice Content
             </label>
             <textarea 
               {...register('content')}
               placeholder="Enter the message for teachers..." 
               rows={6} 
-              className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none" 
+              className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" 
             />
             {errors.content && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.content.message}</p>}
           </div>
         ) : (
           <div>
             <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-              <Edit3 size={14} className="text-indigo-500" /> Policy Description
+              <Edit3 size={14} className="text-primary" /> Policy Description
             </label>
             <textarea 
               {...register('description')}
               placeholder="Enter the details of the policy..." 
               rows={6} 
-              className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 resize-none" 
+              className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" 
             />
             {errors.description && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.description.message}</p>}
           </div>
@@ -178,7 +178,7 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
 
         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl mb-8">
           <Text className="text-sm font-bold text-gray-700 flex items-center gap-2">
-            <Activity size={14} className="text-indigo-500" /> Visible & Active
+            <Activity size={14} className="text-primary" /> Visible & Active
           </Text>
           <Controller
             name="active"
@@ -197,7 +197,7 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
             type="primary"
             htmlType="submit"
             loading={loading}
-            className="h-11 px-10 rounded-xl font-bold bg-indigo-600 border-none shadow-lg shadow-indigo-200"
+            className="h-11 px-10 rounded-xl font-bold bg-primary hover:!bg-primary-dark border-none shadow-lg shadow-primary/20"
           >
             {isNotice ? 'Update Notice' : (editingPolicy ? 'Update Policy' : 'Create Policy')}
           </Button>

@@ -62,12 +62,12 @@ export default function Dashboard() {
         fill: true,
         label: 'Sessions',
         data: data?.sessionsPerDay?.map((d: any) => d.count) || [],
-        borderColor: '#5e5ce6',
-        backgroundColor: 'rgba(94, 92, 230, 0.1)',
+        borderColor: '#800020',
+        backgroundColor: 'rgba(128, 0, 32, 0.1)',
         tension: 0.4,
         borderWidth: 3,
         pointBackgroundColor: '#ffffff',
-        pointBorderColor: '#5e5ce6',
+        pointBorderColor: '#800020',
         pointBorderWidth: 2,
         pointRadius: 4,
         pointHoverRadius: 6,
@@ -163,7 +163,7 @@ export default function Dashboard() {
         {/* Card 2 */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between h-36 hover:shadow-md transition-shadow">
           <div className="flex justify-between items-start">
-            <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-[#5e5ce6]">
+            <div className="w-8 h-8 rounded-full bg-burgundy-light flex items-center justify-center text-primary">
               <BookOpen className="w-4 h-4" />
             </div>
             <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-semibold rounded-md">
@@ -176,8 +176,8 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Card 3 - Purple Background */}
-        <div className="bg-[#5e5ce6] rounded-2xl p-6 shadow-sm flex flex-col justify-between h-36 relative overflow-hidden text-white hover:shadow-md transition-shadow">
+        {/* Card 3 - Dark Burgundy Background */}
+        <div className="bg-[#500014] rounded-2xl p-6 shadow-sm flex flex-col justify-between h-36 relative overflow-hidden text-white hover:shadow-md transition-shadow">
           <div className="absolute right-0 top-0 opacity-10">
             <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M0 100C0 100 20 80 50 80C80 80 100 60 100 60L100 0L0 0L0 100Z" fill="currentColor"/>
@@ -192,7 +192,7 @@ export default function Dashboard() {
             </span>
           </div>
           <div className="relative z-10">
-            <p className="text-[10px] text-indigo-200 font-bold mb-1 tracking-wider uppercase">Pending Requests</p>
+            <p className="text-[10px] text-burgundy-light font-bold mb-1 tracking-wider uppercase">Pending Requests</p>
             <h3 className="text-2xl font-bold">{data?.stats?.pendingRequests || 0}</h3>
           </div>
         </div>
@@ -246,7 +246,7 @@ export default function Dashboard() {
             <div className="flex justify-center items-end gap-6 h-32 mb-8 mt-4">
               <div className="relative group w-12 h-full flex items-end justify-center cursor-pointer">
                 <div 
-                  className="w-full bg-blue-500 rounded-t-lg shadow-sm transition-all duration-500 group-hover:bg-blue-400 group-hover:shadow-md"
+                  className="w-full bg-[#800020] rounded-t-lg shadow-sm transition-all duration-500 group-hover:bg-[#670019] group-hover:shadow-md"
                   style={{ height: `${(totalStudents / maxUsers) * 100}%`, minHeight: '10%' }}
                 ></div>
                 <div className="absolute -top-10 bg-gray-900 text-white text-xs font-medium py-1.5 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl z-10">
@@ -257,7 +257,7 @@ export default function Dashboard() {
               
               <div className="relative group w-12 h-full flex items-end justify-center cursor-pointer">
                 <div 
-                  className="w-full bg-[#5e5ce6] rounded-t-lg shadow-sm transition-all duration-500 group-hover:bg-[#4b49b8] group-hover:shadow-md"
+                  className="w-full bg-[#500014] rounded-t-lg shadow-sm transition-all duration-500 group-hover:bg-[#38000e] group-hover:shadow-md"
                   style={{ height: `${(totalInstructors / maxUsers) * 100}%`, minHeight: '10%' }}
                 ></div>
                 <div className="absolute -top-10 bg-gray-900 text-white text-xs font-medium py-1.5 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl z-10">
@@ -274,7 +274,7 @@ export default function Dashboard() {
                   <span className="font-bold text-gray-900">{totalStudents}</span>
                 </div>
                 <div className="w-full bg-gray-100 rounded-full h-1.5">
-                  <div className="bg-blue-500 h-1.5 rounded-full transition-all duration-1000" style={{ width: `${(totalStudents / totalUsers) * 100}%` }}></div>
+                  <div className="bg-[#800020] h-1.5 rounded-full transition-all duration-1000" style={{ width: `${(totalStudents / totalUsers) * 100}%` }}></div>
                 </div>
               </div>
               
@@ -284,7 +284,7 @@ export default function Dashboard() {
                   <span className="font-bold text-gray-900">{totalInstructors}</span>
                 </div>
                 <div className="w-full bg-gray-100 rounded-full h-1.5">
-                  <div className="bg-[#5e5ce6] h-1.5 rounded-full transition-all duration-1000" style={{ width: `${(totalInstructors / totalUsers) * 100}%` }}></div>
+                  <div className="bg-[#500014] h-1.5 rounded-full transition-all duration-1000" style={{ width: `${(totalInstructors / totalUsers) * 100}%` }}></div>
                 </div>
               </div>
             </div>
@@ -307,7 +307,7 @@ export default function Dashboard() {
                   {activity.type === 'request' ? (
                     <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(activity.user)}&background=random`} alt={activity.user} className="w-10 h-10 rounded-full object-cover shadow-sm" />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-[#5e5ce6] shadow-sm shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-primary shadow-sm shrink-0">
                       <Users className="w-5 h-5" />
                     </div>
                   )}
@@ -316,7 +316,7 @@ export default function Dashboard() {
                       {activity.title}
                     </p>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className={`w-1.5 h-1.5 rounded-full ${activity.type === 'request' ? 'bg-orange-400' : 'bg-[#5e5ce6]'}`}></span>
+                      <span className={`w-1.5 h-1.5 rounded-full ${activity.type === 'request' ? 'bg-primary' : 'bg-primary-dark'}`}></span>
                       <span className="text-xs text-gray-500">
                         {new Date(activity.time).toLocaleDateString()} {new Date(activity.time).toLocaleTimeString()}
                       </span>
@@ -333,7 +333,7 @@ export default function Dashboard() {
         {/* Right Column */}
         <div className="space-y-6">
           {/* District Report Ready */}
-          <div className="bg-[#2a286b] rounded-2xl p-6 text-white relative overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-[#500014] rounded-2xl p-6 text-white relative overflow-hidden shadow-sm hover:shadow-md transition-shadow">
             <div className="absolute right-0 bottom-0 opacity-10">
               <svg width="150" height="150" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="80" cy="80" r="50" stroke="currentColor" strokeWidth="15"/>
@@ -342,10 +342,10 @@ export default function Dashboard() {
             </div>
             <div className="relative z-10">
               <h3 className="text-xl font-bold mb-3 text-white">District Report Ready</h3>
-              <p className="text-sm text-indigo-100/80 mb-6 leading-relaxed">
+              <p className="text-sm text-burgundy-light/80 mb-6 leading-relaxed">
                 The monthly performance audit for Q2 is now available for review and signature.
               </p>
-              <button className="px-5 py-2.5 bg-white text-[#2a286b] rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-gray-50 transition-colors"
+              <button className="px-5 py-2.5 bg-white text-[#800020] rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-gray-50 transition-colors"
               onClick={() => navigate("/dashboard/reports")}
               >
                 Review Now

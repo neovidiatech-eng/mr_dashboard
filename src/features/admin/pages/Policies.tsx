@@ -106,13 +106,13 @@ export default function AdminPoliciesPage() {
         <Space size="middle">
           <Button 
             type="text" 
-            icon={<Edit2 size={16} className="text-indigo-600" />} 
+            icon={<Edit2 size={16} className="text-primary" />} 
             onClick={() => {
               setIsEditingNotice(false);
               setEditingPolicy(record);
               setModalVisible(true);
             }}
-            className="hover:bg-indigo-50"
+            className="hover:bg-primary-light"
           />
           <Popconfirm
             title="Delete Policy"
@@ -143,7 +143,7 @@ export default function AdminPoliciesPage() {
         <Button 
           type="primary" 
           icon={<Plus size={18} />} 
-          className="h-12 px-6 rounded-xl font-bold bg-indigo-600 border-none shadow-lg shadow-indigo-100 flex items-center gap-2"
+          className="h-12 px-6 rounded-xl font-bold bg-primary hover:!bg-primary-dark border-none shadow-lg shadow-primary/20 flex items-center gap-2"
           onClick={() => {
             setIsEditingNotice(false);
             setEditingPolicy(null);
@@ -195,7 +195,7 @@ export default function AdminPoliciesPage() {
                   </div>
                 </div>
                 <Button 
-                  className="w-full h-12 rounded-2xl font-bold text-indigo-600 border-indigo-200 bg-white hover:bg-indigo-50 flex items-center justify-center gap-2"
+                  className="w-full h-12 rounded-2xl font-bold text-primary border-primary/20 bg-white hover:bg-primary-light flex items-center justify-center gap-2"
                   onClick={() => {
                     setIsEditingNotice(true);
                     setEditingPolicy(notice as any);

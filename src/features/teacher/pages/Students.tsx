@@ -18,7 +18,7 @@ interface StudentData {
 export default function TeacherStudents() {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language.split('-')[0] === 'ar';
-  const primaryColor = '#2563eb';
+  const primaryColor = '#800020';
   
   const [searchQuery, setSearchQuery] = useState('');
 

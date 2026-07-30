@@ -37,7 +37,7 @@ export default function Requests() {
       key: 'user',
       render: (_: any, req: UnifiedRequest) => (
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs">
+          <div className="w-9 h-9 rounded-full bg-primary-light flex items-center justify-center text-primary font-bold text-xs">
             {req.requester?.name?.substring(0, 2).toUpperCase()}
           </div>
           <div>
@@ -89,9 +89,9 @@ export default function Requests() {
       align: 'center' as const,
       render: (_: any, req: UnifiedRequest) => (
         selectedRequest?.id === req.id && isSidebarOpen ? (
-          <span className="text-[10px] font-bold text-[#6366f1] tracking-widest uppercase">SELECTED</span>
+          <span className="text-[10px] font-bold text-[#800020] tracking-widest uppercase">SELECTED</span>
         ) : (
-          <button className="p-1 text-gray-400 hover:text-[#6366f1] rounded-full hover:bg-indigo-50 transition-colors inline-flex">
+          <button className="p-1 text-gray-400 hover:text-[#800020] rounded-full hover:bg-indigo-50 transition-colors inline-flex">
             <ChevronRight className="w-5 h-5" />
           </button>
         )
@@ -135,13 +135,13 @@ export default function Requests() {
               <div className="flex items-center gap-6">
                 <button 
                   onClick={() => setActiveTab('student')}
-                  className={`text-sm font-bold pb-4 -mb-[1px] border-b-2 transition-all ${activeTab === 'student' ? 'text-[#6366f1] border-[#6366f1]' : 'text-gray-400 border-transparent hover:text-gray-700'}`}
+                  className={`text-sm font-bold pb-4 -mb-[1px] border-b-2 transition-all ${activeTab === 'student' ? 'text-[#800020] border-[#800020]' : 'text-gray-400 border-transparent hover:text-gray-700'}`}
                 >
                   Student Requests ({studentRequests.length})
                 </button>
                 <button 
                   onClick={() => setActiveTab('teacher')}
-                  className={`text-sm font-bold pb-4 -mb-[1px] border-b-2 transition-all ${activeTab === 'teacher' ? 'text-[#6366f1] border-[#6366f1]' : 'text-gray-400 border-transparent hover:text-gray-700'}`}
+                  className={`text-sm font-bold pb-4 -mb-[1px] border-b-2 transition-all ${activeTab === 'teacher' ? 'text-[#800020] border-[#800020]' : 'text-gray-400 border-transparent hover:text-gray-700'}`}
                 >
                   Instructor Requests ({teacherRequests.length})
                 </button>
@@ -197,7 +197,7 @@ export default function Requests() {
                 top: 0;
                 bottom: 0;
                 width: 3px;
-                background-color: #6366f1;
+                background-color: #800020;
               }
               .ant-table-tbody > tr:last-child > td {
                 border-bottom: none !important;
@@ -209,7 +209,7 @@ export default function Requests() {
               <span className="text-xs font-bold text-gray-400">Showing {currentData.length} records</span>
               <div className="flex items-center gap-1">
                 <button className="px-3 py-1.5 text-xs font-bold text-gray-400 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">Previous</button>
-                <button className="w-7 h-7 flex items-center justify-center text-xs font-bold text-white bg-[#6366f1] rounded-lg shadow-sm">1</button>
+                <button className="w-7 h-7 flex items-center justify-center text-xs font-bold text-white bg-[#800020] rounded-lg shadow-sm">1</button>
                 <button className="px-3 py-1.5 text-xs font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">Next</button>
               </div>
             </div>
@@ -280,7 +280,7 @@ export default function Requests() {
                 <label className="block text-xs font-bold text-gray-900 mb-2">Internal Admin Notes:</label>
                 <div className="relative">
                   <textarea 
-                    className="w-full bg-white border border-gray-200 rounded-xl p-4 pr-12 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#6366f1]/20 focus:border-[#6366f1] transition-all resize-none h-28 shadow-sm placeholder:text-gray-400"
+                    className="w-full bg-white border border-gray-200 rounded-xl p-4 pr-12 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#800020]/20 focus:border-[#800020] transition-all resize-none h-28 shadow-sm placeholder:text-gray-400"
                     placeholder="Add notes for this action..."
                     value={adminNotes}
                     onChange={(e) => setAdminNotes(e.target.value)}

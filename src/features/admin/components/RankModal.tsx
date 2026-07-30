@@ -25,7 +25,7 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
     resolver: zodResolver(rankSchema),
     defaultValues: {
       name: '',
-      color: '#4F46E5',
+      color: '#800020',
       ageRange: { minAge: 6, maxAge: 12 },
       stageName: '',
     }
@@ -48,7 +48,7 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
       } else {
         reset({
           name: '',
-          color: '#4F46E5',
+          color: '#800020',
           ageRange: { minAge: 6, maxAge: 12 },
           stageName: '',
         });
@@ -78,8 +78,8 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center">
-                <Trophy className="w-6 h-6 text-indigo-600" />
+              <div className="w-12 h-12 bg-primary-light rounded-2xl flex items-center justify-center">
+                <Trophy className="w-6 h-6 text-primary" />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-gray-900">
@@ -104,7 +104,7 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
               </label>
               <input
                 type="text"
-                className={`w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-start ${errors.name ? 'ring-2 ring-red-500' : ''}`}
+                className={`w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start ${errors.name ? 'ring-2 ring-red-500' : ''}`}
                 placeholder={language === 'ar' ? 'مثل: البرونزي، الفضي...' : 'e.g. Bronze, Silver...'}
                 {...register('name')}
               />
@@ -126,7 +126,7 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
                 />
                 <input
                   type="text"
-                  className={`flex-1 px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-medium uppercase ${errors.color ? 'ring-2 ring-red-500' : ''}`}
+                  className={`flex-1 px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium uppercase ${errors.color ? 'ring-2 ring-red-500' : ''}`}
                   value={colorValue}
                   onChange={(e) => setValue('color', e.target.value)}
                 />
@@ -142,7 +142,7 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
               </label>
               <input
                 type="text"
-                className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-start"
+                className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start"
                 placeholder={language === 'ar' ? 'مثل: الصف الأول الابتدائي (اختياري)' : 'e.g. Grade 1 (optional)'}
                 {...register('stageName')}
               />
@@ -160,7 +160,7 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
                 </label>
                 <input
                   type="number"
-                  className={`w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-medium ${errors.ageRange?.minAge ? 'ring-2 ring-red-500' : ''}`}
+                  className={`w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium ${errors.ageRange?.minAge ? 'ring-2 ring-red-500' : ''}`}
                   {...register('ageRange.minAge', { valueAsNumber: true })}
                 />
                 {errors.ageRange?.minAge && <p className="text-xs text-red-500 font-bold px-2">{errors.ageRange.minAge.message}</p>}
@@ -172,7 +172,7 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
                 </label>
                 <input
                   type="number"
-                  className={`w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-medium ${errors.ageRange?.maxAge ? 'ring-2 ring-red-500' : ''}`}
+                  className={`w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium ${errors.ageRange?.maxAge ? 'ring-2 ring-red-500' : ''}`}
                   {...register('ageRange.maxAge', { valueAsNumber: true })}
                 />
                 {errors.ageRange?.maxAge && <p className="text-xs text-red-500 font-bold px-2">{errors.ageRange.maxAge.message}</p>}
@@ -191,7 +191,7 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
               <button
                 type="submit"
                 disabled={createRank.isPending || updateRank.isPending}
-                className="flex-1 py-4 bg-indigo-600 text-white font-bold rounded-2xl shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all disabled:opacity-50"
+                className="flex-1 py-4 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all disabled:opacity-50"
               >
                 {createRank.isPending || updateRank.isPending 
                   ? (language === 'ar' ? 'جاري الحفظ...' : 'Saving...') 

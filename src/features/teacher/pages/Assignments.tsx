@@ -136,7 +136,7 @@ export default function Assignments() {
   const getStatusStyle = (status: string) => {
     switch (status) {
       case 'pending': return 'bg-amber-50 text-amber-600 border-amber-200/50 shadow-[0_2px_10px_-3px_rgba(245,158,11,0.2)]';
-      case 'submitted': return 'bg-blue-50 text-blue-600 border-blue-200/50 shadow-[0_2px_10px_-3px_rgba(59,130,246,0.2)]';
+      case 'submitted': return 'bg-primary-light text-primary border-primary/20 shadow-sm';
       case 'completed': return 'bg-emerald-50 text-emerald-600 border-emerald-200/50 shadow-[0_2px_10px_-3px_rgba(16,185,129,0.2)]';
       default: return 'bg-gray-50 text-gray-600 border-gray-200';
     }
@@ -156,7 +156,7 @@ export default function Assignments() {
       title: text.student[language],
       render: (_: any, record: HomeworkItem) => (
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
+          <div className="w-9 h-9 rounded-full bg-primary-light flex items-center justify-center text-primary font-bold text-sm">
             {(record.student?.user?.name || '?')[0]}
           </div>
           <div>
@@ -270,7 +270,7 @@ export default function Assignments() {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-8 py-3 bg-[#6366f1] hover:bg-[#4f46e5] text-white rounded-2xl transition-all font-black text-sm shadow-lg shadow-indigo-100 hover:shadow-indigo-200 active:scale-95"
+          className="flex items-center gap-2 px-8 py-3 bg-[#800020] hover:bg-[#4f46e5] text-white rounded-2xl transition-all font-black text-sm shadow-lg shadow-indigo-100 hover:shadow-indigo-200 active:scale-95"
         >
           <Plus className="w-5 h-5" />
           {text.addAssignment[language]}
@@ -310,7 +310,7 @@ export default function Assignments() {
               placeholder={text.search[language]}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-2.5 bg-gray-50 border-none rounded-full text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:bg-white transition-colors placeholder:text-gray-400`}
+              className={`w-full ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-2.5 bg-gray-50 border-none rounded-full text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#800020] focus:bg-white transition-colors placeholder:text-gray-400`}
             />
           </div>
 
@@ -372,7 +372,7 @@ export default function Assignments() {
                 <button
                   key={i}
                   onClick={() => setCurrentPage(i + 1)}
-                  className={`w-9 h-9 flex items-center justify-center rounded-xl text-xs font-black transition-all ${currentPage === i + 1 ? 'bg-[#6366f1] text-white shadow-lg shadow-indigo-200 scale-110' : 'text-gray-500 hover:bg-gray-50 border border-transparent hover:border-gray-100'}`}
+                  className={`w-9 h-9 flex items-center justify-center rounded-xl text-xs font-black transition-all ${currentPage === i + 1 ? 'bg-[#800020] text-white shadow-lg shadow-indigo-200 scale-110' : 'text-gray-500 hover:bg-gray-50 border border-transparent hover:border-gray-100'}`}
                 >
                   {i + 1}
                 </button>

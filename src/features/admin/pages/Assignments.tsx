@@ -105,7 +105,7 @@ export default function Assignments() {
   const getStatusStyle = (status: string) => {
     switch (status) {
       case 'pending': return 'bg-amber-50 text-amber-600 border-amber-100';
-      case 'submitted': return 'bg-blue-50 text-blue-600 border-blue-100';
+      case 'submitted': return 'bg-primary-light text-primary border-primary/20';
       case 'completed': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
       default: return 'bg-gray-50 text-gray-600 border-gray-100';
     }
@@ -188,7 +188,7 @@ export default function Assignments() {
                 href={`${baseURL}/${file.path}`} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-[11px] font-bold text-indigo-600 hover:text-indigo-800 transition-colors bg-indigo-50/50 px-2 py-1 rounded-lg group"
+                className="flex items-center gap-1.5 text-[11px] font-bold text-indigo-600 hover:bg-primary-dark transition-colors bg-indigo-50/50 px-2 py-1 rounded-lg group"
               >
                 <FileText className="w-3 h-3" />
                 <span className="max-w-[120px] truncate">{file.name}</span>
@@ -265,7 +265,7 @@ export default function Assignments() {
               placeholder={text.search[language]}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-2.5 bg-gray-50 border-none rounded-full text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:bg-white transition-colors placeholder:text-gray-400`}
+              className={`w-full ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-2.5 bg-gray-50 border-none rounded-full text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#800020] focus:bg-white transition-colors placeholder:text-gray-400`}
             />
           </div>
 
@@ -327,7 +327,7 @@ export default function Assignments() {
                 <button
                   key={i}
                   onClick={() => setCurrentPage(i + 1)}
-                  className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold transition-all ${currentPage === i + 1 ? 'bg-[#6366f1] text-white shadow-sm scale-110' : 'text-gray-500 hover:bg-gray-50'}`}
+                  className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold transition-all ${currentPage === i + 1 ? 'bg-[#800020] text-white shadow-sm scale-110' : 'text-gray-500 hover:bg-gray-50'}`}
                 >
                   {i + 1}
                 </button>

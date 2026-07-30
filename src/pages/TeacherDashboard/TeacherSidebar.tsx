@@ -47,10 +47,6 @@ export default function TeacherSidebar({
           className={`p-8 transition-all ${isCollapsed ? "px-4 flex justify-center" : "flex items-center justify-between"}`}
         >
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-[#2563eb] rounded-full flex items-center justify-center text-white shrink-0 shadow-lg shadow-blue-500/20">
-              <img src="/logo.png" alt="logo" className="w-[50px] h-[50px]" />
-
-            </div>
             {!isCollapsed && (
               <span className="text-xl font-bold font-['Outfit'] tracking-tight text-[#1e293b]">
                 MR MAHMOUD
@@ -81,8 +77,8 @@ export default function TeacherSidebar({
                 className={({ isActive }) => `
                   flex items-center gap-4 ${isCollapsed ? "justify-center px-0" : "px-5"} py-3.5 rounded-xl transition-all duration-300 group
                   ${isActive
-                    ? "bg-[#2563eb] text-white shadow-xl shadow-blue-500/25"
-                    : "text-slate-400 hover:bg-blue-50/50 hover:text-[#2563eb]"
+                    ? "bg-primary text-white shadow-xl shadow-primary/25"
+                    : "text-slate-400 hover:bg-primary-light/50 hover:text-primary"
                   }
                 `}
               >

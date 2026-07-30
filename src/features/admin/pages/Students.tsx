@@ -153,7 +153,7 @@ export default function Students() {
       title: t('studentInfo'),
       render: (_: any, record: Student) => (
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-xs">
+          <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-primary font-bold text-xs">
             {record.user.name ? record.user.name.charAt(0).toUpperCase() : '?'}
           </div>
           <div>
@@ -167,7 +167,7 @@ export default function Students() {
       title: t('User Name'),
       render: (_: any, record: Student) => (
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-xs">
+          <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-primary font-bold text-xs">
             {record.user.username ? record.user.username.charAt(0).toUpperCase() : '?'}
           </div>
           <div>
@@ -203,7 +203,7 @@ export default function Students() {
     {
       title: t('academicRank') || 'Rank',
       render: (_: any, record: Student) => (
-        <span className="inline-flex px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-bold border border-indigo-100 uppercase tracking-wider">
+        <span className="inline-flex px-3 py-1 bg-primary-light text-primary rounded-full text-[10px] font-bold border border-indigo-100 uppercase tracking-wider">
           {record.rank?.name || '---'}
         </span>
       ),
@@ -307,7 +307,7 @@ export default function Students() {
           </div>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="mt-4 md:mt-0 flex items-center gap-2 px-6 py-2.5 bg-[#6366f1] hover:bg-[#4f46e5] text-white rounded-full transition-colors font-bold text-sm shadow-sm active:scale-95"
+            className="mt-4 md:mt-0 flex items-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-full transition-colors font-bold text-sm shadow-sm active:scale-95"
           >
             <Plus className="w-4 h-4" />
             {t('addNewStudent')}
@@ -323,7 +323,7 @@ export default function Students() {
               placeholder={t('searchUsersPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-2.5 bg-gray-50 border-none rounded-full text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#6366f1] focus:bg-white transition-colors placeholder:text-gray-400`}
+              className={`w-full ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-2.5 bg-gray-50 border-none rounded-full text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#800020] focus:bg-white transition-colors placeholder:text-gray-400`}
             />
           </div>
 
@@ -387,7 +387,7 @@ export default function Students() {
                 <button
                   key={i}
                   onClick={() => setCurrentPage(i + 1)}
-                  className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold transition-all ${currentPage === i + 1 ? 'bg-[#6366f1] text-white shadow-sm scale-110' : 'text-gray-500 hover:bg-gray-50'
+                  className={`w-8 h-8 flex items-center justify-center rounded-full text-xs font-bold transition-all ${currentPage === i + 1 ? 'bg-[#800020] text-white shadow-sm scale-110' : 'text-gray-500 hover:bg-gray-50'
                     }`}
                 >
                   {i + 1}

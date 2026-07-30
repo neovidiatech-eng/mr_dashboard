@@ -43,7 +43,7 @@ export default function Sidebar({ isOpen, onClose, isCollapsed }: SidebarProps) 
         {/* Header with Logo and Close Button */}
         <div className={`p-8 transition-all ${isCollapsed ? 'px-4 flex justify-center' : 'flex items-center justify-between'}`}>
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-[#2563eb] rounded-full flex items-center justify-center text-white shrink-0 shadow-lg shadow-blue-500/20">
+            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white shrink-0 shadow-lg shadow-primary/20">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
                 <circle cx="12" cy="12" r="10"></circle>
                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
@@ -76,8 +76,8 @@ export default function Sidebar({ isOpen, onClose, isCollapsed }: SidebarProps) 
                 className={({ isActive }) => `
                   flex items-center gap-4 ${isCollapsed ? 'justify-center px-0' : 'px-5'} py-3.5 rounded-xl transition-all duration-300 group
                   ${isActive 
-                    ? 'bg-[#2563eb] text-white shadow-xl shadow-blue-500/25' 
-                    : 'text-slate-400 hover:bg-blue-50/50 hover:text-[#2563eb]'}
+                    ? 'bg-primary text-white shadow-xl shadow-primary/25' 
+                    : 'text-slate-400 hover:bg-primary-light/50 hover:text-primary'}
                 `}
               >
                 {Icon && <Icon size={19} className={`${isCollapsed ? '' : 'shrink-0'}`} />}

@@ -20,7 +20,7 @@ interface ChatStudent {
 export default function TeacherChat() {
   const { i18n } = useTranslation();
   const isRtl = i18n.language.split('-')[0] === 'ar';
-  const primaryColor = '#2563eb';
+  const primaryColor = '#800020';
   
   const [messages, setMessages] = useState<Message[]>([
     { id: '1', text: isRtl ? 'السلام عليكم يا أستاذ.' : 'Hello teacher.', sender: 'student', timestamp: '10:00 AM' },

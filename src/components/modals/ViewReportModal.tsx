@@ -26,11 +26,11 @@ export default function ViewReportModal({ isOpen, onClose, reportData }: ViewRep
       width={650}
       centered
       className="view-report-modal"
-      bodyStyle={{ padding: 0 }}
+      styles={{ body: { padding: 0 }, content: { padding: 0 } }}
     >
       <div className="relative overflow-hidden rounded-2xl" dir={language === 'ar' ? 'rtl' : 'ltr'}>
         {/* Header Section */}
-        <div className="bg-gradient-to-r from-indigo-600 to-blue-500 p-6 text-white">
+        <div className="bg-gradient-to-r from-primary to-primary-dark p-6 text-white">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl font-black">
