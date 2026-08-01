@@ -11,11 +11,8 @@ export interface RankItem {
   slug?: string;
   color: string;
   ageRange: AgeRange;
-  stageName_ar?: string | null;
   stageName_en?: string | null;
   stageName?: string | null;
-  stageName_ar?: string | null;
-  stageName_en?: string | null;
   createdAt: string;
   updatedAt: string;
 }
