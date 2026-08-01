@@ -28,7 +28,12 @@ export interface CourseCategory {
 export interface Course {
   id: string;
   title: string;
+  title_ar?: string;
+  title_en?: string;
   description: string;
+  description_ar?: string;
+  description_en?: string;
+  keywords?: string[];
   rankId: string;
   categoryId?: string | null;
   category?: CourseCategory | null;

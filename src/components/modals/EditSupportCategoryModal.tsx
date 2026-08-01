@@ -23,14 +23,19 @@ export default function EditSupportCategoryModal({ isOpen, onClose, onSubmit, ca
     useEffect(() => {
         if (category) {
             reset({
-                title: category.title,
+                title_ar: category.title_ar || category.title || '',
+                title_en: category.title_en || '',
                 active: category.active
             });
         }
     }, [category, reset]);
 
     const handleOnSubmit = async (data: SupportCategoryFormData) => {
-        const isSuccess = await onSubmit(data);
+        const payload = {
+            ...data,
+            title: data.title_ar,
+        };
+        const isSuccess = await onSubmit(payload);
         if (isSuccess) {
             onClose();
         }
@@ -40,7 +45,7 @@ export default function EditSupportCategoryModal({ isOpen, onClose, onSubmit, ca
 
     return (
         <div className="fixed inset-0 !mt-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-300">
-            <div className="bg-white rounded-[32px] shadow-2xl w-full max-w-md overflow-hidden flex flex-col border border-slate-100 animate-in zoom-in-95 duration-300">
+            <div className="bg-white rounded-[32px] shadow-2xl w-full max-w-lg overflow-hidden flex flex-col border border-slate-100 animate-in zoom-in-95 duration-300">
                 {/* Header */}
                 <div className="px-8 py-6 border-b border-slate-50 flex items-center justify-between bg-white sticky top-0 z-10">
                     <div>
@@ -56,17 +61,33 @@ export default function EditSupportCategoryModal({ isOpen, onClose, onSubmit, ca
                 </div>
 
                 <form onSubmit={handleSubmit(handleOnSubmit)} className="p-8 space-y-6">
-                    <div className="text-start">
-                        <label className="text-xs font-black text-slate-500 mb-2 uppercase tracking-wider block">
-                            Category Title
-                        </label>
-                        <input
-                            type="text"
-                            placeholder="e.g. Technical Support"
-                            {...register('title')}
-                            className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none"
-                        />
-                        {errors.title && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.title.message}</p>}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-start">
+                        <div>
+                            <label className="text-xs font-black text-slate-500 mb-2 uppercase tracking-wider block">
+                                Category Title (Arabic) *
+                            </label>
+                            <input
+                                type="text"
+                                dir="rtl"
+                                placeholder="مثال: الدعم الفني"
+                                {...register('title_ar')}
+                                className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none"
+                            />
+                            {errors.title_ar && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.title_ar.message}</p>}
+                        </div>
+
+                        <div>
+                            <label className="text-xs font-black text-slate-500 mb-2 uppercase tracking-wider block">
+                                Category Title (English)
+                            </label>
+                            <input
+                                type="text"
+                                dir="ltr"
+                                placeholder="e.g. Technical Support"
+                                {...register('title_en')}
+                                className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none"
+                            />
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl">

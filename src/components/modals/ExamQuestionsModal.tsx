@@ -18,18 +18,22 @@ interface ExamQuestionsModalProps {
 }
 
 interface DraftOption {
+  text_ar: string;
+  text_en?: string;
   text: string;
   isCorrect: boolean;
 }
 
 const emptyDraft = (type: 'mcq' | 'true_false') => ({
+  text_ar: '',
+  text_en: '',
   text: '',
   type,
   points: 1,
   options:
     type === 'true_false'
-      ? ([{ text: 'True', isCorrect: false }, { text: 'False', isCorrect: false }] as DraftOption[])
-      : ([{ text: '', isCorrect: false }, { text: '', isCorrect: false }] as DraftOption[]),
+      ? ([{ text_ar: 'صح', text_en: 'True', text: 'True', isCorrect: false }, { text_ar: 'خطأ', text_en: 'False', text: 'False', isCorrect: false }] as DraftOption[])
+      : ([{ text_ar: '', text_en: '', text: '', isCorrect: false }, { text_ar: '', text_en: '', text: '', isCorrect: false }] as DraftOption[]),
 });
 
 export default function ExamQuestionsModal({ isOpen, onClose, examId, examTitle }: ExamQuestionsModalProps) {
@@ -54,7 +58,8 @@ export default function ExamQuestionsModal({ isOpen, onClose, examId, examTitle 
 
   const text = {
     title: { ar: 'إدارة أسئلة الامتحان', en: 'Manage Exam Questions' },
-    questionText: { ar: 'نص السؤال', en: 'Question Text' },
+    questionTextAr: { ar: 'نص السؤال (عربي) *', en: 'Question Text (Arabic) *' },
+    questionTextEn: { ar: 'نص السؤال (إنجليزي)', en: 'Question Text (English)' },
     type: { ar: 'نوع السؤال', en: 'Question Type' },
     mcq: { ar: 'اختيار من متعدد', en: 'Multiple Choice' },
     trueFalse: { ar: 'صح / خطأ', en: 'True / False' },
@@ -66,7 +71,7 @@ export default function ExamQuestionsModal({ isOpen, onClose, examId, examTitle 
     close: { ar: 'إغلاق', en: 'Close' },
     noQuestions: { ar: 'لسه مفيش أسئلة في الامتحان ده', en: 'No questions in this exam yet' },
     needOneCorrect: { ar: 'لازم تختار إجابة صحيحة واحدة بالظبط', en: 'You must mark exactly one correct answer' },
-    needOptionText: { ar: 'كل الاختيارات لازم يكون ليها نص', en: 'Every option needs text' },
+    needOptionText: { ar: 'كل الاختيارات لازم يكون ليها نص بالعربي', en: 'Every option needs Arabic text' },
     deleteConfirmTitle: { ar: 'حذف سؤال', en: 'Delete Question' },
     deleteConfirmMsg: { ar: 'متأكد إنك عايز تحذف السؤال ده؟', en: 'Are you sure you want to delete this question?' },
     edit: { ar: 'تعديل', en: 'Edit' },
@@ -75,8 +80,12 @@ export default function ExamQuestionsModal({ isOpen, onClose, examId, examTitle 
 
   if (!isOpen) return null;
 
-  const setOptionText = (index: number, value: string) => {
-    setDraft((d) => ({ ...d, options: d.options.map((o, i) => (i === index ? { ...o, text: value } : o)) }));
+  const setOptionTextAr = (index: number, value: string) => {
+    setDraft((d) => ({ ...d, options: d.options.map((o, i) => (i === index ? { ...o, text_ar: value, text: value } : o)) }));
+  };
+
+  const setOptionTextEn = (index: number, value: string) => {
+    setDraft((d) => ({ ...d, options: d.options.map((o, i) => (i === index ? { ...o, text_en: value } : o)) }));
   };
 
   const setCorrectOption = (index: number) => {
@@ -84,7 +93,7 @@ export default function ExamQuestionsModal({ isOpen, onClose, examId, examTitle 
   };
 
   const addOption = () => {
-    setDraft((d) => ({ ...d, options: [...d.options, { text: '', isCorrect: false }] }));
+    setDraft((d) => ({ ...d, options: [...d.options, { text_ar: '', text_en: '', text: '', isCorrect: false }] }));
   };
 
   const removeOption = (index: number) => {
@@ -94,10 +103,12 @@ export default function ExamQuestionsModal({ isOpen, onClose, examId, examTitle 
   const startEdit = (q: ExamQuestion) => {
     setEditingId(q.id);
     setDraft({
-      text: q.text,
+      text_ar: q.text_ar || q.text || '',
+      text_en: q.text_en || '',
+      text: q.text_ar || q.text || '',
       type: q.type,
       points: q.points,
-      options: q.options.map((o) => ({ text: o.text, isCorrect: !!o.isCorrect })),
+      options: q.options.map((o) => ({ text_ar: o.text_ar || o.text || '', text_en: o.text_en || '', text: o.text_ar || o.text || '', isCorrect: !!o.isCorrect })),
     });
     setFormError('');
   };
@@ -110,15 +121,22 @@ export default function ExamQuestionsModal({ isOpen, onClose, examId, examTitle 
 
   const handleSubmitQuestion = () => {
     setFormError('');
-    if (!draft.text.trim()) return setFormError(text.questionText[language]);
-    if (draft.options.some((o) => !o.text.trim())) return setFormError(text.needOptionText[language]);
+    if (!draft.text_ar.trim()) return setFormError(text.questionTextAr[language]);
+    if (draft.options.some((o) => !o.text_ar.trim())) return setFormError(text.needOptionText[language]);
     if (draft.options.filter((o) => o.isCorrect).length !== 1) return setFormError(text.needOneCorrect[language]);
 
     const payload = {
-      text: draft.text,
+      text_ar: draft.text_ar,
+      text_en: draft.text_en,
+      text: draft.text_ar,
       type: draft.type as 'mcq' | 'true_false',
       points: Number(draft.points) || 1,
-      options: draft.options,
+      options: draft.options.map(o => ({
+        text_ar: o.text_ar,
+        text_en: o.text_en,
+        text: o.text_ar,
+        isCorrect: o.isCorrect,
+      })),
     };
 
     if (editingId) {
@@ -202,14 +220,29 @@ export default function ExamQuestionsModal({ isOpen, onClose, examId, examTitle 
 
           {/* Add/Edit question form */}
           <div className="border-t border-gray-100 pt-5 space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">{text.questionText[language]}</label>
-              <textarea
-                value={draft.text}
-                onChange={(e) => setDraft((d) => ({ ...d, text: e.target.value }))}
-                rows={2}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{text.questionTextAr[language]}</label>
+                <textarea
+                  value={draft.text_ar}
+                  onChange={(e) => setDraft((d) => ({ ...d, text_ar: e.target.value, text: e.target.value }))}
+                  rows={2}
+                  dir="rtl"
+                  placeholder="نص السؤال بالعربية"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{text.questionTextEn[language]}</label>
+                <textarea
+                  value={draft.text_en}
+                  onChange={(e) => setDraft((d) => ({ ...d, text_en: e.target.value }))}
+                  rows={2}
+                  dir="ltr"
+                  placeholder="Question text in English"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -241,23 +274,36 @@ export default function ExamQuestionsModal({ isOpen, onClose, examId, examTitle 
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">{text.options[language]}</label>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {draft.options.map((o, i) => (
-                  <div key={i} className="flex items-center gap-2">
+                  <div key={i} className="flex items-center gap-2 bg-gray-50 p-2 rounded-xl">
                     <input
                       type="radio"
                       name="correct-option"
                       checked={o.isCorrect}
                       onChange={() => setCorrectOption(i)}
-                      className="w-4 h-4 accent-emerald-600"
+                      className="w-4 h-4 accent-emerald-600 cursor-pointer"
                     />
-                    <input
-                      type="text"
-                      value={o.text}
-                      disabled={draft.type === 'true_false'}
-                      onChange={(e) => setOptionText(i, e.target.value)}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm disabled:bg-gray-50"
-                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 flex-1">
+                      <input
+                        type="text"
+                        value={o.text_ar}
+                        dir="rtl"
+                        placeholder="الاختيار (عربي) *"
+                        disabled={draft.type === 'true_false'}
+                        onChange={(e) => setOptionTextAr(i, e.target.value)}
+                        className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white disabled:bg-gray-100"
+                      />
+                      <input
+                        type="text"
+                        value={o.text_en}
+                        dir="ltr"
+                        placeholder="Option (English)"
+                        disabled={draft.type === 'true_false'}
+                        onChange={(e) => setOptionTextEn(i, e.target.value)}
+                        className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white disabled:bg-gray-100"
+                      />
+                    </div>
                     {draft.type === 'mcq' && draft.options.length > 2 && (
                       <button onClick={() => removeOption(i)} className="p-1.5 text-gray-400 hover:text-red-500">
                         <Trash2 className="w-4 h-4" />

@@ -25,9 +25,12 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
   const { register, handleSubmit, reset, control, formState: { errors } } = useForm<PolicyFormData>({
     resolver: zodResolver(getPolicySchema(t)) as any,
     defaultValues: {
-      title: '',
-      description: '',
-      content: '',
+      title_ar: '',
+      title_en: '',
+      description_ar: '',
+      description_en: '',
+      content_ar: '',
+      content_en: '',
       icon: 'shield',
       color: '#800020',
       active: true,
@@ -38,18 +41,24 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
     if (visible) {
       if (editingPolicy) {
         reset({
-          title: editingPolicy.title,
-          description: editingPolicy.description || '',
-          content: editingPolicy.content || '',
+          title_ar: editingPolicy.title_ar || editingPolicy.title || '',
+          title_en: editingPolicy.title_en || '',
+          description_ar: editingPolicy.description_ar || editingPolicy.description || '',
+          description_en: editingPolicy.description_en || '',
+          content_ar: editingPolicy.content_ar || editingPolicy.content || '',
+          content_en: editingPolicy.content_en || '',
           icon: editingPolicy.icon || 'shield',
           color: editingPolicy.color || '#800020',
           active: editingPolicy.active,
         });
       } else {
         reset({
-          title: '',
-          description: '',
-          content: '',
+          title_ar: '',
+          title_en: '',
+          description_ar: '',
+          description_en: '',
+          content_ar: '',
+          content_en: '',
           icon: 'shield',
           color: '#800020',
           active: true,
@@ -61,19 +70,28 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
   const onSubmit = async (values: PolicyFormData) => {
     const formattedValues = {
       ...values,
+      title: values.title_ar,
       color: typeof values.color === 'string' ? values.color : (values.color as any)?.toHexString?.() || '#800020',
     };
     
     if (isNotice) {
       const noticeData = {
-        title: formattedValues.title,
-        content: formattedValues.content || formattedValues.description,
+        title: formattedValues.title_ar,
+        title_ar: formattedValues.title_ar,
+        title_en: formattedValues.title_en,
+        content: formattedValues.content_ar || formattedValues.description_ar,
+        content_ar: formattedValues.content_ar || formattedValues.description_ar,
+        content_en: formattedValues.content_en || formattedValues.description_en,
         active: formattedValues.active
       };
       await onSave(noticeData);
     } else {
-      const { content, ...policyData } = formattedValues;
-      await onSave(policyData);
+      const { content, content_ar, content_en, ...policyData } = formattedValues;
+      const finalPolicy = {
+        ...policyData,
+        description: formattedValues.description_ar,
+      };
+      await onSave(finalPolicy);
     }
   };
 
@@ -98,20 +116,35 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
       onCancel={onClose}
       footer={null}
       centered
-      width={540}
+      width={580}
       className="premium-modal"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-6 text-start">
-        <div>
-          <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-            <Type size={14} className="text-primary" /> Title
-          </label>
-          <input 
-            {...register('title')}
-            placeholder="e.g. Attendance Policy" 
-            className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20" 
-          />
-          {errors.title && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.title.message}</p>}
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-6 text-start max-h-[75vh] overflow-y-auto pr-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
+              <Type size={14} className="text-primary" /> Title (Arabic) *
+            </label>
+            <input 
+              {...register('title_ar')}
+              placeholder="مثال: سياسة الحضور" 
+              dir="rtl"
+              className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20" 
+            />
+            {errors.title_ar && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.title_ar.message}</p>}
+          </div>
+
+          <div>
+            <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
+              <Type size={14} className="text-primary" /> Title (English)
+            </label>
+            <input 
+              {...register('title_en')}
+              placeholder="e.g. Attendance Policy" 
+              dir="ltr"
+              className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20" 
+            />
+          </div>
         </div>
 
         {!isNotice && (
@@ -149,30 +182,60 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
         )}
 
         {isNotice ? (
-          <div>
-            <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-              <Edit3 size={14} className="text-primary" /> Notice Content
-            </label>
-            <textarea 
-              {...register('content')}
-              placeholder="Enter the message for teachers..." 
-              rows={6} 
-              className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" 
-            />
-            {errors.content && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.content.message}</p>}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
+                <Edit3 size={14} className="text-primary" /> Notice Content (Arabic)
+              </label>
+              <textarea 
+                {...register('content_ar')}
+                placeholder="تفاصيل التنبيه بالعربية..." 
+                rows={4} 
+                dir="rtl"
+                className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" 
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
+                <Edit3 size={14} className="text-primary" /> Notice Content (English)
+              </label>
+              <textarea 
+                {...register('content_en')}
+                placeholder="Notice details in English..." 
+                rows={4} 
+                dir="ltr"
+                className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" 
+              />
+            </div>
           </div>
         ) : (
-          <div>
-            <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-              <Edit3 size={14} className="text-primary" /> Policy Description
-            </label>
-            <textarea 
-              {...register('description')}
-              placeholder="Enter the details of the policy..." 
-              rows={6} 
-              className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" 
-            />
-            {errors.description && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.description.message}</p>}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
+                <Edit3 size={14} className="text-primary" /> Description (Arabic)
+              </label>
+              <textarea 
+                {...register('description_ar')}
+                placeholder="تفاصيل السياسة بالعربية..." 
+                rows={4} 
+                dir="rtl"
+                className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" 
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
+                <Edit3 size={14} className="text-primary" /> Description (English)
+              </label>
+              <textarea 
+                {...register('description_en')}
+                placeholder="Policy description in English..." 
+                rows={4} 
+                dir="ltr"
+                className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" 
+              />
+            </div>
           </div>
         )}
 

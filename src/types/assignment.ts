@@ -46,7 +46,11 @@ export interface SubjectInAssignment {
 export interface Assignment {
     id: string;
     title: string;
+    title_ar?: string;
+    title_en?: string;
     description: string;
+    description_ar?: string;
+    description_en?: string;
     status: 'pending' | 'completed' | 'graded' | string;
     dueDate: string;
     teacherId: string;
@@ -96,7 +100,11 @@ export interface Attachment {
 export interface HomeworkItem {
   id: string;
   title: string;
+  title_ar?: string;
+  title_en?: string;
   description: string;
+  description_ar?: string;
+  description_en?: string;
   status: HomeworkStatus;
   dueDate: string;
   studentId: string;

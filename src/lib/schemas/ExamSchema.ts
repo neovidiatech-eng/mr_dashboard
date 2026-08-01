@@ -3,7 +3,9 @@ import { z } from 'zod';
 type TFunc = (key: string, options?: any) => string;
 
 export const getExamSchema = (t: TFunc) => z.object({
-  title: z.string().min(3, t("validation.min", { count: 3 })),
+  title_ar: z.string().min(3, t("validation.min", { count: 3 })),
+  title_en: z.string().optional(),
+  title: z.string().optional(),
   subject: z.string().optional(),
   studentId: z.string().min(1, t("validation.required")),
   teacherId: z.string().optional(),

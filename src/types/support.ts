@@ -1,6 +1,8 @@
 export interface SupportCategory {
     id: string;
     title: string;
+    title_ar?: string;
+    title_en?: string;
     active: boolean;
     createdAt: string;
     updatedAt: string;
@@ -9,8 +11,12 @@ export interface SupportCategory {
 export interface SupportItem {
     id: string;
     title: string;
+    title_ar?: string;
+    title_en?: string;
     url: string;
     description: string;
+    description_ar?: string;
+    description_en?: string;
     categoryId: string;
     readingCount: number;
     active: boolean;
@@ -38,26 +44,38 @@ export interface SupportCategoriesResponse {
 }
 
 export interface CreateSupportItemInput {
-    title: string;
+    title?: string;
+    title_ar: string;
+    title_en?: string;
     url: string;
-    description: string;
+    description?: string;
+    description_ar?: string;
+    description_en?: string;
     categoryId: string;
 }
 
 export interface UpdateSupportItemInput {
     title?: string;
+    title_ar?: string;
+    title_en?: string;
     url?: string;
     description?: string;
+    description_ar?: string;
+    description_en?: string;
     categoryId?: string;
     active?: boolean;
 }
 
 export interface CreateSupportCategoryInput {
-    title: string;
+    title?: string;
+    title_ar: string;
+    title_en?: string;
 }
 
 export interface UpdateSupportCategoryInput {
     title?: string;
+    title_ar?: string;
+    title_en?: string;
     active?: boolean;
 }
 

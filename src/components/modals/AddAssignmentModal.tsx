@@ -65,8 +65,10 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
       if (initialData) {
         reset({
           studentId: initialData.student?.id || '',
-          title: initialData.title || '',
-          description: initialData.description || '',
+          title_ar: initialData.title_ar || initialData.title || '',
+          title_en: initialData.title_en || '',
+          description_ar: initialData.description_ar || initialData.description || '',
+          description_en: initialData.description_en || '',
           dueDate: initialData.dueDate ? initialData.dueDate.split('T')[0] : '',
           status: (initialData.status as any) || 'pending',
           grade: initialData.grade ?? '',
@@ -75,8 +77,10 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
       } else {
         reset({
           studentId: '',
-          title: '',
-          description: '',
+          title_ar: '',
+          title_en: '',
+          description_ar: '',
+          description_en: '',
           dueDate: '',
           status: 'pending',
           grade: '',
@@ -87,8 +91,13 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
   }, [initialData, reset, isOpen]);
 
   const handleOnSubmit = (data: AssignmentFormData) => {
+    const preparedData = {
+      ...data,
+      title: data.title_ar,
+      description: data.description_ar || '',
+    };
     if (initialData) {
-      const payload: any = { ...data };
+      const payload: any = { ...preparedData };
       if (payload.grade === '' || payload.grade === undefined) {
         delete payload.grade;
       }
@@ -101,7 +110,7 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
         }
       });
     } else {
-      const { grade, feedback, ...createData } = data;
+      const { grade, feedback, ...createData } = preparedData;
       createMutation.mutate(createData, {
         onSuccess: () => {
           onClose();
@@ -156,32 +165,63 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
               {errors.studentId && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.studentId.message}</p>}
             </div>
 
-            {/* Title */}
-            <div className="text-start">
-              <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
-                {text.assignmentTitle[language]} *
-              </label>
-              <input
-                type="text"
-                {...register('title')}
-                placeholder={language === 'ar' ? 'أدخل عنوان الواجب' : 'Enter assignment title'}
-                className={`w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ${errors.title ? 'ring-red-500/20' : 'ring-transparent'} focus:ring-indigo-500/10 transition-all placeholder:text-gray-300`}
-              />
-              {errors.title && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.title.message}</p>}
+            {/* Title (Dual Language) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="text-start">
+                <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                  Title (Arabic) *
+                </label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  {...register('title_ar')}
+                  placeholder="عنوان الواجب بالعربية"
+                  className={`w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ${errors.title_ar ? 'ring-red-500/20' : 'ring-transparent'} focus:ring-indigo-500/10 transition-all placeholder:text-gray-300`}
+                />
+                {errors.title_ar && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.title_ar.message}</p>}
+              </div>
+
+              <div className="text-start">
+                <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                  Title (English)
+                </label>
+                <input
+                  type="text"
+                  dir="ltr"
+                  {...register('title_en')}
+                  placeholder="Assignment title in English"
+                  className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all placeholder:text-gray-300"
+                />
+              </div>
             </div>
 
-            {/* Description */}
-            <div className="text-start">
-              <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
-                {text.description[language]} *
-              </label>
-              <textarea
-                rows={3}
-                {...register('description')}
-                placeholder={language === 'ar' ? 'أدخل وصف الواجب' : 'Enter assignment description'}
-                className={`w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ${errors.description ? 'ring-red-500/20' : 'ring-transparent'} focus:ring-indigo-500/10 transition-all placeholder:text-gray-300 resize-none`}
-              />
-              {errors.description && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.description.message}</p>}
+            {/* Description (Dual Language) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="text-start">
+                <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                  Description (Arabic)
+                </label>
+                <textarea
+                  rows={3}
+                  dir="rtl"
+                  {...register('description_ar')}
+                  placeholder="وصف الواجب بالعربية"
+                  className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all placeholder:text-gray-300 resize-none"
+                />
+              </div>
+
+              <div className="text-start">
+                <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                  Description (English)
+                </label>
+                <textarea
+                  rows={3}
+                  dir="ltr"
+                  {...register('description_en')}
+                  placeholder="Assignment description in English"
+                  className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all placeholder:text-gray-300 resize-none"
+                />
+              </div>
             </div>
 
             {/* Due Date + Status */}

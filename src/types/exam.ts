@@ -2,6 +2,8 @@ export interface ExamOption {
   id: string;
   questionId: string;
   text: string;
+  text_ar?: string;
+  text_en?: string;
   isCorrect?: boolean; // hidden by the backend until the exam is submitted
   order: number;
 }
@@ -10,6 +12,8 @@ export interface ExamQuestion {
   id: string;
   examId: string;
   text: string;
+  text_ar?: string;
+  text_en?: string;
   type: 'mcq' | 'true_false';
   points: number;
   order: number;
@@ -30,6 +34,8 @@ export type ExamStatus = 'pending' | 'in_progress' | 'submitted' | 'graded';
 export interface Exam {
   id: string;
   title: string;
+  title_ar?: string;
+  title_en?: string;
   subject?: string | null;
   grade: number;
   studentId: string;
@@ -47,7 +53,9 @@ export interface Exam {
 }
 
 export interface CreateExamPayload {
-  title: string;
+  title?: string;
+  title_ar: string;
+  title_en?: string;
   subject?: string;
   studentId: string;
   teacherId?: string;
@@ -57,10 +65,12 @@ export interface CreateExamPayload {
 }
 
 export interface CreateQuestionPayload {
-  text: string;
+  text?: string;
+  text_ar: string;
+  text_en?: string;
   type: 'mcq' | 'true_false';
   points: number;
-  options: { text: string; isCorrect: boolean }[];
+  options: { text_ar?: string; text_en?: string; text: string; isCorrect: boolean }[];
 }
 
 export interface SubmitExamPayload {

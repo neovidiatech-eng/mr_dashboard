@@ -13,10 +13,14 @@ api.interceptors.request.use(
     const token =
       localStorage.getItem("token") || sessionStorage.getItem("token");
 
+    config.headers = config.headers || {};
+
     if (token) {
-      config.headers ??= {};
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    const currentLang = i18n.language || localStorage.getItem("i18nextLng") || "en";
+    config.headers["Accept-Language"] = currentLang;
 
     return config;
   },

@@ -10,8 +10,9 @@ export default function CoursesStore() {
   const { language } = useLanguage();
   const queryClient = useQueryClient();
   const [page] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const { data: coursesData, isLoading } = useCourses(page, 50);
+  const { data: coursesData, isLoading } = useCourses(page, 50, undefined, searchQuery);
   const { data: myRequests } = useQuery({
     queryKey: ['my-course-purchase-requests'],
     queryFn: getMyCoursePurchaseRequests,
@@ -37,6 +38,7 @@ export default function CoursesStore() {
   const text = {
     title: { ar: 'متجر الكورسات', en: 'Courses Store' },
     subtitle: { ar: 'اطلب شراء أي كورس منفرد، وهيتم التواصل معاك لإتمام العملية', en: 'Request to buy any individual course, and we will reach out to complete the purchase' },
+    searchPlaceholder: { ar: 'ابحث عن كورس بالاسم أو الوصف أو الكلمات المفتاحية...', en: 'Search course by name, description, or keywords...' },
     request: { ar: 'اطلب الكورس', en: 'Request Course' },
     pending: { ar: 'طلبك قيد المراجعة', en: 'Request pending' },
     approved: { ar: 'متاح لك بالفعل', en: 'Already unlocked' },
@@ -46,9 +48,20 @@ export default function CoursesStore() {
 
   return (
     <div className="p-6 lg:p-8 space-y-8" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">{text.title[language]}</h1>
-        <p className="text-gray-500 text-sm mt-1">{text.subtitle[language]}</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">{text.title[language]}</h1>
+          <p className="text-gray-500 text-sm mt-1">{text.subtitle[language]}</p>
+        </div>
+        <div className="w-full sm:w-80">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={text.searchPlaceholder[language]}
+            className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20"
+          />
+        </div>
       </div>
 
       {isLoading ? (

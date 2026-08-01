@@ -55,7 +55,7 @@ export default function Curriculum() {
     return items.map((r: any) => ({ id: r.id, name: r.name, color: r.color }));
   }, [ranksData]);
 
-  const { data: coursesData } = useCourses(currentPage, pageSize, selectedRankId);
+  const { data: coursesData } = useCourses(currentPage, pageSize, selectedRankId, searchQuery);
   const { data: fullCourseData } = useCourseById(courseId || '');
   const { mutate: deleteCourse } = useDeleteCourse();
   const { mutate: deleteLecture } = useDeleteLecture();
@@ -70,16 +70,11 @@ export default function Curriculum() {
     }
   }, [selectedCourse, selectedLessonId]);
 
-  const filteredCourses = courses?.filter(course =>
-    course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    course.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery, selectedRankId]);
 
-  const paginatedCourses = filteredCourses;
+  const paginatedCourses = courses;
 
   const handleCourseClick = (id: string) => {
     navigate(`/dashboard/curriculum/${id}`);
@@ -466,7 +461,7 @@ export default function Curriculum() {
         </div>
       </div>
 
-      {(filteredCourses?.length ?? 0) > 0 ? (
+      {(courses?.length ?? 0) > 0 ? (
         <>
           <div className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
             {paginatedCourses?.map((course) => (

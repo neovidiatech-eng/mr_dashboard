@@ -27,8 +27,10 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
     const { register, handleSubmit, reset, control, formState: { errors } } = useForm<LectureFormData>({
         resolver: zodResolver(getLectureSchema(t)),
         defaultValues: {
-            title: '',
-            content: '',
+            title_ar: '',
+            title_en: '',
+            content_ar: '',
+            content_en: '',
             videoUrl: '',
             pdfUrl: '',
             slidesUrl: '',
@@ -41,19 +43,25 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
         if (visible) {
             if (lecture) {
                 reset({
-                    title: lecture.title,
-                    content: lecture.content,
+                    title_ar: lecture.title_ar || lecture.title || '',
+                    title_en: lecture.title_en || '',
+                    content_ar: lecture.content_ar || lecture.content || '',
+                    content_en: lecture.content_en || '',
                     videoUrl: lecture.videoUrl || '',
                     pdfUrl: lecture.pdfUrl || '',
+                    slidesUrl: lecture.slidesUrl || '',
                     order: lecture.order,
                     courseId: courseId,
                 });
             } else {
                 reset({
-                    title: '',
-                    content: '',
+                    title_ar: '',
+                    title_en: '',
+                    content_ar: '',
+                    content_en: '',
                     videoUrl: '',
                     pdfUrl: '',
+                    slidesUrl: '',
                     order: 1,
                     courseId: courseId,
                 });
@@ -62,7 +70,12 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
     }, [visible, lecture, courseId, reset]);
 
     const onSubmit = (values: LectureFormData) => {
-        const payload = { ...values, courseId };
+        const payload = {
+            ...values,
+            title: values.title_ar,
+            content: values.content_ar || '',
+            courseId,
+        };
 
         if (isEditMode && lecture) {
             updateLecture({ id: lecture.id, data: payload }, {
@@ -103,33 +116,61 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
             onCancel={onClose}
             footer={null}
             centered
-            width={520}
+            width={580}
             className="premium-modal"
         >
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-5 text-start">
-                <div>
-                    <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
-                        <Type size={14} className="text-primary" /> Lecture Title
-                    </label>
-                    <input
-                        {...register('title')}
-                        placeholder="e.g. Introduction to React Hooks"
-                        className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                    />
-                    {errors.title && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.title.message}</p>}
+            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-5 text-start max-h-[75vh] overflow-y-auto pr-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
+                            <Type size={14} className="text-primary" /> Title (Arabic) *
+                        </label>
+                        <input
+                            {...register('title_ar')}
+                            placeholder="مثال: مقدمة في الرياضيات"
+                            dir="rtl"
+                            className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                        />
+                        {errors.title_ar && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.title_ar.message}</p>}
+                    </div>
+                    <div>
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
+                            <Type size={14} className="text-primary" /> Title (English)
+                        </label>
+                        <input
+                            {...register('title_en')}
+                            placeholder="e.g. Introduction to Math"
+                            dir="ltr"
+                            className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                        />
+                    </div>
                 </div>
 
-                <div>
-                    <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
-                        <AlignLeft size={14} className="text-indigo-500" /> Content / Description
-                    </label>
-                    <textarea
-                        {...register('content')}
-                        placeholder="Enter lecture details or transcript..."
-                        rows={4}
-                        className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none"
-                    />
-                    {errors.content && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.content.message}</p>}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
+                            <AlignLeft size={14} className="text-indigo-500" /> Content (Arabic)
+                        </label>
+                        <textarea
+                            {...register('content_ar')}
+                            placeholder="تفاصيل المحاضرة بالعربية..."
+                            rows={3}
+                            dir="rtl"
+                            className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none"
+                        />
+                    </div>
+                    <div>
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
+                            <AlignLeft size={14} className="text-indigo-500" /> Content (English)
+                        </label>
+                        <textarea
+                            {...register('content_en')}
+                            placeholder="Lecture content in English..."
+                            rows={3}
+                            dir="ltr"
+                            className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none"
+                        />
+                    </div>
                 </div>
                                 <div className="grid grid-cols-2 gap-4">
 

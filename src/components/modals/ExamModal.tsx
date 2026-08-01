@@ -51,7 +51,8 @@ export default function AddExamModal({ isOpen, onClose, onAdd, initialData }: Ad
     if (isOpen) {
       if (initialData) {
         reset({
-          title: initialData.title,
+          title_ar: initialData.title_ar || initialData.title || '',
+          title_en: initialData.title_en || '',
           subject: initialData.subject || '',
           studentId: initialData.studentId,
           teacherId: initialData.teacherId,
@@ -61,7 +62,8 @@ export default function AddExamModal({ isOpen, onClose, onAdd, initialData }: Ad
         });
       } else {
         reset({
-          title: '',
+          title_ar: '',
+          title_en: '',
           subject: '',
           studentId: '',
           teacherId: '',
@@ -78,7 +80,8 @@ export default function AddExamModal({ isOpen, onClose, onAdd, initialData }: Ad
       ar: initialData ? 'تعديل امتحان' : 'إضافة امتحان جديد',
       en: initialData ? 'Edit Exam' : 'Add New Exam',
     },
-    examTitle: { ar: 'العنوان', en: 'Title' },
+    examTitleAr: { ar: 'العنوان (عربي) *', en: 'Title (Arabic) *' },
+    examTitleEn: { ar: 'العنوان (إنجليزي)', en: 'Title (English)' },
     subject: { ar: 'المادة', en: 'Subject' },
     teacher: { ar: 'المعلم', en: 'Teacher' },
     student: { ar: 'اختر الطالب', en: 'Select Student' },
@@ -97,7 +100,11 @@ export default function AddExamModal({ isOpen, onClose, onAdd, initialData }: Ad
   };
 
   const handleOnSubmit = async (data: ExamFormData) => {
-    const isSuccess = await onAdd(data);
+    const preparedData = {
+      ...data,
+      title: data.title_ar,
+    };
+    const isSuccess = await onAdd(preparedData);
     if (isSuccess) {
       onClose();
     }
@@ -116,10 +123,16 @@ export default function AddExamModal({ isOpen, onClose, onAdd, initialData }: Ad
         </div>
 
         <form onSubmit={handleSubmit(handleOnSubmit)} className="p-6 space-y-4" dir="rtl">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2 text-start">{text.examTitle[language]}</label>
-            <input type="text" {...register('title')} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-start" dir="rtl" />
-            {errors.title && <p className="text-red-500 text-xs mt-1 text-start">{errors.title.message}</p>}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2 text-start">{text.examTitleAr[language]}</label>
+              <input type="text" {...register('title_ar')} placeholder="مثال: امتحان جبر" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-start" dir="rtl" />
+              {errors.title_ar && <p className="text-red-500 text-xs mt-1 text-start">{errors.title_ar.message}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2 text-start">{text.examTitleEn[language]}</label>
+              <input type="text" {...register('title_en')} placeholder="e.g. Algebra Exam" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-start" dir="ltr" />
+            </div>
           </div>
 
           <div>

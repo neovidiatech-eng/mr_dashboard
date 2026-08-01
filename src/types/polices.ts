@@ -1,8 +1,14 @@
 export interface Policy {
     id: string;
     title: string;
+    title_ar?: string;
+    title_en?: string;
     description?: string;
+    description_ar?: string;
+    description_en?: string;
     content?: string;
+    content_ar?: string;
+    content_en?: string;
     icon?: string;
     color?: string;
     lastUpdated?: string;
@@ -26,16 +32,24 @@ export interface SinglePolicyResponse {
 }
 
 export interface CreatePolicyInput {
-    title: string;
-    description: string;
+    title?: string;
+    title_ar: string;
+    title_en?: string;
+    description?: string;
+    description_ar?: string;
+    description_en?: string;
     icon?: string;
     color?: string;
     active?: boolean;
 }
 
 export interface CreateNoticeInput {
-    title: string;
-    content: string;
+    title?: string;
+    title_ar: string;
+    title_en?: string;
+    content?: string;
+    content_ar?: string;
+    content_en?: string;
     active?: boolean;
 }
 

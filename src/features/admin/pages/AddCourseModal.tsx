@@ -30,8 +30,11 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
     const { register, handleSubmit, reset, control, formState: { errors } } = useForm<CourseFormData>({
         resolver: zodResolver(getCourseSchema(t)),
         defaultValues: {
-            title: '',
-            description: '',
+            title_ar: '',
+            title_en: '',
+            description_ar: '',
+            description_en: '',
+            keywords: '',
             rankId: '',
             categoryId: '',
             price: '',
@@ -42,8 +45,11 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
         if (visible) {
             if (course) {
                 reset({
-                    title: course.title,
-                    description: course.description,
+                    title_ar: course.title_ar || course.title || '',
+                    title_en: course.title_en || '',
+                    description_ar: course.description_ar || course.description || '',
+                    description_en: course.description_en || '',
+                    keywords: Array.isArray(course.keywords) ? course.keywords.join(', ') : (course.keywords || ''),
                     rankId: course.rankId,
                     categoryId: course.categoryId || '',
                     price: course.price !== undefined && course.price !== null ? String(course.price) : '',
@@ -60,8 +66,11 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                 }
             } else {
                 reset({
-                    title: '',
-                    description: '',
+                    title_ar: '',
+                    title_en: '',
+                    description_ar: '',
+                    description_en: '',
+                    keywords: '',
                     rankId: '',
                     categoryId: '',
                     price: '',
@@ -73,8 +82,21 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
 
     const onSubmit = (values: CourseFormData) => {
         const formData = new FormData();
-        formData.append('title', values.title);
-        formData.append('description', values.description);
+        formData.append('title_ar', values.title_ar);
+        if (values.title_en) formData.append('title_en', values.title_en);
+        formData.append('title', values.title_ar); // fallback
+
+        if (values.description_ar) formData.append('description_ar', values.description_ar);
+        if (values.description_en) formData.append('description_en', values.description_en);
+        formData.append('description', values.description_ar || ''); // fallback
+
+        if (values.keywords) {
+            const kwArray = typeof values.keywords === 'string'
+                ? values.keywords.split(',').map(k => k.trim()).filter(Boolean)
+                : values.keywords;
+            kwArray.forEach((kw: string) => formData.append('keywords[]', kw));
+        }
+
         formData.append('rankId', values.rankId);
 
         if (values.categoryId) {
@@ -130,33 +152,72 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
             onCancel={onClose}
             footer={null}
             centered
-            width={520}
+            width={580}
             className="premium-modal"
         >
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4 text-start">
-                <div>
-                    <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
-                        <BookOpen size={14} className="text-indigo-500" /> Course Title
-                    </label>
-                    <input 
-                        {...register('title')}
-                        placeholder="e.g. Backend Development Basics" 
-                        className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" 
-                    />
-                    {errors.title && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.title.message}</p>}
+            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4 text-start max-h-[75vh] overflow-y-auto pr-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
+                            <BookOpen size={14} className="text-indigo-500" /> Title (Arabic) *
+                        </label>
+                        <input 
+                            {...register('title_ar')}
+                            placeholder="مثال: مقدمة في الجبر" 
+                            dir="rtl"
+                            className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" 
+                        />
+                        {errors.title_ar && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.title_ar.message}</p>}
+                    </div>
+                    <div>
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
+                            <BookOpen size={14} className="text-indigo-500" /> Title (English)
+                        </label>
+                        <input 
+                            {...register('title_en')}
+                            placeholder="e.g. Introduction to Algebra" 
+                            dir="ltr"
+                            className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all" 
+                        />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
+                            <AlignLeft size={14} className="text-indigo-500" /> Description (Arabic)
+                        </label>
+                        <textarea 
+                            {...register('description_ar')}
+                            placeholder="أدخل وصف الكورس بالعربية..." 
+                            rows={3} 
+                            dir="rtl"
+                            className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none" 
+                        />
+                    </div>
+                    <div>
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
+                            <AlignLeft size={14} className="text-indigo-500" /> Description (English)
+                        </label>
+                        <textarea 
+                            {...register('description_en')}
+                            placeholder="Enter course description in English..." 
+                            rows={3} 
+                            dir="ltr"
+                            className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none" 
+                        />
+                    </div>
                 </div>
 
                 <div>
                     <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
-                        <AlignLeft size={14} className="text-indigo-500" /> Description
+                        <Tag size={14} className="text-indigo-500" /> Keywords (comma-separated)
                     </label>
-                    <textarea 
-                        {...register('description')}
-                        placeholder="Enter a comprehensive description of the course content..." 
-                        rows={4} 
-                        className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none" 
+                    <input
+                        {...register('keywords')}
+                        placeholder="e.g. algebra, math, secondary, رياضيات"
+                        className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
                     />
-                    {errors.description && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.description.message}</p>}
                 </div>
 
                 <div>

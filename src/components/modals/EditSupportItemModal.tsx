@@ -25,9 +25,11 @@ export default function EditSupportItemModal({ isOpen, onClose, onSubmit, catego
     useEffect(() => {
         if (support) {
             reset({
-                title: support.title,
+                title_ar: support.title_ar || support.title || '',
+                title_en: support.title_en || '',
                 url: support.url,
-                description: support.description,
+                description_ar: support.description_ar || support.description || '',
+                description_en: support.description_en || '',
                 categoryId: support.categoryId,
                 active: support.active
             });
@@ -40,7 +42,12 @@ export default function EditSupportItemModal({ isOpen, onClose, onSubmit, catego
     }));
 
     const handleOnSubmit = async (data: SupportItemFormData) => {
-        const isSuccess = await onSubmit(data);
+        const payload = {
+            ...data,
+            title: data.title_ar,
+            description: data.description_ar || '',
+        };
+        const isSuccess = await onSubmit(payload);
         if (isSuccess) {
             onClose();
         }
@@ -67,18 +74,35 @@ export default function EditSupportItemModal({ isOpen, onClose, onSubmit, catego
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar">
                     <form id="edit-support-item-form" onSubmit={handleSubmit(handleOnSubmit)} className="p-8 space-y-6">
-                        <div className="text-start">
-                            <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
-                                <FileText className="w-3.5 h-3.5" />
-                                Resource Title
-                            </label>
-                            <input
-                                type="text"
-                                placeholder="e.g. How to join a session"
-                                {...register('title')}
-                                className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
-                            />
-                            {errors.title && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.title.message}</p>}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-start">
+                            <div>
+                                <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
+                                    <FileText className="w-3.5 h-3.5" />
+                                    Resource Title (Arabic) *
+                                </label>
+                                <input
+                                    type="text"
+                                    dir="rtl"
+                                    placeholder="كيفية الانضمام للجلسة"
+                                    {...register('title_ar')}
+                                    className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
+                                />
+                                {errors.title_ar && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.title_ar.message}</p>}
+                            </div>
+
+                            <div>
+                                <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
+                                    <FileText className="w-3.5 h-3.5" />
+                                    Resource Title (English)
+                                </label>
+                                <input
+                                    type="text"
+                                    dir="ltr"
+                                    placeholder="How to join a session"
+                                    {...register('title_en')}
+                                    className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
+                                />
+                            </div>
                         </div>
 
                         <div className="text-start">
@@ -114,18 +138,34 @@ export default function EditSupportItemModal({ isOpen, onClose, onSubmit, catego
                             {errors.url && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.url.message}</p>}
                         </div>
 
-                        <div className="text-start">
-                            <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
-                                <FileText className="w-3.5 h-3.5" />
-                                Description
-                            </label>
-                            <textarea
-                                rows={3}
-                                placeholder="Provide a brief summary of the resource..."
-                                {...register('description')}
-                                className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none resize-none"
-                            />
-                            {errors.description && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.description.message}</p>}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-start">
+                            <div>
+                                <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
+                                    <FileText className="w-3.5 h-3.5" />
+                                    Description (Arabic)
+                                </label>
+                                <textarea
+                                    rows={3}
+                                    dir="rtl"
+                                    placeholder="وصف مختصر للمصدر بالعربية..."
+                                    {...register('description_ar')}
+                                    className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none resize-none"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
+                                    <FileText className="w-3.5 h-3.5" />
+                                    Description (English)
+                                </label>
+                                <textarea
+                                    rows={3}
+                                    dir="ltr"
+                                    placeholder="Brief summary of resource in English..."
+                                    {...register('description_en')}
+                                    className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none resize-none"
+                                />
+                            </div>
                         </div>
 
                         <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl">

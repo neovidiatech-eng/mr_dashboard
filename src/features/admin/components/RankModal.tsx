@@ -24,10 +24,12 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
   const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<RankSchema>({
     resolver: zodResolver(rankSchema),
     defaultValues: {
-      name: '',
+      name_ar: '',
+      name_en: '',
       color: '#800020',
       ageRange: { minAge: 6, maxAge: 12 },
-      stageName: '',
+      stageName_ar: '',
+      stageName_en: '',
     }
   });
 
@@ -37,20 +39,24 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
     if (isOpen) {
       if (rank) {
         reset({
-          name: rank.name,
+          name_ar: rank.name_ar || rank.name || '',
+          name_en: rank.name_en || '',
           color: rank.color,
           ageRange: {
             minAge: rank.ageRange.minAge,
             maxAge: rank.ageRange.maxAge
           },
-          stageName: rank.stageName || '',
+          stageName_ar: rank.stageName_ar || rank.stageName || '',
+          stageName_en: rank.stageName_en || '',
         });
       } else {
         reset({
-          name: '',
+          name_ar: '',
+          name_en: '',
           color: '#800020',
           ageRange: { minAge: 6, maxAge: 12 },
-          stageName: '',
+          stageName_ar: '',
+          stageName_en: '',
         });
       }
     }
@@ -59,11 +65,16 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
   if (!isOpen) return null;
 
   const onFormSubmit = async (data: RankSchema) => {
+    const payload = {
+      ...data,
+      name: data.name_ar,
+      stageName: data.stageName_ar,
+    };
     try {
       if (isUpdate && rank) {
-        await updateRank.mutateAsync(data);
+        await updateRank.mutateAsync(payload as any);
       } else {
-        await createRank.mutateAsync(data);
+        await createRank.mutateAsync(payload as any);
       }
       onClose();
     } catch (error) {
@@ -95,20 +106,37 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
             </button>
           </div>
 
-          <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
-            {/* Name Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                <Trophy className="w-4 h-4" />
-                {language === 'ar' ? 'اسم الرتبة' : 'Rank Name'}
-              </label>
-              <input
-                type="text"
-                className={`w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start ${errors.name ? 'ring-2 ring-red-500' : ''}`}
-                placeholder={language === 'ar' ? 'مثل: البرونزي، الفضي...' : 'e.g. Bronze, Silver...'}
-                {...register('name')}
-              />
-              {errors.name && <p className="text-xs text-red-500 font-bold px-2">{errors.name.message}</p>}
+          <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6 max-h-[75vh] overflow-y-auto pr-1">
+            {/* Name Input (Dual-language) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                  <Trophy className="w-4 h-4" />
+                  {language === 'ar' ? 'اسم الرتبة (عربي) *' : 'Rank Name (Arabic) *'}
+                </label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  className={`w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start ${errors.name_ar ? 'ring-2 ring-red-500' : ''}`}
+                  placeholder="مثل: الذهبي"
+                  {...register('name_ar')}
+                />
+                {errors.name_ar && <p className="text-xs text-red-500 font-bold px-2">{errors.name_ar.message}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                  <Trophy className="w-4 h-4" />
+                  {language === 'ar' ? 'اسم الرتبة (إنجليزي)' : 'Rank Name (English)'}
+                </label>
+                <input
+                  type="text"
+                  dir="ltr"
+                  className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start"
+                  placeholder="e.g. Gold"
+                  {...register('name_en')}
+                />
+              </div>
             </div>
 
             {/* Color Input */}
@@ -134,21 +162,35 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
               {errors.color && <p className="text-xs text-red-500 font-bold px-2">{errors.color.message}</p>}
             </div>
 
-            {/* Stage Name Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                {language === 'ar' ? 'المرحلة الدراسية' : 'Study Stage'}
-              </label>
-              <input
-                type="text"
-                className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start"
-                placeholder={language === 'ar' ? 'مثل: الصف الأول الابتدائي (اختياري)' : 'e.g. Grade 1 (optional)'}
-                {...register('stageName')}
-              />
-              <p className="text-xs text-gray-400 px-2">
-                {language === 'ar' ? 'اسم توضيحي للمرحلة، بجانب السن اللي تحته' : 'A friendly label for this stage, alongside the age range below'}
-              </p>
+            {/* Stage Name Input (Dual language) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  {language === 'ar' ? 'المرحلة (عربي)' : 'Stage (Arabic)'}
+                </label>
+                <input
+                  type="text"
+                  dir="rtl"
+                  className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start"
+                  placeholder="الصف الأول الثانوي"
+                  {...register('stageName_ar')}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  {language === 'ar' ? 'المرحلة (إنجليزي)' : 'Stage (English)'}
+                </label>
+                <input
+                  type="text"
+                  dir="ltr"
+                  className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start"
+                  placeholder="Grade 10"
+                  {...register('stageName_en')}
+                />
+              </div>
             </div>
 
             {/* Age Range Inputs */}
