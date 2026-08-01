@@ -4,7 +4,6 @@ import {
   Users,
   BookOpen,
   DollarSign,
-  PlayCircle,
   Settings,
   CreditCard,
   GraduationCap,
@@ -65,6 +64,7 @@ const SettingsPage = lazy(() => import("../../features/admin/pages/Settings"));
 const RolesPage = lazy(() => import("../../features/admin/pages/Roles"));
 const RequestsPage = lazy(() => import("../../features/admin/pages/Requests"));
 const CurriculumPage = lazy(() => import("../../features/admin/pages/Curriculum"));
+const CourseDetailsPage = lazy(() => import("../../features/admin/pages/CourseDetails"));
 const LibraryPage = lazy(() => import("../../features/admin/pages/Library"));
 const RanksPage = lazy(() => import("../../features/admin/pages/Ranks"));
 const PoliciesPage = lazy(() => import("../../features/admin/pages/Policies"));
@@ -175,8 +175,14 @@ export const adminDashboardRoutes: RouteConfig[] = [
         id: "curriculum",
         label: "Curriculum Shelf",
         icon: Layers,
-        path: "curriculum/:courseId?",
+        path: "curriculum",
         element: <CurriculumPage />,
+      },
+      {
+        id: "curriculum-details",
+        label: "Curriculum Details",
+        path: "curriculum/:courseId",
+        element: <CourseDetailsPage />,
       },
       {
         id: "categories",

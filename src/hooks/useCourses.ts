@@ -14,6 +14,7 @@ export const useCourseById = (id: string) => {
     return useQuery({
         queryKey: ["courses", id],
         queryFn: () => getCourseById(id),
+        enabled: !!id,
     });
 }
 

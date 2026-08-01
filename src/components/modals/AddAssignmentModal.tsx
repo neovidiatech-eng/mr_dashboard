@@ -4,7 +4,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import CustomSelect from '../ui/CustomSelect';
 import DatePickerField from '../ui/DatePickerField';
 import { AssignmentFormData, getAssignmentSchema } from '../../lib/schemas/AssignmentSchema';
-import { Resolver, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useGetStudents, useCreateAssignment, useUpdateAssignment } from '../../hooks/useAssignment';
 import { HomeworkItem } from '../../types/assignment';
@@ -36,8 +36,14 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
     watch,
     formState: { errors },
   } = useForm<AssignmentFormData>({
-    resolver: zodResolver(getAssignmentSchema(t)) as Resolver<AssignmentFormData>,
+    resolver: zodResolver(getAssignmentSchema(t)),
     defaultValues: {
+      studentId: '',
+      title_ar: '',
+      title_en: '',
+      description_ar: '',
+      description_en: '',
+      dueDate: '',
       status: 'pending',
     },
   });
@@ -46,8 +52,10 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
     title: { ar: initialData ? 'تعديل الواجب' : 'إضافة واجب جديد', en: initialData ? 'Edit Assignment' : 'Add New Assignment' },
     subtitle: { ar: initialData ? 'تعديل بيانات الواجب' : 'أضف واجب جديد للطالب', en: initialData ? 'Update assignment details' : 'Create a new assignment for a student' },
     student: { ar: 'اختر الطالب', en: 'Select Student' },
-    assignmentTitle: { ar: 'العنوان', en: 'Title' },
-    description: { ar: 'الوصف', en: 'Description' },
+    titleAr: { ar: 'عنوان الواجب (بالعربية)', en: 'Assignment Title (Arabic)' },
+    titleEn: { ar: 'عنوان الواجب (بالإنجليزية)', en: 'Assignment Title (English)' },
+    descAr: { ar: 'وصف الواجب (بالعربية)', en: 'Assignment Description (Arabic)' },
+    descEn: { ar: 'وصف الواجب (بالإنجليزية)', en: 'Assignment Description (English)' },
     dueDate: { ar: 'تاريخ التسليم', en: 'Due Date' },
     status: { ar: 'الحالة', en: 'Status' },
     grade: { ar: 'الدرجة', en: 'Grade' },
@@ -64,11 +72,11 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
     if (isOpen) {
       if (initialData) {
         reset({
-          studentId: initialData.student?.id || '',
+          studentId: initialData.studentId || initialData.student?.id || '',
           title_ar: initialData.title_ar || initialData.title || '',
-          title_en: initialData.title_en || '',
+          title_en: initialData.title_en || initialData.title || '',
           description_ar: initialData.description_ar || initialData.description || '',
-          description_en: initialData.description_en || '',
+          description_en: initialData.description_en || initialData.description || '',
           dueDate: initialData.dueDate ? initialData.dueDate.split('T')[0] : '',
           status: (initialData.status as any) || 'pending',
           grade: initialData.grade ?? '',
@@ -91,18 +99,23 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
   }, [initialData, reset, isOpen]);
 
   const handleOnSubmit = (data: AssignmentFormData) => {
-    const preparedData = {
-      ...data,
-      title: data.title_ar,
-      description: data.description_ar || '',
-    };
+    const formattedDueDate = data.dueDate ? (data.dueDate.includes('T') ? data.dueDate : new Date(data.dueDate).toISOString()) : '';
+
     if (initialData) {
-      const payload: any = { ...preparedData };
-      if (payload.grade === '' || payload.grade === undefined) {
-        delete payload.grade;
+      const payload: any = {
+        studentId: data.studentId,
+        title_ar: data.title_ar,
+        title_en: data.title_en,
+        description_ar: data.description_ar,
+        description_en: data.description_en,
+        dueDate: formattedDueDate,
+        status: data.status,
+      };
+      if (data.grade !== '' && data.grade !== undefined) {
+        payload.grade = Number(data.grade);
       }
-      if (!payload.feedback) {
-        delete payload.feedback;
+      if (data.feedback) {
+        payload.feedback = data.feedback;
       }
       updateMutation.mutate({ id: initialData.id, ...payload }, {
         onSuccess: () => {
@@ -110,8 +123,15 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
         }
       });
     } else {
-      const { grade, feedback, ...createData } = preparedData;
-      createMutation.mutate(createData, {
+      const payload = {
+        studentId: data.studentId,
+        title_ar: data.title_ar,
+        title_en: data.title_en,
+        description_ar: data.description_ar,
+        description_en: data.description_en,
+        dueDate: formattedDueDate,
+      };
+      createMutation.mutate(payload, {
         onSuccess: () => {
           onClose();
         }
@@ -165,63 +185,64 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
               {errors.studentId && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.studentId.message}</p>}
             </div>
 
-            {/* Title (Dual Language) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="text-start">
-                <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
-                  Title (Arabic) *
-                </label>
-                <input
-                  type="text"
-                  dir="rtl"
-                  {...register('title_ar')}
-                  placeholder="عنوان الواجب بالعربية"
-                  className={`w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ${errors.title_ar ? 'ring-red-500/20' : 'ring-transparent'} focus:ring-indigo-500/10 transition-all placeholder:text-gray-300`}
-                />
-                {errors.title_ar && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.title_ar.message}</p>}
-              </div>
-
-              <div className="text-start">
-                <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
-                  Title (English)
-                </label>
-                <input
-                  type="text"
-                  dir="ltr"
-                  {...register('title_en')}
-                  placeholder="Assignment title in English"
-                  className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all placeholder:text-gray-300"
-                />
-              </div>
+            {/* Arabic Title */}
+            <div className="text-start">
+              <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                {text.titleAr[language]} *
+              </label>
+              <input
+                type="text"
+                dir="rtl"
+                {...register('title_ar')}
+                placeholder="أدخل عنوان الواجب بالعربية"
+                className={`w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ${errors.title_ar ? 'ring-red-500/20' : 'ring-transparent'} focus:ring-indigo-500/10 transition-all placeholder:text-gray-300`}
+              />
+              {errors.title_ar && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.title_ar.message}</p>}
             </div>
 
-            {/* Description (Dual Language) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="text-start">
-                <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
-                  Description (Arabic)
-                </label>
-                <textarea
-                  rows={3}
-                  dir="rtl"
-                  {...register('description_ar')}
-                  placeholder="وصف الواجب بالعربية"
-                  className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all placeholder:text-gray-300 resize-none"
-                />
-              </div>
+            {/* English Title */}
+            <div className="text-start">
+              <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                {text.titleEn[language]} *
+              </label>
+              <input
+                type="text"
+                dir="ltr"
+                {...register('title_en')}
+                placeholder="Enter assignment title in English"
+                className={`w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ${errors.title_en ? 'ring-red-500/20' : 'ring-transparent'} focus:ring-indigo-500/10 transition-all placeholder:text-gray-300`}
+              />
+              {errors.title_en && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.title_en.message}</p>}
+            </div>
 
-              <div className="text-start">
-                <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
-                  Description (English)
-                </label>
-                <textarea
-                  rows={3}
-                  dir="ltr"
-                  {...register('description_en')}
-                  placeholder="Assignment description in English"
-                  className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all placeholder:text-gray-300 resize-none"
-                />
-              </div>
+            {/* Arabic Description */}
+            <div className="text-start">
+              <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                {text.descAr[language]} *
+              </label>
+              <textarea
+                rows={3}
+                dir="rtl"
+                {...register('description_ar')}
+                placeholder="أدخل وصف الواجب بالعربية"
+                className={`w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ${errors.description_ar ? 'ring-red-500/20' : 'ring-transparent'} focus:ring-indigo-500/10 transition-all placeholder:text-gray-300 resize-none`}
+              />
+              {errors.description_ar && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.description_ar.message}</p>}
+            </div>
+
+            {/* English Description */}
+            <div className="text-start">
+              <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                {text.descEn[language]} *
+              </label>
+              <textarea
+                rows={3}
+                dir="ltr"
+                {...register('description_en')}
+                placeholder="Enter assignment description in English"
+                className={`w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ${errors.description_en ? 'ring-red-500/20' : 'ring-transparent'} focus:ring-indigo-500/10 transition-all placeholder:text-gray-300 resize-none`}
+              />
+              {errors.description_en && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.description_en.message}</p>}
             </div>
 
             {/* Due Date + Status */}
@@ -238,20 +259,22 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
                 {errors.dueDate && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.dueDate.message}</p>}
               </div>
 
-              <div className="text-start">
-                <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
-                  {text.status[language]}
-                </label>
-                <CustomSelect
-                  value={watch('status')}
-                  onChange={(val) => setValue('status', val as 'pending' | 'submitted' | 'graded', { shouldValidate: true })}
-                  options={statusOptions}
-                  className="rounded-2xl border-none bg-gray-50"
-                />
-              </div>
+              {initialData && (
+                <div className="text-start">
+                  <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                    {text.status[language]}
+                  </label>
+                  <CustomSelect
+                    value={watch('status')}
+                    onChange={(val) => setValue('status', val as 'pending' | 'submitted' | 'graded', { shouldValidate: true })}
+                    options={statusOptions}
+                    className="rounded-2xl border-none bg-gray-50"
+                  />
+                </div>
+              )}
             </div>
 
-            {/* Grade + Feedback (only when grading an existing, already-submitted assignment) */}
+            {/* Grade + Feedback (only when grading an existing assignment) */}
             {initialData && initialData.status !== 'pending' && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="text-start">

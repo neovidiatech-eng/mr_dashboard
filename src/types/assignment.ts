@@ -45,23 +45,23 @@ export interface SubjectInAssignment {
 
 export interface Assignment {
     id: string;
-    title: string;
     title_ar?: string;
     title_en?: string;
-    description: string;
+    title?: string;
     description_ar?: string;
     description_en?: string;
+    description?: string;
     status: 'pending' | 'completed' | 'graded' | string;
     dueDate: string;
-    teacherId: string;
-    subjectId: string;
+    teacherId?: string;
+    subjectId?: string;
     grade?: number | null;
     feedback?: string | null;
     createdAt: string;
     updatedAt: string;
     student: StudentInAssignment;
     teacher: TeacherInAssignment;
-    subject: SubjectInAssignment;
+    subject?: SubjectInAssignment;
 }
 
 export interface AssignmentsResponse {
@@ -70,9 +70,8 @@ export interface AssignmentsResponse {
     data: Assignment[];
 }
 
-
-
 export type HomeworkStatus = 'pending' | 'completed' | 'submitted';
+
 export interface HomeworkTeacher {
   id: string;
   user_id: string;
@@ -99,12 +98,12 @@ export interface Attachment {
 
 export interface HomeworkItem {
   id: string;
-  title: string;
   title_ar?: string;
   title_en?: string;
-  description: string;
+  title?: string;
   description_ar?: string;
   description_en?: string;
+  description?: string;
   status: HomeworkStatus;
   dueDate: string;
   studentId: string;
@@ -156,4 +155,13 @@ export interface HomeworkResponse {
       hasNextPage: boolean;
     };
   };
+}
+
+export interface CreateAssignmentPayload {
+  title_ar: string;
+  title_en: string;
+  description_ar: string;
+  description_en: string;
+  dueDate: string;
+  studentId: string;
 }

@@ -33,12 +33,12 @@ export interface Course {
   description: string;
   description_ar?: string;
   description_en?: string;
-  keywords?: string[];
   rankId: string;
   categoryId?: string | null;
   category?: CourseCategory | null;
   price?: number | null;
-  image:string;
+  keywords?: string[] | string | null;
+  image: string;
   createdAt: string;
   updatedAt: string;
   rank: Rank;
