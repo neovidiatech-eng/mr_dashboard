@@ -1,7 +1,7 @@
 import { Modal, Button, InputNumber } from 'antd';
 import { useCreateLecture, useUpdateLecture } from '../../../hooks/useLectures';
 import { useQueryClient } from '@tanstack/react-query';
-import { Video, AlignLeft, Type, Hash, Presentation } from 'lucide-react';
+import { Video, AlignLeft, Type, Hash, Presentation, Globe } from 'lucide-react';
 import { useEffect } from 'react';
 import { Lecture } from '../../../types/lectures';
 import { useForm, Controller } from 'react-hook-form';
@@ -25,10 +25,12 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
     const isEditMode = !!lecture;
 
     const { register, handleSubmit, reset, control, formState: { errors } } = useForm<LectureFormData>({
-        resolver: zodResolver(getLectureSchema(t)),
+        resolver: zodResolver(getLectureSchema(t)) as any,
         defaultValues: {
-            title: '',
-            content: '',
+            title_ar: '',
+            title_en: '',
+            content_ar: '',
+            content_en: '',
             videoUrl: '',
             pdfUrl: '',
             slidesUrl: '',
@@ -41,19 +43,25 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
         if (visible) {
             if (lecture) {
                 reset({
-                    title: lecture.title,
-                    content: lecture.content,
+                    title_ar: lecture.title_ar || lecture.title || '',
+                    title_en: lecture.title_en || lecture.title || '',
+                    content_ar: lecture.content_ar || lecture.content || '',
+                    content_en: lecture.content_en || lecture.content || '',
                     videoUrl: lecture.videoUrl || '',
                     pdfUrl: lecture.pdfUrl || '',
-                    order: lecture.order,
+                    slidesUrl: lecture.slidesUrl || '',
+                    order: lecture.order || 1,
                     courseId: courseId,
                 });
             } else {
                 reset({
-                    title: '',
-                    content: '',
+                    title_ar: '',
+                    title_en: '',
+                    content_ar: '',
+                    content_en: '',
                     videoUrl: '',
                     pdfUrl: '',
+                    slidesUrl: '',
                     order: 1,
                     courseId: courseId,
                 });
@@ -62,7 +70,18 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
     }, [visible, lecture, courseId, reset]);
 
     const onSubmit = (values: LectureFormData) => {
-        const payload = { ...values, courseId };
+        const payload: any = {
+            courseId,
+            title_ar: values.title_ar,
+            title_en: values.title_en,
+            content_ar: values.content_ar || '',
+            content_en: values.content_en || '',
+            order: values.order,
+        };
+
+        if (values.videoUrl) payload.videoUrl = values.videoUrl;
+        if (values.pdfUrl) payload.pdfUrl = values.pdfUrl;
+        if (values.slidesUrl) payload.slidesUrl = values.slidesUrl;
 
         if (isEditMode && lecture) {
             updateLecture({ id: lecture.id, data: payload }, {
@@ -87,14 +106,14 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
     return (
         <Modal
             title={
-                <div className="flex items-center gap-2 pb-2 border-b border-gray-50">
-                    <div className="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center text-primary">
+                <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
                         <Video size={20} />
                     </div>
                     <div>
                         <h3 className="text-lg font-bold text-gray-900">{isEditMode ? 'Edit Lecture' : 'Add New Lecture'}</h3>
                         <p className="text-xs font-medium text-gray-400">
-                            {isEditMode ? 'Update existing lecture content' : 'Add a new lecture to this course curriculum'}
+                            {isEditMode ? 'Update existing lecture content and details' : 'Add a new lecture with bilingual titles and resources'}
                         </p>
                     </div>
                 </div>
@@ -103,74 +122,85 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
             onCancel={onClose}
             footer={null}
             centered
-            width={520}
+            width={640}
             className="premium-modal"
         >
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-5 text-start">
-                <div>
-                    <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
-                        <Type size={14} className="text-primary" /> Lecture Title
-                    </label>
-                    <input
-                        {...register('title')}
-                        placeholder="e.g. Introduction to React Hooks"
-                        className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                    />
-                    {errors.title && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.title.message}</p>}
-                </div>
-
-                <div>
-                    <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
-                        <AlignLeft size={14} className="text-indigo-500" /> Content / Description
-                    </label>
-                    <textarea
-                        {...register('content')}
-                        placeholder="Enter lecture details or transcript..."
-                        rows={4}
-                        className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none"
-                    />
-                    {errors.content && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.content.message}</p>}
-                </div>
-                                <div className="grid grid-cols-2 gap-4">
-
-                <div>
-                    <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
-                        <Type size={14} className="text-indigo-500" /> PDF URL
-                    </label>
-                    <input
-                        {...register('pdfUrl')}
-                        placeholder="e.g. https://example.com/pdf"
-                        className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
-                    />
-                    {errors.pdfUrl && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.pdfUrl.message}</p>}
-                </div>
-                <div>
-                    <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
-                        <Presentation size={14} className="text-indigo-500" /> Slide URL
-                    </label>
-                    <input
-                        {...register('slidesUrl')}
-                        placeholder="e.g. https://example.com/pdf"
-                        className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
-                    />
-                    {errors.slidesUrl && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.slidesUrl.message}</p>}
-                </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-4 text-start">
+                {/* Titles Section */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
+                            <Globe size={14} className="text-indigo-500" /> Title (Arabic) / العنوان (بالعربية)
+                        </label>
+                        <input
+                            {...register('title_ar')}
+                            dir="rtl"
+                            placeholder="مثال: الدرس الأول"
+                            className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
+                        />
+                        {errors.title_ar && <p className="text-red-500 text-xs mt-1 font-bold">{errors.title_ar.message}</p>}
+                    </div>
+
+                    <div>
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
+                            <Type size={14} className="text-indigo-500" /> Title (English)
+                        </label>
+                        <input
+                            {...register('title_en')}
+                            dir="ltr"
+                            placeholder="e.g. Lesson One"
+                            className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
+                        />
+                        {errors.title_en && <p className="text-red-500 text-xs mt-1 font-bold">{errors.title_en.message}</p>}
+                    </div>
+                </div>
+
+                {/* Content Section */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
+                            <AlignLeft size={14} className="text-indigo-500" /> Content (Arabic) / المحتوى (بالعربية)
+                        </label>
+                        <textarea
+                            {...register('content_ar')}
+                            dir="rtl"
+                            placeholder="محتوى الدرس بالعربي..."
+                            rows={3}
+                            className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none text-sm"
+                        />
+                        {errors.content_ar && <p className="text-red-500 text-xs mt-1 font-bold">{errors.content_ar.message}</p>}
+                    </div>
+
+                    <div>
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
+                            <AlignLeft size={14} className="text-indigo-500" /> Content (English)
+                        </label>
+                        <textarea
+                            {...register('content_en')}
+                            dir="ltr"
+                            placeholder="Lesson content in English..."
+                            rows={3}
+                            className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none text-sm"
+                        />
+                        {errors.content_en && <p className="text-red-500 text-xs mt-1 font-bold">{errors.content_en.message}</p>}
+                    </div>
+                </div>
+
+                {/* Video URL & Order */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="md:col-span-2">
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
                             <Video size={14} className="text-indigo-500" /> Video URL
                         </label>
                         <input
                             {...register('videoUrl')}
-                            placeholder="YouTube, Vimeo, etc."
-                            className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                            placeholder="https://youtube.com/watch?v=xxxx"
+                            className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
                         />
-                        {errors.videoUrl && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.videoUrl.message}</p>}
+                        {errors.videoUrl && <p className="text-red-500 text-xs mt-1 font-bold">{errors.videoUrl.message}</p>}
                     </div>
                     <div>
-                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-2">
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
                             <Hash size={14} className="text-indigo-500" /> Order
                         </label>
                         <Controller
@@ -180,18 +210,45 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
                                 <InputNumber
                                     {...field}
                                     min={1}
-                                    className="w-full h-12 rounded-xl border-gray-200 flex items-center"
+                                    className="w-full h-11 rounded-xl border-gray-200 flex items-center"
                                 />
                             )}
                         />
-                        {errors.order && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.order.message}</p>}
+                        {errors.order && <p className="text-red-500 text-xs mt-1 font-bold">{errors.order.message}</p>}
                     </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-3 mt-10 pt-6 border-t border-gray-50">
+                {/* PDF & Slides URL */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
+                            <Type size={14} className="text-indigo-500" /> PDF URL
+                        </label>
+                        <input
+                            {...register('pdfUrl')}
+                            placeholder="https://example.com/lesson1.pdf"
+                            className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
+                        />
+                        {errors.pdfUrl && <p className="text-red-500 text-xs mt-1 font-bold">{errors.pdfUrl.message}</p>}
+                    </div>
+                    <div>
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
+                            <Presentation size={14} className="text-indigo-500" /> Slide URL
+                        </label>
+                        <input
+                            {...register('slidesUrl')}
+                            placeholder="https://example.com/lesson1.pptx"
+                            className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
+                        />
+                        {errors.slidesUrl && <p className="text-red-500 text-xs mt-1 font-bold">{errors.slidesUrl.message}</p>}
+                    </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-gray-100">
                     <Button
                         onClick={onClose}
-                        className="h-12 px-6 rounded-xl font-bold text-gray-600 border-gray-200 hover:bg-gray-50"
+                        className="h-11 px-6 rounded-xl font-bold text-gray-600 border-gray-200 hover:bg-gray-50"
                     >
                         Cancel
                     </Button>
@@ -199,7 +256,7 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
                         type="primary"
                         htmlType="submit"
                         loading={isCreating || isUpdating}
-                        className="h-12 px-10 rounded-xl font-bold bg-primary hover:!bg-primary-dark border-none shadow-lg shadow-primary/20"
+                        className="h-11 px-8 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 border-none shadow-lg shadow-indigo-100"
                     >
                         {isEditMode ? 'Update Lecture' : 'Add Lecture'}
                     </Button>

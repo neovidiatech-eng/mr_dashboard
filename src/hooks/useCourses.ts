@@ -3,10 +3,10 @@ import { createCourse, deleteCourse, getAllCourses, getCourseById, updateCourse 
 import ErrorService from "../utils/ErrorService";
 import { Course } from "../types/courses";
 
-export const useCourses = (page: number = 1, limit: number = 10, rankId?: string) => {
+export const useCourses = (page: number = 1, limit: number = 10, rankId?: string, search?: string) => {
     return useQuery({
-        queryKey: ["courses", page, limit, rankId],
-        queryFn: () => getAllCourses(page, limit, rankId),
+        queryKey: ["courses", page, limit, rankId, search],
+        queryFn: () => getAllCourses(page, limit, rankId, search),
     });
 }
 
@@ -14,6 +14,7 @@ export const useCourseById = (id: string) => {
     return useQuery({
         queryKey: ["courses", id],
         queryFn: () => getCourseById(id),
+        enabled: !!id,
     });
 }
 

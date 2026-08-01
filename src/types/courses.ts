@@ -28,12 +28,17 @@ export interface CourseCategory {
 export interface Course {
   id: string;
   title: string;
+  title_ar?: string;
+  title_en?: string;
   description: string;
+  description_ar?: string;
+  description_en?: string;
   rankId: string;
   categoryId?: string | null;
   category?: CourseCategory | null;
   price?: number | null;
-  image:string;
+  keywords?: string[] | string | null;
+  image: string;
   createdAt: string;
   updatedAt: string;
   rank: Rank;

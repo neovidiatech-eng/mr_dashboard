@@ -23,9 +23,13 @@ export default function Ranks() {
 
     const ranks = data?.data.items || [];
 
-    const filteredRanks = ranks.filter(rank =>
-        rank.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredRanks = ranks.filter(rank => {
+        const nameAr = rank.name_ar || '';
+        const nameEn = rank.name_en || '';
+        const legacyName = rank.name || '';
+        const query = searchTerm.toLowerCase();
+        return nameAr.toLowerCase().includes(query) || nameEn.toLowerCase().includes(query) || legacyName.toLowerCase().includes(query);
+    });
 
     const handleCreate = () => {
         setSelectedRank(null);
@@ -199,21 +203,24 @@ function EnhancedRankCard({ rank }: { rank: RankItem }) {
                 </div>
 
                 <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-indigo-600 transition-colors">
-                    {rank.name}
+                    {rank.name_ar || rank.name_en || rank.name}
                 </h3>
+                {rank.name_en && rank.name_ar && (
+                    <p className="text-xs text-gray-400 font-medium mb-2">{rank.name_en}</p>
+                )}
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-tighter mb-4">
                     Academic Progression
                 </p>
 
                 <div className="space-y-3 pt-4 border-t border-gray-50">
-                    {rank.stageName && (
+                    {(rank.stageName_ar || rank.stageName_en || rank.stageName) && (
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-gray-500 flex items-center gap-2">
                                 <Users className="w-3.5 h-3.5" />
                                 Study Stage
                             </span>
-                            <span className="text-xs font-bold text-gray-900 bg-indigo-50 text-indigo-700 px-2 py-1 rounded-lg">
-                                {rank.stageName}
+                            <span className="text-xs font-bold bg-indigo-50 text-indigo-700 px-2 py-1 rounded-lg">
+                                {rank.stageName_ar || rank.stageName_en || rank.stageName}
                             </span>
                         </div>
                     )}
