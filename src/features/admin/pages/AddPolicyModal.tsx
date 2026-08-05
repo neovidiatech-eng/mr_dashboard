@@ -104,10 +104,10 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
           </div>
           <div>
             <h3 className="text-lg font-bold text-gray-900">
-              {isNotice ? 'Edit Important Notice' : (editingPolicy ? 'Edit Policy' : 'Create New Policy')}
+              {isNotice ? t('editImportantNotice') : (editingPolicy ? t('editPolicy') : t('createNewPolicy'))}
             </h3>
             <p className="text-xs font-medium text-gray-400">
-              {isNotice ? 'This notice is visible to all instructors' : 'Manage academic guidelines and rules'}
+              {isNotice ? t('noticeVisibleToAll') : t('manageAcademicGuidelines')}
             </p>
           </div>
         </div>
@@ -123,11 +123,11 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-              <Type size={14} className="text-primary" /> Title (Arabic) *
+              <Type size={14} className="text-primary" /> {t('titleArabic')} *
             </label>
             <input 
               {...register('title_ar')}
-              placeholder="مثال: سياسة الحضور" 
+              placeholder={t('titleArabicPlaceholder')} 
               dir="rtl"
               className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20" 
             />
@@ -136,11 +136,11 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
 
           <div>
             <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-              <Type size={14} className="text-primary" /> Title (English)
+              <Type size={14} className="text-primary" /> {t('titleEnglish')}
             </label>
             <input 
               {...register('title_en')}
-              placeholder="e.g. Attendance Policy" 
+              placeholder={t('titleEnglishPlaceholder')} 
               dir="ltr"
               className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20" 
             />
@@ -151,11 +151,11 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-                <Info size={14} className="text-primary" /> Icon Name
+                <Info size={14} className="text-primary" /> {t('iconName')}
               </label>
               <input 
                 {...register('icon')}
-                placeholder="shield, clock, book" 
+                placeholder={t('iconNamePlaceholder')} 
                 className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20" 
               />
               {errors.icon && <p className="text-red-500 text-xs mt-1 font-bold uppercase">{errors.icon.message}</p>}
@@ -163,7 +163,7 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
 
             <div>
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-                <Palette size={14} className="text-primary" /> Theme Color
+                <Palette size={14} className="text-primary" /> {t('themeColor')}
               </label>
               <Controller
                 name="color"
@@ -185,11 +185,11 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-                <Edit3 size={14} className="text-primary" /> Notice Content (Arabic)
+                <Edit3 size={14} className="text-primary" /> {t('noticeContentArabic')}
               </label>
               <textarea 
                 {...register('content_ar')}
-                placeholder="تفاصيل التنبيه بالعربية..." 
+                placeholder={t('noticeContentArabicPlaceholder')} 
                 rows={4} 
                 dir="rtl"
                 className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" 
@@ -198,11 +198,11 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
 
             <div>
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-                <Edit3 size={14} className="text-primary" /> Notice Content (English)
+                <Edit3 size={14} className="text-primary" /> {t('noticeContentEnglish')}
               </label>
               <textarea 
                 {...register('content_en')}
-                placeholder="Notice details in English..." 
+                placeholder={t('noticeContentEnglishPlaceholder')} 
                 rows={4} 
                 dir="ltr"
                 className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" 
@@ -213,11 +213,11 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-                <Edit3 size={14} className="text-primary" /> Description (Arabic)
+                <Edit3 size={14} className="text-primary" /> {t('descriptionArabic')}
               </label>
               <textarea 
                 {...register('description_ar')}
-                placeholder="تفاصيل السياسة بالعربية..." 
+                placeholder={t('descriptionArabicPlaceholder')} 
                 rows={4} 
                 dir="rtl"
                 className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" 
@@ -226,11 +226,11 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
 
             <div>
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-                <Edit3 size={14} className="text-primary" /> Description (English)
+                <Edit3 size={14} className="text-primary" /> {t('descriptionEnglish')}
               </label>
               <textarea 
                 {...register('description_en')}
-                placeholder="Policy description in English..." 
+                placeholder={t('descriptionEnglishPlaceholder')} 
                 rows={4} 
                 dir="ltr"
                 className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" 
@@ -241,7 +241,7 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
 
         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl mb-8">
           <Text className="text-sm font-bold text-gray-700 flex items-center gap-2">
-            <Activity size={14} className="text-primary" /> Visible & Active
+            <Activity size={14} className="text-primary" /> {t('visibleAndActive')}
           </Text>
           <Controller
             name="active"
@@ -254,7 +254,7 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
 
         <div className="flex justify-end gap-3 pt-6 border-t border-gray-50">
           <Button onClick={onClose} className="h-11 px-6 rounded-xl font-bold text-gray-600">
-            Cancel
+            {t('cancel')}
           </Button>
           <Button
             type="primary"
@@ -262,7 +262,7 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
             loading={loading}
             className="h-11 px-10 rounded-xl font-bold bg-primary hover:!bg-primary-dark border-none shadow-lg shadow-primary/20"
           >
-            {isNotice ? 'Update Notice' : (editingPolicy ? 'Update Policy' : 'Create Policy')}
+            {isNotice ? t('updateNotice') : (editingPolicy ? t('updatePolicy') : t('createPolicy'))}
           </Button>
         </div>
       </form>

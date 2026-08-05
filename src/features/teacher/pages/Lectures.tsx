@@ -13,8 +13,10 @@ import { Button, Empty } from 'antd';
 import { useCourseById } from '../../../hooks/useCourses';
 import { Lecture } from '../../../types/lectures';
 import ReactPlayer from 'react-player';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 export default function TeacherLectures() {
+  const { language } = useLanguage();
   const { courseId } = useParams();
   const navigate = useNavigate();
   const [selectedLessonId, setSelectedLessonId] = useState<string>('');
@@ -92,7 +94,7 @@ export default function TeacherLectures() {
                       </div>
                       <div className="flex flex-col">
                         <span className={`text-sm font-bold ${selectedLessonId === lecture.id ? 'text-indigo-600' : 'text-gray-700'}`}>
-                          {lecture.title}
+                          {language === 'ar' ? lecture.title_ar || lecture.title : lecture.title_en || lecture.title}
                         </span>
                         <div className="flex items-center gap-2 mt-1">
                           <Video size={10} className={selectedLessonId === lecture.id ? 'text-indigo-400' : 'text-gray-300'} />
@@ -119,7 +121,7 @@ export default function TeacherLectures() {
               <div>
                 <span className="inline-block px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-bold uppercase tracking-widest mb-2">Current Lecture</span>
                 <h2 className="text-xl font-bold text-gray-900">
-                  {activeLecture?.title || 'No Lecture Selected'}
+                  {(language === 'ar' ? activeLecture?.title_ar || activeLecture?.title : activeLecture?.title_en || activeLecture?.title) || 'No Lecture Selected'}
                 </h2>
                 <p className="text-[11px] font-bold text-gray-400">Last Update: {activeLecture ? new Date(activeLecture.updatedAt).toLocaleDateString() : '-'}</p>
               </div>
@@ -171,7 +173,7 @@ export default function TeacherLectures() {
                       <span className="text-sm font-bold">Lecture Description</span>
                     </div>
                     <div className="p-6 rounded-2xl bg-white border border-gray-100 text-gray-600 leading-relaxed">
-                      {activeLecture.content || 'No content provided for this lecture.'}
+                      {(language === 'ar' ? activeLecture.content_ar || activeLecture.content : activeLecture.content_en || activeLecture.content) || 'No content provided for this lecture.'}
                     </div>
                   </div>
 

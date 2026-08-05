@@ -120,7 +120,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   title={isCollapsed ? "Dashboard" : ''}
                 >
                   <LayoutDashboard className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>Dashboard</span>}
+                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_dashboard', 'Dashboard')}</span>}
                 </NavLink>
               )}
               {hasRouteAccess('sessions') && (
@@ -134,7 +134,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   title={isCollapsed ? "Sessions" : ''}
                 >
                   <PlayCircle className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>Sessions</span>}
+                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_sessions', 'Sessions')}</span>}
                 </NavLink>
               )}
 
@@ -149,7 +149,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   title={isCollapsed ? "Curriculum" : ''}
                 >
                   <BookOpen className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>Curriculum</span>}
+                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_courses', 'Curriculum')}</span>}
                 </NavLink>
               )}
               {hasRouteAccess('students') && (
@@ -163,7 +163,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   title={isCollapsed ? "Students" : ''}
                 >
                   <User className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>Students</span>}
+                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_students', 'Students')}</span>}
                 </NavLink>
               )}
               {hasRouteAccess('requests') && (
@@ -177,7 +177,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   title={isCollapsed ? "Requests" : ''}
                 >
                   <UserPlus className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>Requests</span>}
+                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_requests', 'Requests')}</span>}
                 </NavLink>
               )}
               {hasRouteAccess('teachers') && (
@@ -191,7 +191,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   title={isCollapsed ? "Teachers" : ''}
                 >
                   <User className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>Teachers</span>}
+                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_teachers', 'Teachers')}</span>}
                 </NavLink>
               )}
 
@@ -206,7 +206,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   title={isCollapsed ? "Teacher Availability" : ''}
                 >
                   <Clock className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>Teacher Availability</span>}
+                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_teacher_availability', 'Teacher Availability')}</span>}
                 </NavLink>
               )}
 
@@ -221,7 +221,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   title={isCollapsed ? "Plans" : ''}
                 >
                   <Box className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>Plans</span>}
+                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_plans', 'Plans')}</span>}
                 </NavLink>
               )}
               {hasRouteAccess('ranks') && (
@@ -235,7 +235,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   title={isCollapsed ? "Ranks" : ''}
                 >
                   <Trophy className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>Ranks</span>}
+                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_ranks', 'Ranks')}</span>}
                 </NavLink>
               )}
 
@@ -253,7 +253,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   title={isCollapsed ? "Assignments" : ''}
                 >
                   <FolderOpen className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>Assignments</span>}
+                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_assignments', 'Assignments')}</span>}
                 </NavLink>
               )}
               {hasRouteAccess('admins') && (
@@ -267,7 +267,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   title={isCollapsed ? "Stuff" : ''}
                 >
                   <Users className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>Stuff</span>}
+                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_admins', 'Staff')}</span>}
                 </NavLink>
               )}
               {hasRouteAccess('roles') && (
@@ -281,7 +281,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   title={isCollapsed ? "Roles" : ''}
                 >
                   <Users className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>Roles</span>}
+                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_roles', 'Roles')}</span>}
                 </NavLink>
               )}
               {hasRouteAccess('all-subscriptions') && (
@@ -295,7 +295,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   title={isCollapsed ? "Library" : ''}
                 >
                   <Layers className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>All subscription</span>}
+                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_all_subscriptions', 'All subscriptions')}</span>}
                 </NavLink>
               )}
 
@@ -310,7 +310,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   title={isCollapsed ? "Library" : ''}
                 >
                   <Layers className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>subscription Requests</span>}
+                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_subscription_requests', 'Subscription Requests')}</span>}
                 </NavLink>
               )}
 
@@ -336,7 +336,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                     <DollarSign className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
                     {!isCollapsed && (
                       <>
-                        <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>Finance</span>
+                        <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_finance', 'Finance')}</span>
                         {expandedItems.includes('finance') ? (
                           <ChevronDown className="w-4 h-4" />
                         ) : (
@@ -359,7 +359,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                           `}
                         >
                           <Coins className="w-4 h-4" />
-                          <span>Currencies</span>
+                          <span>{t('sidebar_currencies', 'Currencies')}</span>
                         </NavLink>
                       )}
                       {hasRouteAccess('expenses') && (
@@ -372,7 +372,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                           `}
                         >
                           <CreditCard className="w-4 h-4" />
-                          <span>Expenses</span>
+                          <span>{t('sidebar_expenses', 'Expenses')}</span>
                         </NavLink>
                       )}
                       {hasRouteAccess('transactions') && (
@@ -385,7 +385,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                           `}
                         >
                           <Repeat className="w-4 h-4" />
-                          <span>Transactions</span>
+                          <span>{t('sidebar_transactions', 'Transactions')}</span>
                         </NavLink>
                       )}
                       {hasRouteAccess('transaction-requests') && (
@@ -398,7 +398,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                           `}
                         >
                           <AlertCircle className="w-4 h-4" />
-                          <span>Transaction Requests</span>
+                          <span>{t('sidebar_transaction_requests', 'Transaction Requests')}</span>
                         </NavLink>
                       )}
                     </div>
@@ -425,7 +425,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                 title={isCollapsed ? "Reports" : ''}
               >
                 <File className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>Reports</span>}
+                {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_reports', 'Reports')}</span>}
               </NavLink>
             )}
 
@@ -441,7 +441,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                 title={isCollapsed ? "Policies" : ''}
               >
                 <ShieldCheck className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                {!isCollapsed && <span className="text-sm">Policies</span>}
+                {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_policies', 'Policies')}</span>}
               </NavLink>
             )}
 
@@ -458,7 +458,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                 title={isCollapsed ? "Settings" : ''}
               >
                 <Settings className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                {!isCollapsed && <span className="text-sm">Settings</span>}
+                {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_settings', 'Settings')}</span>}
               </NavLink>
             )}
 
@@ -474,7 +474,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                 title={isCollapsed ? "Support" : ''}
               >
                 <HelpCircle className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                {!isCollapsed && <span className="text-sm">Support</span>}
+                {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_support', 'Support')}</span>}
               </NavLink>
             )}
 

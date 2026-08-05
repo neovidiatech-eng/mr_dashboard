@@ -237,7 +237,7 @@ export default function Users() {
                               {user.name}
                             </div>
                             <div className="text-[11px] text-gray-400 font-medium">
-                              Employee
+                              {t('employeeRole', 'Employee')}
                             </div>
                           </div>
                         </div>

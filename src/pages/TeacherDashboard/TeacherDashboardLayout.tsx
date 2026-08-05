@@ -11,7 +11,7 @@ export default function TeacherDashboardLayout({ children }: TeacherDashboardLay
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex flex-col font-['Inter']" dir="ltr">
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col font-['Inter']">
       <Header
         userRole="teacher"
         onMenuClick={() => setSidebarOpen(!sidebarOpen)}
@@ -26,7 +26,7 @@ export default function TeacherDashboardLayout({ children }: TeacherDashboardLay
           setIsCollapsed={setIsCollapsed}
         />
 
-        <main className={`flex-1 min-w-0 overflow-x-hidden overflow-y-auto w-full transition-all duration-300 ${isCollapsed ? 'lg:pl-20' : 'lg:pl-72'}`}>
+        <main className={`flex-1 min-w-0 overflow-x-hidden overflow-y-auto w-full transition-all duration-300 ${isCollapsed ? 'lg:ms-20' : 'lg:ms-72'}`}>
           <div className="min-h-full w-full">
             {children}
           </div>

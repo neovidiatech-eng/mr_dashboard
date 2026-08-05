@@ -14,11 +14,14 @@ import {
 import { Button, Input, Tag, Card, Empty, Dropdown, Modal, Pagination } from 'antd';
 import { useCourses, useDeleteCourse } from '../../../hooks/useCourses';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import AddCourseModal from './AddCourseModal';
 import { useGetRanks } from '../hooks/useRank';
 import { baseURL } from '../../../consts';
 
 export default function Curriculum() {
+  const { t, i18n } = useTranslation();
+  const isAr = i18n.language?.startsWith('ar');
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
@@ -41,7 +44,7 @@ export default function Curriculum() {
   const { data: ranksData } = useGetRanks();
   const ranksList = useMemo(() => {
     const items = ranksData?.data.items || (Array.isArray(ranksData) ? ranksData : []);
-    return items.map((r: any) => ({ id: r.id, name: r.name, color: r.color }));
+    return items.map((r: any) => ({ id: r.id, name: r.name, name_ar: r.name_ar, name_en: r.name_en, color: r.color }));
   }, [ranksData]);
 
   const { data: coursesData } = useCourses(currentPage, pageSize, selectedRankId, debouncedSearchQuery);
@@ -67,11 +70,11 @@ export default function Curriculum() {
   const handleDelete = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     Modal.confirm({
-      title: 'Are you sure you want to delete this course?',
-      content: 'This action cannot be undone and will remove all curriculum modules.',
-      okText: 'Yes, Delete',
+      title: t('delete_confirm_title', 'Are you sure?'),
+      content: t('delete_confirm_content', 'This action cannot be undone.'),
+      okText: t('delete_yes', 'Yes, Delete'),
       okType: 'danger',
-      cancelText: 'Cancel',
+      cancelText: t('delete_cancel', 'Cancel'),
       onOk: () => {
         deleteCourse(id, {
           onSuccess: () => {
@@ -83,11 +86,11 @@ export default function Curriculum() {
   };
 
   return (
-    <div className="p-8 bg-[#f8fafc] min-h-[calc(100vh-90px)]" dir="ltr">
+    <div className="p-8 bg-[#f8fafc] min-h-[calc(100vh-90px)]" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Curriculum Shelf</h1>
-          <p className="text-gray-500 mt-1 font-medium">Select a course to manage its curriculum modules and lessons</p>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight">{t('courses_title', 'Curriculum Shelf')}</h1>
+          <p className="text-gray-500 mt-1 font-medium">{t('courses_subtitle', 'Select a course to manage its curriculum modules and lessons')}</p>
         </div>
         <Button
           icon={<Plus size={18} />}
@@ -95,7 +98,7 @@ export default function Curriculum() {
           onClick={() => setIsAddModalVisible(true)}
           className="h-11 px-6 rounded-xl bg-primary hover:!bg-primary-dark border-none font-bold shadow-lg shadow-primary/20 flex items-center"
         >
-          New Course
+          {t('add_course', 'New Course')}
         </Button>
       </div>
 
@@ -103,7 +106,7 @@ export default function Curriculum() {
         <div className="relative w-52">
           <Input
             prefix={<Search size={16} className="text-gray-400 mr-1" />}
-            placeholder="Search..."
+            placeholder={t('search_placeholder', 'Search...')}
             className="h-9 rounded-xl border-gray-200 text-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -115,10 +118,10 @@ export default function Curriculum() {
             onClick={() => setSelectedRankId(undefined)}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${!selectedRankId ? 'bg-indigo-600 text-white shadow-sm' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
           >
-            All
+            {t('all_levels', 'All')}
           </button>
           {ranksList.length === 0 ? (
-            <span className="text-xs text-gray-400 font-medium px-2 animate-pulse">Loading ranks...</span>
+            <span className="text-xs text-gray-400 font-medium px-2 animate-pulse">{t('loading_levels', 'Loading...')}</span>
           ) : (
             ranksList.map((rank) => (
               <button
@@ -127,7 +130,7 @@ export default function Curriculum() {
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${selectedRankId === rank.id ? 'text-white shadow-sm' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
                 style={selectedRankId === rank.id ? { backgroundColor: rank.color || '#6366f1' } : {}}
               >
-                {rank.name}
+                {isAr ? rank.name_ar || rank.name : rank.name_en || rank.name}
               </button>
             ))
           )}
@@ -176,7 +179,7 @@ export default function Curriculum() {
                       </div>
                       <div className="flex justify-between items-start relative z-10">
                         <Tag color={course.rank.color} className="w-fit rounded-lg px-3 py-1 font-bold border-none text-[10px] uppercase tracking-wider">
-                          {course.rank.name}
+                          {isAr ? course.rank?.name_ar || course.rank?.name : course.rank?.name_en || course.rank?.name}
                         </Tag>
                         <Dropdown
                           classNames={{ root: "custom-dropdown" }}
@@ -185,13 +188,13 @@ export default function Curriculum() {
                             items: [
                               {
                                 key: 'edit',
-                                label: 'Edit Course',
+                                label: t('edit', 'Edit Course'),
                                 icon: <Edit size={14} />,
                                 onClick: (info) => handleEdit(course, info.domEvent as any)
                               },
                               {
                                 key: 'delete',
-                                label: 'Delete',
+                                label: t('delete', 'Delete'),
                                 icon: <Trash2 size={14} />,
                                 danger: true,
                                 onClick: (info) => handleDelete(course.id, info.domEvent as any)
@@ -208,14 +211,14 @@ export default function Curriculum() {
                           </button>
                         </Dropdown>
                       </div>
-                      <h3 className="text-xl font-bold text-white relative z-10">{course.title}</h3>
+                      <h3 className="text-xl font-bold text-white relative z-10">{isAr ? course.title_ar || course.title : course.title_en || course.title}</h3>
                     </div>
                     <div className="p-6">
-                      <p className="text-gray-500 text-sm line-clamp-2 mb-6">{course.description}</p>
+                      <p className="text-gray-500 text-sm line-clamp-2 mb-6">{isAr ? course.description_ar || course.description : course.description_en || course.description}</p>
                       <div className="flex items-center justify-between pt-4 border-t border-gray-50">
                         <div className="flex items-center gap-2">
                           <BookOpen size={14} className="text-indigo-600" />
-                          <span className="text-xs font-bold text-gray-600">{course.lectures?.length || 0} Lectures</span>
+                          <span className="text-xs font-bold text-gray-600">{course.lectures?.length || 0} {t('lectures', 'Lectures')}</span>
                         </div>
                         <ArrowRight size={18} className="text-gray-300 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
                       </div>
@@ -228,17 +231,17 @@ export default function Curriculum() {
                         <BookOpen size={20} />
                       </div>
                       <div>
-                        <h3 className="font-bold text-gray-900">{course.title}</h3>
-                        <p className="text-xs text-gray-500">{course.lectures?.length || 0} Lectures</p>
+                        <h3 className="font-bold text-gray-900">{isAr ? course.title_ar || course.title : course.title_en || course.title}</h3>
+                        <p className="text-xs text-gray-500">{course.lectures?.length || 0} {t('lecture', 'Lectures')}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
-                      <Tag color={course.rank.color} className="rounded-lg font-bold border-none text-[9px] uppercase tracking-wider">{course.rank.name}</Tag>
+                      <Tag color={course.rank.color} className="rounded-lg font-bold border-none text-[9px] uppercase tracking-wider">{isAr ? course.rank?.name_ar || course.rank?.name : course.rank?.name_en || course.rank?.name}</Tag>
                       <Dropdown
                         menu={{
                           items: [
-                            { key: 'edit', label: 'Edit', icon: <Edit size={14} />, onClick: (info) => handleEdit(course, info.domEvent as any) },
-                            { key: 'delete', label: 'Delete', icon: <Trash2 size={14} />, danger: true, onClick: (info) => handleDelete(course.id, info.domEvent as any) },
+                            { key: 'edit', label: t('edit', 'Edit'), icon: <Edit size={14} />, onClick: (info) => handleEdit(course, info.domEvent as any) },
+                            { key: 'delete', label: t('delete', 'Delete'), icon: <Trash2 size={14} />, danger: true, onClick: (info) => handleDelete(course.id, info.domEvent as any) },
                           ]
                         }}
                         trigger={['click']}
@@ -268,7 +271,7 @@ export default function Curriculum() {
           </div>
         </>
       ) : (
-        <Empty description="No courses found" className="mt-20" />
+        <Empty description={t('no_courses_found', 'No courses found')} className="mt-20" />
       )}
       <AddCourseModal
         visible={isAddModalVisible || !!editingCourse}

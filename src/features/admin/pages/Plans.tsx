@@ -73,6 +73,12 @@ export default function Plans() {
       ar: "هل أنت متأكد من حذف هذه الخطة؟",
       en: "Are you sure you want to delete this plan?",
     },
+    subtitle: {
+      ar: "قم بتهيئة وإدارة باقات الاشتراك",
+      en: "Configure and manage your curriculum subscription tiers.",
+    },
+    monthSingular: { ar: "شهر", en: "Month" },
+    includedFeatures: { ar: "المميزات المضمنة", en: "Included Features" }
   };
 
   // React Query handles fetching automatically via usePlans
@@ -138,7 +144,7 @@ export default function Plans() {
               {text.title[language]}
             </h1>
             <p className="text-gray-500 font-medium mt-1">
-              Configure and manage your curriculum subscription tiers.
+              {text.subtitle[language]}
             </p>
           </div>
 
@@ -200,7 +206,7 @@ export default function Plans() {
                     <div className="mt-4 pt-4 border-t border-gray-200/50 flex items-center justify-center gap-4 text-sm font-bold text-gray-500">
                        <div className="flex items-center gap-1.5">
                          <Clock className="w-4 h-4" />
-                         {plan.duration} Month
+                         {plan.duration} {text.monthSingular[language]}
                        </div>
                        <div className="w-1 h-1 rounded-full bg-gray-300" />
                        <div className="flex items-center gap-1.5">
@@ -212,7 +218,7 @@ export default function Plans() {
 
                   <div className="space-y-4 mb-10 flex-1">
                     <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest text-start">
-                      Included Features
+                      {text.includedFeatures[language]}
                     </h4>
                     {plan.features.map((feature: string, index: number) => (
                       <div key={index} className="flex items-start gap-3 text-start group/feature">

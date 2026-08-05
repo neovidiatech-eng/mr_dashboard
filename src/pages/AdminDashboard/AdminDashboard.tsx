@@ -95,7 +95,7 @@ export default function AdminDashboard() {
   const storedEmail = localStorage.getItem("email") || "admin@admin.com";
 
   return (
-    <div className="min-h-screen bg-gray-50" dir={isRtl ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-gray-50">
       <Header
         onMenuClick={() => setSidebarOpen(!sidebarOpen)}
         userRole="admin"
@@ -111,7 +111,7 @@ export default function AdminDashboard() {
         setIsCollapsed={setIsCollapsed}
       />
 
-      <main className={`${isRtl ? (isCollapsed ? 'lg:mr-20' : 'lg:mr-72') : (isCollapsed ? 'lg:ml-20' : 'lg:ml-72')} transition-all duration-300`}>
+      <main className={`transition-all duration-300 ${isCollapsed ? 'lg:ms-20' : 'lg:ms-72'}`}>
         <div className={`transition-all duration-300 ${isCollapsed ? 'p-4' : 'p-6'}`}>
           <Suspense fallback={<div className="flex items-center justify-center min-h-[400px] animate-pulse text-gray-400">Loading...</div>}>
             <Routes>

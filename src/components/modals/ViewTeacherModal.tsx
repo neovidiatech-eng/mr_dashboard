@@ -67,7 +67,7 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
                   {teacher.active ? t('active') : t('inactive')}
                 </span>
                 <span className="w-1 h-1 rounded-full bg-slate-300" />
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Instructor Profile</p>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('instructorProfile')}</p>
               </div>
             </div>
           </div>
@@ -109,8 +109,8 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
               <div className="p-3 bg-white rounded-2xl w-fit mb-4 shadow-sm">
                 <Users className="w-5 h-5 text-fuchsia-600" />
               </div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Age</p>
-              <p className="text-sm font-bold text-slate-900">{teacher.user.age || 'N/A'} Years</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('age')}</p>
+              <p className="text-sm font-bold text-slate-900">{teacher.user.age || 'N/A'} {t('years')}</p>
             </div>
           </div>
 
@@ -123,9 +123,9 @@ export default function ViewTeacherModal({ isOpen, onClose, teacher }: ViewTeach
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {[
-                  { label: 'Total Students', value: teacherDetails?.teacherStudents ?? 0, icon: Users, color: 'indigo' },
-                  { label: 'Total Sessions', value: teacherDetails?.totalsessions ?? 0, icon: Videotape, color: 'red' },
-                  { label: 'Completed Sessions', value: teacherDetails?.sessionCount ?? 0, icon: Calendar, color: 'emerald' },
+                  { label: t('totalStudents') || 'Total Students', value: teacherDetails?.teacherStudents ?? 0, icon: Users, color: 'indigo' },
+                  { label: t('totalSessions') || 'Total Sessions', value: teacherDetails?.totalsessions ?? 0, icon: Videotape, color: 'red' },
+                  { label: t('completedSessions') || 'Completed Sessions', value: teacherDetails?.sessionCount ?? 0, icon: Calendar, color: 'emerald' },
 
                 ].map((stat, i) => (
                   <div key={i} className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm flex items-center gap-5">

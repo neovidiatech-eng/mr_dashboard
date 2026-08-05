@@ -2,6 +2,7 @@ import { X, LogOut } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { teacherDashboardRoutes } from "./teacherDashboardRoutes.tsx";
 import { disconnectSocket } from "../../lib/socket";
+import { useTranslation } from "react-i18next";
 
 interface TeacherSidebarProps {
   isOpen: boolean;
@@ -15,6 +16,8 @@ export default function TeacherSidebar({
   onClose,
   isCollapsed,
 }: TeacherSidebarProps) {
+  const { t } = useTranslation();
+
   const resolvePath = (path: string) => {
     if (path === "") return "/teacher-dashboard";
     return `/teacher-dashboard/${path}`;
@@ -90,7 +93,7 @@ export default function TeacherSidebar({
                 )}
                 {!isCollapsed && (
                   <span className="text-sm font-bold tracking-wide">
-                    {item.label}
+                    {t(`sidebar_${item.id}`, item.label)}
                   </span>
                 )}
               </NavLink>
@@ -105,7 +108,7 @@ export default function TeacherSidebar({
             className="w-full flex items-center gap-4 px-5 py-4 rounded-xl text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all group"
           >
             <LogOut size={19} />
-            {!isCollapsed && <span className="text-sm font-bold">Logout</span>}
+            {!isCollapsed && <span className="text-sm font-bold">{t('logout', 'Logout')}</span>}
           </button>
         </div>
       </aside>

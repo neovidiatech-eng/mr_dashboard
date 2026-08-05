@@ -19,9 +19,11 @@ import { TableSkeleton } from "../../../components/ui/CustomSkeleton";
 import { useExpenses, useCreateExpense, useUpdateExpense, useDeleteExpense } from "../hooks/useExpenses";
 import { Expense } from "../../../types/expenses";
 import ErrorService from "../../../utils/ErrorService";
+import { useTranslation } from "react-i18next";
 
 export default function Expenses() {
   const { language } = useLanguage();
+  const { t } = useTranslation();
   const { confirm, ConfirmDialog } = useConfirm();
   const [showModal, setShowModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -261,7 +263,7 @@ export default function Expenses() {
                   >
                     <td className="px-6 py-5">
                       <p className="text-sm font-semibold text-gray-900">
-                        {expense.title}
+                        {expense.title ? t(expense.title, expense.title) : "-"}
                       </p>
                     </td>
                     <td className="px-6 py-5">
@@ -281,7 +283,7 @@ export default function Expenses() {
                     </td>
                     <td className="px-6 py-5">
                       <p className="text-sm text-gray-600">
-                        {expense.payment_type || "-"}
+                        {expense.payment_type ? t(expense.payment_type, expense.payment_type) : "-"}
                       </p>
                     </td>
                     <td className="px-6 py-5">

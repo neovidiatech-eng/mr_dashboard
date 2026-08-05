@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../../../contexts/LanguageContext';
 import {
   Share2, Phone, MessageCircle,
   Facebook, Instagram,
@@ -14,21 +16,23 @@ import { useSettings } from '../hooks/useSettings';
 import { message } from 'antd';
 import { UpdateSettingsRequest } from '../../../types/settings';
 
-const socialPlatforms = [
-  { platform: 'facebook', label: 'Facebook', placeholder: 'https://facebook.com/...', icon: Facebook, color: '#1877f2' },
-  { platform: 'instagram', label: 'Instagram', placeholder: 'https://instagram.com/...', icon: Instagram, color: '#e1306c' },
-  { platform: 'TikTok', label: 'TikTok', placeholder: 'https://tiktok.com/...', icon: SiTiktok, color: '#000000' },
-];
-
 type Tab = 'general' | 'social' | 'contact';
 
-const tabs: { id: Tab; label: string; icon: any }[] = [
-  { id: 'general', label: 'General', icon: Settings },
-  { id: 'social', label: 'Social Media', icon: Share2 },
-  { id: 'contact', label: 'Contact', icon: Phone },
-];
-
 export default function SettingsPage() {
+  const { t } = useTranslation();
+
+  const socialPlatforms = [
+    { platform: 'facebook', label: t('facebook'), placeholder: 'https://facebook.com/...', icon: Facebook, color: '#1877f2' },
+    { platform: 'instagram', label: t('instagram'), placeholder: 'https://instagram.com/...', icon: Instagram, color: '#e1306c' },
+    { platform: 'TikTok', label: t('tiktok'), placeholder: 'https://tiktok.com/...', icon: SiTiktok, color: '#000000' },
+  ];
+
+  const tabs: { id: Tab; label: string; icon: any }[] = [
+    { id: 'general', label: t('generalTab'), icon: Settings },
+    { id: 'social', label: t('socialMediaTab'), icon: Share2 },
+    { id: 'contact', label: t('contactTab'), icon: Phone },
+  ];
+  const { language } = useLanguage();
   const primaryColor = '#800020';
   const { settings: apiSettings, isLoading, updateSettings: apiUpdateSettings } = useSettings();
 
@@ -50,9 +54,9 @@ export default function SettingsPage() {
     try {
       setSaving(true);
       await apiUpdateSettings(formData);
-      message.success('Settings updated successfully');
+      message.success(t('settingsUpdated', 'Settings updated successfully'));
     } catch (error) {
-      message.error('Failed to update settings');
+      message.error(t('settingsUpdateFailed', 'Failed to update settings'));
     } finally {
       setSaving(false);
     }
@@ -68,12 +72,12 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6" dir="ltr">
+    <div className="space-y-6" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-500 text-sm mt-1">Customize your platform and configure settings</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('settingsTitle', 'Settings')}</h1>
+          <p className="text-gray-500 text-sm mt-1">{t('settingsDesc', 'Customize your platform and configure settings')}</p>
         </div>
         <div className="flex gap-2">
           {/* <button
@@ -90,7 +94,7 @@ export default function SettingsPage() {
             style={{ backgroundColor: primaryColor }}
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            {saving ? 'Saving...' : 'Save Changes'}
+            {saving ? t('saving', 'Saving...') : t('saveChanges', 'Save Changes')}
           </button>
         </div>
       </div>
@@ -108,8 +112,8 @@ export default function SettingsPage() {
                 style={activeTab === tab.id ? { backgroundColor: primaryColor + '15', color: primaryColor } : {}}
               >
                 <tab.icon className="w-4 h-4" />
-                <span className="flex-1 text-left">{tab.label}</span>
-                {activeTab === tab.id && <ChevronRight className="w-3 h-3" />}
+                <span className={`flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t(tab.id + 'Tab', tab.label)}</span>
+                {activeTab === tab.id && <ChevronRight className={`w-3 h-3 ${language === 'ar' ? 'rotate-180' : ''}`} />}
               </button>
             ))}
           </div>
@@ -119,9 +123,9 @@ export default function SettingsPage() {
         <div className="flex-1">
           {/* General */}
           {activeTab === 'general' && (
-            <SectionCard title="General Settings" icon={Settings} primaryColor={primaryColor}>
+            <SectionCard title={t("general")} icon={Settings} primaryColor={primaryColor}>
               <div className="max-w-md">
-                <FieldGroup label="User Prefix">
+                <FieldGroup label={t('userIdPrefix', 'User Prefix')}>
                   <input
                     type="text"
                     value={formData.userPrefix || ''}
@@ -136,7 +140,7 @@ export default function SettingsPage() {
 
           {/* Social */}
           {activeTab === 'social' && (
-            <SectionCard title="Social Media Links" icon={Share2} primaryColor={primaryColor}>
+            <SectionCard title={t("links")} icon={Share2} primaryColor={primaryColor}>
               <div className="space-y-4">
                 {socialPlatforms.map(({ platform, label, placeholder, icon: Icon, color }) => (
                   <div key={platform} className="flex items-center gap-3 p-3 rounded-xl border border-gray-200 bg-white shadow-sm">
@@ -164,12 +168,12 @@ export default function SettingsPage() {
 
           {/* Contact */}
           {activeTab === 'contact' && (
-            <SectionCard title="Contact Information" icon={Phone} primaryColor={primaryColor}>
+            <SectionCard title={t("contactInformation")} icon={Phone} primaryColor={primaryColor}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                     <MessageCircle className="w-4 h-4 text-green-500" />
-                    WhatsApp
+                    {t("whatsapp")}
                   </h3>
                   <div className="flex items-center gap-3">
                     <input
@@ -203,7 +207,7 @@ export default function SettingsPage() {
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                     <Mail className="w-4 h-4 text-blue-500" />
-                    Email Address
+                    {t('emailAddress')}
                   </h3>
                   <div className="flex items-center gap-3">
                     <input

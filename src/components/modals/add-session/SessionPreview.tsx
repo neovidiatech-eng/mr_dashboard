@@ -1,5 +1,6 @@
 import { Calendar, ChevronDown } from 'lucide-react';
 import { Course } from '../../../types/courses';
+import { useTranslation } from 'react-i18next';
 
 interface SessionPreviewProps {
   previewSessions: {
@@ -19,12 +20,13 @@ export default function SessionPreview({
   selectedCourse,
   watchStartTime,
 }: SessionPreviewProps) {
+  const { t } = useTranslation();
   return (
     <div className="w-full lg:w-[42%] bg-[#fcfdfe] border-l border-gray-100 overflow-y-auto">
       <div className="p-6 border-b border-gray-100">
-        <h3 className="font-bold text-gray-900">Schedule Preview</h3>
+        <h3 className="font-bold text-gray-900">{t('schedulePreview')}</h3>
         <p className="text-xs text-gray-400 mt-1">
-          {previewSessions.length} Sessions
+          {previewSessions.length} {t('sessionsCount')}
         </p>
       </div>
 
@@ -62,12 +64,12 @@ export default function SessionPreview({
                             : 'bg-red-100 text-red-600'
                         }`}
                       >
-                        {session.available ? 'Available' : 'Conflict'}
+                        {session.available ? t('available') : t('conflict')}
                       </span>
                     </div>
 
                     <p className="text-xs text-gray-500 mt-1">
-                      {selectedCourse?.title || 'No Subject'}
+                      {selectedCourse?.title || t('noSubject')}
                     </p>
 
                     <p className="text-xs text-gray-400 mt-2">
@@ -81,7 +83,7 @@ export default function SessionPreview({
         ) : (
           <div className="text-center py-20">
             <Calendar className="w-10 h-10 mx-auto text-gray-300 mb-3" />
-            <p className="text-sm text-gray-400">No sessions generated yet</p>
+            <p className="text-sm text-gray-400">{t('noSessionsGenerated')}</p>
           </div>
         )}
 
@@ -90,7 +92,7 @@ export default function SessionPreview({
             type="button"
             className="w-full text-indigo-600 text-sm font-bold flex items-center justify-center gap-1"
           >
-            View More
+            {t('viewMore')}
             <ChevronDown className="w-4 h-4" />
           </button>
         )}

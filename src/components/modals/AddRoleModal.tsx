@@ -128,7 +128,7 @@ export default function AddRoleModal({
                             <label className="font-medium text-gray-700">
                                 {t('permissions')}
                             </label>
-                            
+
                             {/* <div className="flex items-center gap-3">
                                 <div className="relative">
                                     <input
@@ -174,8 +174,8 @@ export default function AddRoleModal({
                                     };
 
                                     const filteredData = permissions?.data ? Object.entries(permissions.data).reduce((acc, [category, items]) => {
-                                        const filteredItems = (items as any[]).filter(p => 
-                                            p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                        const filteredItems = (items as any[]).filter(p =>
+                                            p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                                             category.toLowerCase().includes(searchQuery.toLowerCase())
                                         );
                                         if (filteredItems.length > 0) acc[category] = filteredItems;

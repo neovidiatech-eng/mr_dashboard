@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { ChevronRight, X } from 'lucide-react';
 import { Table } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { useGetRequests, useUpdateRequestStatus } from '../hooks/useRequests';
 import { UnifiedRequest } from '../../../types/requests';
 
 export default function Requests() {
+  const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState<'student' | 'teacher'>('student');
   const [selectedRequest, setSelectedRequest] = useState<UnifiedRequest | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -33,7 +35,7 @@ export default function Requests() {
 
   const columns = [
     {
-      title: 'USER',
+      title: t('table_user', 'USER'),
       key: 'user',
       render: (_: any, req: UnifiedRequest) => (
         <div className="flex items-center gap-3">
@@ -48,29 +50,29 @@ export default function Requests() {
       ),
     },
     {
-      title: 'TYPE',
+      title: t('table_type', 'TYPE'),
       dataIndex: 'type',
       key: 'type',
       render: (text: string) => <span className="text-sm font-bold text-gray-700 whitespace-nowrap capitalize">{text.replace('_', ' ')}</span>,
     },
     {
-      title: 'DATE SUBMITTED',
+      title: t('table_date_submitted', 'DATE SUBMITTED'),
       dataIndex: 'createdAt',
       key: 'date',
       render: (text: string) => <span className="text-[13px] font-bold text-gray-500 whitespace-nowrap">{new Date(text).toLocaleDateString()}</span>,
     },
     {
-      title: 'REASON',
+      title: t('table_reason', 'REASON'),
       dataIndex: 'reason',
       key: 'reason',
       render: (text: string) => (
         <span className="text-[13px] font-medium text-gray-600 line-clamp-1 max-w-[200px]">
-          {text || 'N/A'}
+          {text || t('na', 'N/A')}
         </span>
       ),
     },
     {
-      title: 'STATUS',
+      title: t('table_status', 'STATUS'),
       dataIndex: 'status',
       key: 'status',
       render: (text: string) => {
@@ -84,15 +86,15 @@ export default function Requests() {
       },
     },
     {
-      title: 'ACTION',
+      title: t('table_action', 'ACTION'),
       key: 'action',
       align: 'center' as const,
       render: (_: any, req: UnifiedRequest) => (
         selectedRequest?.id === req.id && isSidebarOpen ? (
-          <span className="text-[10px] font-bold text-[#800020] tracking-widest uppercase">SELECTED</span>
+          <span className="text-[10px] font-bold text-[#800020] tracking-widest uppercase">{t('selected', 'SELECTED')}</span>
         ) : (
           <button className="p-1 text-gray-400 hover:text-[#800020] rounded-full hover:bg-indigo-50 transition-colors inline-flex">
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className={`w-5 h-5 ${i18n.language === 'ar' ? 'rotate-180' : ''}`} />
           </button>
         )
       ),
@@ -116,16 +118,16 @@ export default function Requests() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-90px)] bg-[#f8fafc] overflow-hidden" dir="ltr">
+    <div className="flex h-[calc(100vh-90px)] bg-[#f8fafc] overflow-hidden" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
       
       {/* Main Content Area */}
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'mr-[400px]' : ''}`}>
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? 'me-[400px]' : ''}`}>
         
         <div className="px-6 pt-6 pb-0 flex-1 flex flex-col overflow-hidden">
           {/* Header */}
           <div className="mb-3 flex-shrink-0">
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">Requests Management</h1>
-            <p className="text-sm font-medium text-gray-500">Review and handle all student and instructor administrative actions.</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">{t('requests_management', 'Requests Management')}</h1>
+            <p className="text-sm font-medium text-gray-500">{t('requests_subtitle', 'Review and handle all student and instructor administrative actions.')}</p>
           </div>
 
           <div className="bg-white rounded-t-2xl shadow-sm border border-gray-100 flex flex-col flex-1 overflow-hidden">
@@ -137,13 +139,13 @@ export default function Requests() {
                   onClick={() => setActiveTab('student')}
                   className={`text-sm font-bold pb-4 -mb-[1px] border-b-2 transition-all ${activeTab === 'student' ? 'text-[#800020] border-[#800020]' : 'text-gray-400 border-transparent hover:text-gray-700'}`}
                 >
-                  Student Requests ({studentRequests.length})
+                  {t('student_requests', 'Student Requests')} ({studentRequests.length})
                 </button>
                 <button 
                   onClick={() => setActiveTab('teacher')}
                   className={`text-sm font-bold pb-4 -mb-[1px] border-b-2 transition-all ${activeTab === 'teacher' ? 'text-[#800020] border-[#800020]' : 'text-gray-400 border-transparent hover:text-gray-700'}`}
                 >
-                  Instructor Requests ({teacherRequests.length})
+                  {t('instructor_requests', 'Instructor Requests')} ({teacherRequests.length})
                 </button>
               </div>
 
@@ -157,6 +159,7 @@ export default function Requests() {
                 loading={isLoading}
                 rowKey="id" 
                 pagination={false} 
+                locale={{ emptyText: t('no_data', 'No data') }}
                 className="w-full"
                 onRow={(record) => ({
                   onClick: () => {
@@ -206,11 +209,11 @@ export default function Requests() {
 
             {/* Pagination */}
             <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-white rounded-b-2xl">
-              <span className="text-xs font-bold text-gray-400">Showing {currentData.length} records</span>
+              <span className="text-xs font-bold text-gray-400">{t('showing', 'Showing')} {currentData.length} {t('records', 'records')}</span>
               <div className="flex items-center gap-1">
-                <button className="px-3 py-1.5 text-xs font-bold text-gray-400 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">Previous</button>
+                <button className="px-3 py-1.5 text-xs font-bold text-gray-400 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">{t('previous', 'Previous')}</button>
                 <button className="w-7 h-7 flex items-center justify-center text-xs font-bold text-white bg-[#800020] rounded-lg shadow-sm">1</button>
-                <button className="px-3 py-1.5 text-xs font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">Next</button>
+                <button className="px-3 py-1.5 text-xs font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">{t('next', 'Next')}</button>
               </div>
             </div>
 
@@ -219,11 +222,11 @@ export default function Requests() {
       </div>
 
       {/* Right Sidebar (Details) */}
-      <div className={`fixed right-0 top-[90px] h-[calc(100vh-90px)] w-[400px] bg-white shadow-[-4px_0_24px_rgba(0,0,0,0.02)] transform transition-transform duration-300 z-30 flex flex-col ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={`fixed end-0 top-[90px] h-[calc(100vh-90px)] w-[400px] bg-white shadow-[-4px_0_24px_rgba(0,0,0,0.02)] transform transition-transform duration-300 z-30 flex flex-col ${isSidebarOpen ? 'translate-x-0' : 'ltr:translate-x-full rtl:-translate-x-full'}`}>
         
         {/* Header */}
         <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
-          <h2 className="text-[15px] font-bold text-gray-900">Request Details</h2>
+          <h2 className="text-[15px] font-bold text-gray-900">{t('request_details', 'Request Details')}</h2>
           <button onClick={() => setIsSidebarOpen(false)} className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-50 rounded-full transition-colors">
             <X className="w-4 h-4" />
           </button>
@@ -246,14 +249,14 @@ export default function Requests() {
               </div>
               
               <div className="inline-flex px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-lg text-xs font-bold text-gray-600 shadow-sm capitalize">
-                Request Type: <span className="ml-1 text-gray-900">{selectedRequest.type.replace('_', ' ')}</span>
+                {t('request_type', 'Request Type')}: <span className="mx-1 text-gray-900">{selectedRequest.type.replace('_', ' ')}</span>
               </div>
 
               {/* Message Box */}
               <div className="relative mt-2">
-                <div className="absolute left-4 -top-4 text-5xl text-gray-200 font-serif leading-none h-4 overflow-visible select-none">"</div>
+                <div className={`absolute ${i18n.language === 'ar' ? 'right-4' : 'left-4'} -top-4 text-5xl text-gray-200 font-serif leading-none h-4 overflow-visible select-none`}>"</div>
                 <div className="bg-gray-50/80 rounded-2xl p-5 pt-7 text-sm font-semibold text-gray-600 leading-relaxed border border-gray-100/80 shadow-inner">
-                  {selectedRequest.reason || 'No reason provided.'}
+                  {selectedRequest.reason || t('no_reason_provided', 'No reason provided.')}
                 </div>
               </div>
 
@@ -261,7 +264,7 @@ export default function Requests() {
               <div className="bg-white border border-gray-100 rounded-xl p-4 space-y-3 shadow-sm">
                  <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Submitted On</div>
+                      <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{t('submitted_on', 'Submitted On')}</div>
                       <div className="text-xs font-bold text-gray-900">
                         {new Date(selectedRequest.createdAt).toLocaleDateString()} at {new Date(selectedRequest.createdAt).toLocaleTimeString()}
                       </div>
@@ -277,11 +280,11 @@ export default function Requests() {
 
               {/* Admin Notes */}
               <div className="pt-2">
-                <label className="block text-xs font-bold text-gray-900 mb-2">Internal Admin Notes:</label>
+                <label className="block text-xs font-bold text-gray-900 mb-2">{t('internal_admin_notes', 'Internal Admin Notes:')}</label>
                 <div className="relative">
                   <textarea 
-                    className="w-full bg-white border border-gray-200 rounded-xl p-4 pr-12 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#800020]/20 focus:border-[#800020] transition-all resize-none h-28 shadow-sm placeholder:text-gray-400"
-                    placeholder="Add notes for this action..."
+                    className={`w-full bg-white border border-gray-200 rounded-xl p-4 ${i18n.language === 'ar' ? 'pl-12' : 'pr-12'} text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#800020]/20 focus:border-[#800020] transition-all resize-none h-28 shadow-sm placeholder:text-gray-400`}
+                    placeholder={t('add_notes_placeholder', 'Add notes for this action...')}
                     value={adminNotes}
                     onChange={(e) => setAdminNotes(e.target.value)}
                   ></textarea>
@@ -296,14 +299,14 @@ export default function Requests() {
                     disabled={updateStatus.isPending}
                     className="flex-1 py-3 text-xs font-bold text-white bg-[#10b981] hover:bg-[#059669] rounded-xl shadow-sm transition-colors disabled:opacity-50"
                   >
-                    {updateStatus.isPending ? 'Processing...' : 'Approve'}
+                    {updateStatus.isPending ? t('processing', 'Processing...') : t('approve', 'Approve')}
                   </button>
                   <button 
                     onClick={() => handleAction('reject')}
                     disabled={updateStatus.isPending}
                     className="flex-1 py-3 text-xs font-bold text-red-500 bg-white border border-red-200 hover:bg-red-50 hover:border-red-300 rounded-xl transition-colors shadow-sm disabled:opacity-50"
                   >
-                    {updateStatus.isPending ? 'Processing...' : 'Reject'}
+                    {updateStatus.isPending ? t('processing', 'Processing...') : t('reject', 'Reject')}
                   </button>
                 </div>
               )}
@@ -311,9 +314,9 @@ export default function Requests() {
           ) : (
             <div className="h-full flex flex-col items-center justify-center opacity-30">
               <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                <ChevronRight className="w-8 h-8 text-gray-400" />
+                <ChevronRight className={`w-8 h-8 text-gray-400 ${i18n.language === 'ar' ? 'rotate-180' : ''}`} />
               </div>
-              <p className="text-sm font-bold text-gray-400">Select a request to view details</p>
+              <p className="text-sm font-bold text-gray-400">{t('select_request_view', 'Select a request to view details')}</p>
             </div>
           )}
         </div>

@@ -345,7 +345,7 @@ export default function CurriculumDetails() {
                         {/* Info */}
                         <div>
                           <h3 className="text-lg font-bold text-slate-800">
-                            {lecture.title ||
+                            {(language === 'ar' ? lecture.title_ar || lecture.title : lecture.title_en || lecture.title) ||
                               `Lecture ${lectureOrder}`}
                           </h3>
 
@@ -376,7 +376,7 @@ export default function CurriculumDetails() {
 
                           {lecture.content && (
                             <p className="text-sm text-slate-500 mt-2 line-clamp-2">
-                              {lecture.content}
+                              {language === 'ar' ? lecture.content_ar || lecture.content : lecture.content_en || lecture.content}
                             </p>
                           )}
                         </div>

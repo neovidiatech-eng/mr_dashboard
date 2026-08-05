@@ -42,7 +42,10 @@ import { useServerTime } from "../../../hooks/useServerTime";
 
 type GroupedSchedule = Schedule & { groupCount?: number };
 
+import { useTranslation } from "react-i18next";
+
 export default function Sessions() {
+  const { t, i18n } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -356,7 +359,7 @@ export default function Sessions() {
 
   const columns = [
     {
-      title: "Order",
+      title: t('table_order', "Order"),
       dataIndex: "order",
       render: (text: number) => (
         <div className="font-bold text-gray-700">{text ?? "-"}</div>
@@ -364,7 +367,7 @@ export default function Sessions() {
     },
 
     {
-      title: "Student",
+      title: t('table_student', "Student"),
       dataIndex: "student",
       render: (_: unknown, record: GroupedSchedule) => (
         <div className="flex items-center gap-3">
@@ -382,7 +385,7 @@ export default function Sessions() {
       ),
     },
     {
-      title: "Instructor",
+      title: t('table_instructor', "Instructor"),
       render: (_: unknown, record: GroupedSchedule) => (
         <div className="flex items-center gap-3">
           <img
@@ -397,7 +400,7 @@ export default function Sessions() {
       ),
     },
     {
-      title: "Lesson",
+      title: t('table_lesson', "Lesson"),
       render: (_: unknown, record: GroupedSchedule) => {
         return (
           <span className="text-sm font-bold text-gray-800">
@@ -408,7 +411,7 @@ export default function Sessions() {
     },
 
     {
-      title: "Date & Time",
+      title: t('table_date_time', "Date & Time"),
       render: (_: unknown, record: GroupedSchedule) => {
         const { date, time } = formatDateTime(record.start_time);
         const isRescheduled = record.status?.toLowerCase() === "rescheduled";
@@ -430,24 +433,27 @@ export default function Sessions() {
       },
     },
     {
-      title: "Status",
-      render: (_: unknown, record: GroupedSchedule) => (
-        <div className="flex flex-col gap-1">
-          <span
-            className={`inline-flex items-center px-2 py-1 rounded-md text-[10px] tracking-widest uppercase ${getBadgeStyle(record.status || "upcoming")}`}
-          >
-            {record.status || "UPCOMING"}
-          </span>
-          {record.is_recurring && (
-            <span className="text-[9px] font-bold text-indigo-400 uppercase tracking-tighter">
-              Recurring Series ({record.groupCount} sessions)
+      title: t('table_status', "Status"),
+      render: (_: unknown, record: GroupedSchedule) => {
+        const statusText = record.status || "upcoming";
+        return (
+          <div className="flex flex-col gap-1">
+            <span
+              className={`inline-flex items-center px-2 py-1 rounded-md text-[10px] tracking-widest uppercase ${getBadgeStyle(statusText)}`}
+            >
+              {t(`status_${statusText.toLowerCase()}`, statusText.toUpperCase())}
             </span>
-          )}
-        </div>
-      ),
+            {record.is_recurring && (
+              <span className="text-[9px] font-bold text-indigo-400 uppercase tracking-tighter">
+                {t('recurringSeries', 'Recurring Series')} ({record.groupCount} {t('sessions', 'sessions')})
+              </span>
+            )}
+          </div>
+        );
+      }
     },
     {
-      title: "Meeting Details",
+      title: t('table_meeting_details', "Meeting Details"),
       render: (_: unknown, record: GroupedSchedule) => {
         const isCompleted = record.status?.toLowerCase() === "completed";
         return (
@@ -476,7 +482,7 @@ export default function Sessions() {
       },
     },
     {
-      title: "Actions",
+      title: t('table_actions', "Actions"),
       align: "right" as const,
       render: (_: unknown, record: GroupedSchedule) => {
         const items = [
@@ -557,16 +563,16 @@ export default function Sessions() {
   ];
 
   return (
-    <div className="space-y-6 max-w-[1200px] mx-auto p-2" dir="ltr">
+    <div className="space-y-6 max-w-[1200px] mx-auto p-2" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 overflow-hidden">
         {/* Page Title & Create Button */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between px-8 py-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-1">
-              Sessions Management
+              {t('sessions_management', 'Sessions Management')}
             </h1>
             <p className="text-gray-500 text-sm font-medium">
-              Manage and monitor academic interactions across all cohorts.
+              {t('sessions_subtitle', 'Manage and monitor academic interactions across all cohorts.')}
             </p>
           </div>
           <div className="mt-4 md:mt-0 flex items-center gap-3">
@@ -575,7 +581,7 @@ export default function Sessions() {
               className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-full transition-colors font-bold text-sm shadow-sm"
             >
               <Plus className="w-4 h-4" />
-              Create Session
+              {t('create_session', 'Create Session')}
             </button>
           </div>
         </div>
@@ -586,7 +592,7 @@ export default function Sessions() {
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
-              placeholder="Search by student, instructor, or subject..."
+              placeholder={t('search_sessions_placeholder', "Search by student, instructor, or subject...")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border-none rounded-full text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#800020] focus:bg-white transition-colors placeholder:text-gray-400"
@@ -603,7 +609,7 @@ export default function Sessions() {
                   }}
                   className={`flex-1 md:min-w-[120px] px-4 sm:px-8 py-2.5 text-xs sm:text-sm font-bold rounded-lg transition-all whitespace-nowrap ${currentTab === tab ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
                 >
-                  {tab}
+                  {t(tab.toLowerCase(), tab)}
                 </button>
               ))}
             </div>
@@ -617,6 +623,7 @@ export default function Sessions() {
             dataSource={displaySchedules}
             rowKey="id"
             pagination={false}
+            locale={{ emptyText: t('no_data', 'No data') }}
             className="w-full min-w-[900px]"
             rowClassName="hover:bg-gray-50/50 transition-colors group cursor-pointer"
           />
@@ -625,10 +632,10 @@ export default function Sessions() {
         {/* Pagination */}
         <div className="p-4 border-t border-gray-50 flex items-center justify-between">
           <span className="text-xs text-gray-400 font-bold ml-2">
-            Showing{" "}
-            {(currentPage - 1) * itemsPerPage + (totalItems > 0 ? 1 : 0)} to{" "}
-            {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
-            sessions
+            {t('showing', 'Showing')}{" "}
+            {(currentPage - 1) * itemsPerPage + (totalItems > 0 ? 1 : 0)} {t('to', 'to')}{" "}
+            {Math.min(currentPage * itemsPerPage, totalItems)} {t('of', 'of')} {totalItems}{" "}
+            {t('sessions_count', 'sessions')}
           </span>
           <div className="flex items-center gap-1.5">
             <button
@@ -709,13 +716,13 @@ export default function Sessions() {
         <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 p-6 flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-bold text-gray-900 text-base">
-              Instructor Availability
+              {t('instructor_availability', 'Instructor Availability')}
             </h3>
             <Link
               to="/dashboard/teacher-availability"
               className="text-xs text-[#800020] font-bold hover:underline"
             >
-              View Calendar
+              {t('view_calendar', 'View Calendar')}
             </Link>
           </div>
 
@@ -762,11 +769,11 @@ export default function Sessions() {
                           <span
                             className={`text-[10px] font-bold uppercase tracking-wider ${isBusy ? "text-amber-600" : "text-emerald-600"}`}
                           >
-                            {isBusy ? "In Session" : "Available"}
+                            {isBusy ? t('in_session', 'In Session') : t('available', 'Available')}
                           </span>
                           <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
                           <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider">
-                            {instructor.hour_price}$/hr
+                            {instructor.hour_price}$/{t("hr")}
                           </span>
                         </div>
                       </div>
@@ -781,7 +788,7 @@ export default function Sessions() {
                   <Bell className="w-6 h-6 text-gray-400" />
                 </div>
                 <p className="text-xs font-bold text-gray-400">
-                  No instructors found
+                  {t('no_instructors_found', 'No instructors found')}
                 </p>
               </div>
             )}
@@ -799,17 +806,15 @@ export default function Sessions() {
           <div className="relative z-10 flex-1">
             <div className="flex items-center gap-2 mb-3">
               <Bell className="w-5 h-5 text-white" />
-              <h3 className="font-bold text-base">Admin Notification</h3>
+              <h3 className="font-bold text-base">{t('admin_notification', 'Admin Notification')}</h3>
             </div>
             <p className="text-indigo-50 text-sm font-medium leading-relaxed max-w-[85%]">
-              3 students have missed multiple sessions this week. This could
-              indicate a risk of churn or academic difficulty. Consider sending
-              a batch reminder or checking in.
+              {t('admin_notification_desc', '3 students have missed multiple sessions this week. This could indicate a risk of churn or academic difficulty. Consider sending a batch reminder or checking in.')}
             </p>
           </div>
           <div className="relative z-10 mt-6">
             <button className="px-6 py-2.5 bg-white text-[#800020] text-xs font-bold rounded-full hover:bg-gray-50 transition-colors shadow-sm">
-              Review Attendance
+              {t('review_attendance', 'Review Attendance')}
             </button>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { Video, MonitorPlay } from 'lucide-react';
 import { UseFormSetValue } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 interface PlatformSelectorProps {
   watchPlatform: string;
@@ -10,9 +11,10 @@ export default function PlatformSelector({
   watchPlatform,
   setValue,
 }: PlatformSelectorProps) {
+  const { t } = useTranslation();
   return (
     <div className="mb-6">
-      <label className="label mb-3">Meeting Platform</label>
+      <label className="label mb-3">{t('meetingPlatform')}</label>
       <div className="grid grid-cols-2 gap-4">
         <button
           type="button"

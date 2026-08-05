@@ -6,9 +6,9 @@ import {
   Calendar,
   ArrowRight,
   MoreHorizontal,
-  ChevronDown,
 } from 'lucide-react';
 import { useAdminDashboard } from '../hooks/useAdminDashboard';
+import { useTranslation } from 'react-i18next';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -35,6 +35,7 @@ ChartJS.register(
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const { data: dashboardResponse, isLoading, isError } = useAdminDashboard();
 
   if (isLoading) {
@@ -132,12 +133,12 @@ export default function Dashboard() {
   const totalUsers = totalStudents + totalInstructors || 1;
 
   return (
-    <div className="min-h-screen bg-[#f8f9fc] p-8 font-sans" dir="ltr">
+    <div className="min-h-screen bg-[#f8f9fc] p-8 font-sans" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
       {/* Header Area */}
       <div className="flex justify-between items-start mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">Good Morning, Admin</h1>
-          <p className="text-sm text-gray-500">Here's what's happening in the club kit today.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">{t('dashboard_good_morning', 'Good Morning, Admin')}</h1>
+          <p className="text-sm text-gray-500">{t('dashboard_subtitle', "Here's what's happening today.")}</p>
         </div>
 
       </div>
@@ -155,7 +156,7 @@ export default function Dashboard() {
             </span>
           </div>
           <div>
-            <p className="text-[10px] text-gray-500 font-bold mb-1 tracking-wider uppercase">Total Students</p>
+            <p className="text-[10px] text-gray-500 font-bold mb-1 tracking-wider uppercase">{t('totalStudents', 'Total Students')}</p>
             <h3 className="text-2xl font-bold text-gray-900">{data?.stats?.totalStudents || 0}</h3>
           </div>
         </div>
@@ -167,11 +168,11 @@ export default function Dashboard() {
               <BookOpen className="w-4 h-4" />
             </div>
             <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs font-semibold rounded-md">
-              Active
+              {t('activeLabel', 'Active')}
             </span>
           </div>
           <div>
-            <p className="text-[10px] text-gray-500 font-bold mb-1 tracking-wider uppercase">Total Instructors</p>
+            <p className="text-[10px] text-gray-500 font-bold mb-1 tracking-wider uppercase">{t('totalInstructors', 'Total Instructors')}</p>
             <h3 className="text-2xl font-bold text-gray-900">{data?.stats?.totalTeachers || 0}</h3>
           </div>
         </div>
@@ -188,11 +189,11 @@ export default function Dashboard() {
               <Clock className="w-4 h-4" />
             </div>
             <span className="px-2 py-1 bg-white/20 text-white text-[10px] font-semibold rounded-md">
-              Attention Required
+              {t('dashboard_attention_required', 'Attention Required')}
             </span>
           </div>
           <div className="relative z-10">
-            <p className="text-[10px] text-burgundy-light font-bold mb-1 tracking-wider uppercase">Pending Requests</p>
+            <p className="text-[10px] text-burgundy-light font-bold mb-1 tracking-wider uppercase">{t('dashboard_pending_requests', 'Pending Requests')}</p>
             <h3 className="text-2xl font-bold">{data?.stats?.pendingRequests || 0}</h3>
           </div>
         </div>
@@ -210,7 +211,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div>
-            <p className="text-[10px] text-gray-500 font-bold mb-1 tracking-wider uppercase">Today's Sessions</p>
+            <p className="text-[10px] text-gray-500 font-bold mb-1 tracking-wider uppercase">{t('todaySessions', 'Today\'s Sessions')}</p>
             <h3 className="text-2xl font-bold text-gray-900">{data?.stats?.todaySessions || 0}</h3>
           </div>
         </div>
@@ -222,8 +223,8 @@ export default function Dashboard() {
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 lg:col-span-2">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h3 className="text-lg font-bold text-gray-900">Sessions per Day</h3>
-              <p className="text-sm text-gray-500">Weekly tracking of educational engagement</p>
+              <h3 className="text-lg font-bold text-gray-900">{t('dashboard_sessions_per_day', 'Sessions per Day')}</h3>
+              <p className="text-sm text-gray-500">{t('dashboard_weekly_tracking', 'Weekly tracking of educational engagement')}</p>
             </div>
 
           </div>
@@ -236,7 +237,7 @@ export default function Dashboard() {
         {/* Bar Chart Card */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col">
           <div className="flex justify-between items-start mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Active Users</h3>
+            <h3 className="text-lg font-bold text-gray-900">{t('dashboard_active_users', 'Active Users')}</h3>
             <button className="text-gray-400 hover:text-gray-600 transition-colors">
               <MoreHorizontal className="w-5 h-5" />
             </button>
@@ -250,7 +251,7 @@ export default function Dashboard() {
                   style={{ height: `${(totalStudents / maxUsers) * 100}%`, minHeight: '10%' }}
                 ></div>
                 <div className="absolute -top-10 bg-gray-900 text-white text-xs font-medium py-1.5 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl z-10">
-                  {totalStudents.toLocaleString()} Students
+                  {totalStudents.toLocaleString()} {t('students', 'Students')}
                   <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
                 </div>
               </div>
@@ -261,7 +262,7 @@ export default function Dashboard() {
                   style={{ height: `${(totalInstructors / maxUsers) * 100}%`, minHeight: '10%' }}
                 ></div>
                 <div className="absolute -top-10 bg-gray-900 text-white text-xs font-medium py-1.5 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl z-10">
-                  {totalInstructors.toLocaleString()} Instructors
+                  {totalInstructors.toLocaleString()} {t('dashboard_instructors', 'Instructors')}
                   <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-900 rotate-45"></div>
                 </div>
               </div>
@@ -270,7 +271,7 @@ export default function Dashboard() {
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-600 font-medium">Students</span>
+                  <span className="text-gray-600 font-medium">{t('students', 'Students')}</span>
                   <span className="font-bold text-gray-900">{totalStudents}</span>
                 </div>
                 <div className="w-full bg-gray-100 rounded-full h-1.5">
@@ -280,7 +281,7 @@ export default function Dashboard() {
               
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-600 font-medium">Instructors</span>
+                  <span className="text-gray-600 font-medium">{t('dashboard_instructors', 'Instructors')}</span>
                   <span className="font-bold text-gray-900">{totalInstructors}</span>
                 </div>
                 <div className="w-full bg-gray-100 rounded-full h-1.5">
@@ -297,7 +298,7 @@ export default function Dashboard() {
         {/* Activity Feed */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 lg:col-span-2">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Activity Feed</h3>
+            <h3 className="text-lg font-bold text-gray-900">{t('dashboard_activity_feed', 'Activity Feed')}</h3>
           </div>
           
           <div className="space-y-6">
@@ -325,7 +326,7 @@ export default function Dashboard() {
                 </div>
               ))
             ) : (
-              <p className="text-sm text-gray-500 italic">No recent activity.</p>
+              <p className="text-sm text-gray-500 italic">{t('dashboard_no_recent_activity', 'No recent activity.')}</p>
             )}
           </div>
         </div>
@@ -341,22 +342,22 @@ export default function Dashboard() {
               </svg>
             </div>
             <div className="relative z-10">
-              <h3 className="text-xl font-bold mb-3 text-white">District Report Ready</h3>
+              <h3 className="text-xl font-bold mb-3 text-white">{t('dashboard_district_report', 'District Report Ready')}</h3>
               <p className="text-sm text-burgundy-light/80 mb-6 leading-relaxed">
-                The monthly performance audit for Q2 is now available for review and signature.
+                {t('dashboard_district_report_desc', 'The monthly performance audit for Q2 is now available for review and signature.')}
               </p>
               <button className="px-5 py-2.5 bg-white text-[#800020] rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-gray-50 transition-colors"
               onClick={() => navigate("/dashboard/reports")}
               >
-                Review Now
-                <ArrowRight className="w-4 h-4" />
+                {t('dashboard_review_now', 'Review Now')}
+                <ArrowRight className={`w-4 h-4 ${i18n.language === 'ar' ? 'rotate-180' : ''}`} />
               </button>
             </div>
           </div>
 
           {/* Upcoming Sessions */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Upcoming Sessions</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">{t('upcomingSessions', 'Upcoming Sessions')}</h3>
             
             <div className="space-y-3 mb-4">
               {data?.upcomingSessions && data.upcomingSessions.length > 0 ? (
@@ -369,14 +370,14 @@ export default function Dashboard() {
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-gray-500 italic p-3">No upcoming sessions.</p>
+                <p className="text-sm text-gray-500 italic p-3">{t('dashboard_no_upcoming_sessions', 'No upcoming sessions.')}</p>
               )}
             </div>
             
             <button className="w-full text-center text-sm text-gray-500 font-medium hover:text-gray-800 transition-colors mt-2"
             onClick={() => navigate("/dashboard/teacher-availability")}
             >
-              See Full Calendar
+              {t('dashboard_see_full_calendar', 'See Full Calendar')}
             </button>
           </div>
         </div>

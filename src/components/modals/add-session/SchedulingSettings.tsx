@@ -1,7 +1,7 @@
 import { DayOfWeek } from '../../../types/scheduales';
 import { UseFormRegister, UseFormSetValue, Control, Controller } from 'react-hook-form';
 import DatePickerField from '../../ui/DatePickerField';
-
+import { useTranslation } from 'react-i18next';
 interface SchedulingSettingsProps {
   schedulingMode: 'single' | 'batch';
   setSchedulingMode: (mode: 'single' | 'batch') => void;
@@ -23,6 +23,8 @@ export default function SchedulingSettings({
   control,
   errors,
 }: SchedulingSettingsProps) {
+  const { t } = useTranslation();
+
   return (
     <>
       {/* Toggle */}
@@ -34,7 +36,7 @@ export default function SchedulingSettings({
             className={`toggle-btn ${schedulingMode === 'single' ? 'active-toggle' : ''
               }`}
           >
-            Single
+            {t('single')}
           </button>
 
           <button
@@ -43,7 +45,7 @@ export default function SchedulingSettings({
             className={`toggle-btn ${schedulingMode === 'batch' ? 'active-toggle' : ''
               }`}
           >
-            Batch
+            {t('batch')}
           </button>
         </div>
       </div>
@@ -57,7 +59,7 @@ export default function SchedulingSettings({
               control={control}
               render={({ field }) => (
                 <DatePickerField
-                  label="Session Date"
+                  label={t('sessionDate')}
                   value={field.value}
                   onChange={field.onChange}
                   error={errors?.sessionDate?.message}
@@ -67,7 +69,7 @@ export default function SchedulingSettings({
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="label">Start</label>
+                <label className="label">{t('start')}</label>
                 <input
                   type="time"
                   {...register('startTime')}
@@ -76,7 +78,7 @@ export default function SchedulingSettings({
               </div>
 
               <div>
-                <label className="label">End</label>
+                <label className="label">{t('end')}</label>
                 <input
                   type="time"
                   {...register('endTime')}
@@ -95,7 +97,7 @@ export default function SchedulingSettings({
               control={control}
               render={({ field }) => (
                 <DatePickerField
-                  label="Start Date"
+                  label={t('startDate')}
                   value={field.value}
                   onChange={field.onChange}
                   error={errors?.batchStartDate?.message}
@@ -107,7 +109,7 @@ export default function SchedulingSettings({
               control={control}
               render={({ field }) => (
                 <DatePickerField
-                  label="End Date"
+                  label={t('endDate')}
                   value={field.value}
                   onChange={field.onChange}
                   error={errors?.batchEndDate?.message}
@@ -117,12 +119,12 @@ export default function SchedulingSettings({
           </div>
 
           <div className="mb-5">
-            <label className="label">Start Time</label>
+            <label className="label">{t('startTime')}</label>
             <input type="time" {...register('startTime')} className="input" />
           </div>
 
           <div>
-            <label className="label">Weekly Schedule</label>
+            <label className="label">{t('weeklySchedule')}</label>
             <div className="flex flex-wrap gap-2">
               {DAYS.map((day) => {
                 const selected = watchSelectedDays.includes(day);
@@ -144,7 +146,7 @@ export default function SchedulingSettings({
                     className={`day-btn ${selected ? 'bg-indigo-600 text-white' : 'bg-white'
                       }`}
                   >
-                    {day.slice(0, 3)}
+                    {t(day)}
                   </button>
                 );
               })}

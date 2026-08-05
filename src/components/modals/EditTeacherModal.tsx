@@ -69,7 +69,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
               <Users className="w-6 h-6 text-primary" />
               <span>{t('editTeacher')}</span>
             </h2>
-            <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">Update Instructor Profile</p>
+            <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">{t('updateInstructorProfile')}</p>
           </div>
           <button onClick={onClose} className="p-3 hover:bg-slate-50 rounded-2xl transition-all text-slate-400 hover:text-slate-600">
             <X className="w-5 h-5" />
@@ -83,7 +83,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
               
               {/* Basic Info Section */}
               <div className="space-y-5">
-                <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4">Basic Information</h3>
+                <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4">{t('basicInformation')}</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="text-start">
@@ -93,7 +93,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
                     </label>
                     <input
                       type="text"
-                      placeholder="Full Name"
+                      placeholder={t('fullNamePlaceholder')}
                       {...register('name')}
                       className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                     />
@@ -107,7 +107,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
                     </label>
                     <input
                       type="email"
-                      placeholder="instructor@example.com"
+                      placeholder={t('instructorEmailPlaceholder')}
                       {...register('email')}
                       className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                     />
@@ -126,9 +126,9 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
                         type={showPassword ? 'text' : 'password'}
                         placeholder="••••••••"
                         {...register('password')}
-                        className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                        className="w-full pl-5 pr-12 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                       />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute end-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
@@ -153,11 +153,11 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
                   <div className="text-start">
                     <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
                       <Users className="w-3.5 h-3.5" />
-                      Age
+                      {t('age')}
                     </label>
                     <input
                       type="number"
-                      placeholder="Enter Age"
+                      placeholder={t('enterAge')}
                       {...register('age', { valueAsNumber: true })}
                       className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                     />
@@ -168,7 +168,7 @@ export default function EditTeacherModal({ isOpen, onClose, onSubmit, teacher }:
 
               {/* Professional Details Section */}
               <div className="space-y-5">
-                <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4">Professional Details</h3>
+                <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4">{t('professionalDetails')}</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                    <div className="text-start">

@@ -137,11 +137,11 @@ export default function Library() {
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-gray-50/50 border-b border-gray-50">
-                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Name</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Type</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Size</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Date Added</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">Actions</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('table_name', 'Name')}</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('table_type', 'Type')}</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('table_size', 'Size')}</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('table_date_added', 'Date Added')}</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-right">{t('table_actions', 'Actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">

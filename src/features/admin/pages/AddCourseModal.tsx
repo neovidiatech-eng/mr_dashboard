@@ -184,9 +184,9 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                         <BookOpen size={20} />
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold text-gray-900">{isEditMode ? 'Edit Course' : 'Create New Course'}</h3>
+                        <h3 className="text-lg font-bold text-gray-900">{isEditMode ? t('editCourse') : t('createNewCourseModal')}</h3>
                         <p className="text-xs font-medium text-gray-400">
-                            {isEditMode ? 'Modify existing course details and bilingual fields' : 'Add a new academic course with bilingual support'}
+                            {isEditMode ? t('editCourseDesc') : t('createCourseDesc')}
                         </p>
                     </div>
                 </div>
@@ -203,12 +203,12 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <Globe size={14} className="text-indigo-500" /> Title (Arabic) / العنوان (بالعربية)
+                            <Globe size={14} className="text-indigo-500" /> {t('titleArLabel')}
                         </label>
                         <input
                             {...register('title_ar')}
                             dir="rtl"
-                            placeholder="مثال: مقدمة في الجبر"
+                            placeholder={t('titleArPlaceholder')}
                             className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
                         />
                         {errors.title_ar && <p className="text-red-500 text-xs mt-1 font-bold">{errors.title_ar.message}</p>}
@@ -216,12 +216,12 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
 
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <BookOpen size={14} className="text-indigo-500" /> Title (English)
+                            <BookOpen size={14} className="text-indigo-500" /> {t('titleEnLabel')}
                         </label>
                         <input
                             {...register('title_en')}
                             dir="ltr"
-                            placeholder="e.g. Introduction to Algebra"
+                            placeholder={t('titleEnPlaceholder')}
                             className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
                         />
                         {errors.title_en && <p className="text-red-500 text-xs mt-1 font-bold">{errors.title_en.message}</p>}
@@ -232,12 +232,12 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <AlignLeft size={14} className="text-indigo-500" /> Description (Arabic) / الوصف (بالعربية)
+                            <AlignLeft size={14} className="text-indigo-500" /> {t('descArLabel')}
                         </label>
                         <textarea
                             {...register('description_ar')}
                             dir="rtl"
-                            placeholder="اكتب وصفاً شاملاً للكورس بالعربية..."
+                            placeholder={t('descArPlaceholder')}
                             rows={3}
                             className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none text-sm"
                         />
@@ -246,12 +246,12 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
 
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <AlignLeft size={14} className="text-indigo-500" /> Description (English)
+                            <AlignLeft size={14} className="text-indigo-500" /> {t('descEnLabel')}
                         </label>
                         <textarea
                             {...register('description_en')}
                             dir="ltr"
-                            placeholder="Enter a comprehensive description in English..."
+                            placeholder={t('descEnPlaceholder')}
                             rows={3}
                             className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none text-sm"
                         />
@@ -263,7 +263,7 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <Trophy size={14} className="text-indigo-500" /> Academic Rank
+                            <Trophy size={14} className="text-indigo-500" /> {t('academicRank')}
                         </label>
                         <Controller
                             name="rankId"
@@ -271,7 +271,7 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                             render={({ field }) => (
                                 <Select
                                     {...field}
-                                    placeholder="Select rank"
+                                    placeholder={t('selectRank')}
                                     loading={ranksLoading}
                                     className="w-full h-11 rounded-xl"
                                     options={ranksData?.data?.items?.map((rank: any) => ({
@@ -291,7 +291,7 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
 
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <Tag size={14} className="text-indigo-500" /> Category
+                            <Tag size={14} className="text-indigo-500" /> {t('category')}
                         </label>
                         <Controller
                             name="categoryId"
@@ -300,7 +300,7 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                                 <Select
                                     {...field}
                                     allowClear
-                                    placeholder="Select category"
+                                    placeholder={t('selectCategory')}
                                     loading={categoriesLoading}
                                     className="w-full h-11 rounded-xl"
                                     options={categoriesData?.categories?.map((cat: any) => ({
@@ -314,13 +314,13 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
 
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <DollarSign size={14} className="text-indigo-500" /> Price
+                            <DollarSign size={14} className="text-indigo-500" /> {t('price')}
                         </label>
                         <input
                             type="number"
                             min={0}
                             {...register('price')}
-                            placeholder="e.g. 100"
+                            placeholder={t('pricePlaceholder')}
                             className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
                         />
                     </div>
@@ -329,7 +329,7 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                 {/* Keywords / Tags */}
                 <div>
                     <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                        <Hash size={14} className="text-indigo-500" /> Keywords / الكلمات المفتاحية
+                        <Hash size={14} className="text-indigo-500" /> {t('keywordsLabel')}
                     </label>
                     <Controller
                         name="keywords"
@@ -338,7 +338,7 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                             <Select
                                 {...field}
                                 mode="tags"
-                                placeholder="Type keywords and press Enter (e.g. متوسط, algebra, رياضيات)"
+                                placeholder={t('keywordsPlaceholder')}
                                 className="w-full min-h-[44px] rounded-xl"
                                 tokenSeparators={[',']}
                                 options={[]}
@@ -350,7 +350,7 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                 {/* Image Upload */}
                 <div>
                     <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                        <ImageIcon size={14} className="text-indigo-500" /> Course Image
+                        <ImageIcon size={14} className="text-indigo-500" /> {t('courseImage')}
                     </label>
                     <Upload.Dragger
                         listType="picture"
@@ -365,8 +365,8 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                                 <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-gray-100 flex items-center justify-center mx-auto mb-2">
                                     <UploadIcon size={20} className="text-indigo-500" />
                                 </div>
-                                <p className="text-sm font-bold text-gray-700 mb-0.5">Click or drag image to upload</p>
-                                <p className="text-[10px] text-gray-400 font-medium">PNG, JPG or JPEG up to 5MB</p>
+                                <p className="text-sm font-bold text-gray-700 mb-0.5">{t('clickOrDragImage')}</p>
+                                <p className="text-[10px] text-gray-400 font-medium">{t('imageFormatNotice')}</p>
                             </div>
                         ) : null}
                     </Upload.Dragger>
@@ -378,7 +378,7 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                         onClick={onClose}
                         className="h-11 px-6 rounded-xl font-bold text-gray-600 border-gray-200 hover:bg-gray-50"
                     >
-                        Cancel
+                        {t('cancelBtn')}
                     </Button>
                     <Button
                         type="primary"
@@ -386,7 +386,7 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                         loading={isCreating || isUpdating}
                         className="h-11 px-8 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-700 border-none shadow-lg shadow-indigo-100"
                     >
-                        {isEditMode ? 'Update Course' : 'Create Course'}
+                        {isEditMode ? t('updateCourseBtn') : t('createCourseBtn')}
                     </Button>
                 </div>
             </form>

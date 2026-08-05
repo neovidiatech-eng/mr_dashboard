@@ -1,6 +1,7 @@
 import { X, LogOut } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { studentDashboardRoutes } from './studentDashboardRoutes';
+import { useTranslation } from 'react-i18next';
 
 interface StudentSidebarProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface StudentSidebarProps {
 }
 
 export default function StudentSidebar({ isOpen, onClose, isCollapsed }: StudentSidebarProps) {
+  const { t } = useTranslation();
   
   const resolvePath = (path: string) => {
     if (path === '') return '/student-dashboard';
@@ -83,7 +85,7 @@ export default function StudentSidebar({ isOpen, onClose, isCollapsed }: Student
                 {Icon && <Icon size={19} className={`${isCollapsed ? '' : 'shrink-0'}`} />}
                 {!isCollapsed && (
                   <span className="text-sm font-bold tracking-wide">
-                    {item.label}
+                    {t(item.label, item.label)}
                   </span>
                 )}
               </NavLink>
@@ -98,7 +100,7 @@ export default function StudentSidebar({ isOpen, onClose, isCollapsed }: Student
             className="w-full flex items-center gap-4 px-5 py-4 rounded-xl text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all group"
           >
             <LogOut size={19} />
-            {!isCollapsed && <span className="text-sm font-bold">Logout</span>}
+            {!isCollapsed && <span className="text-sm font-bold">{t('logout', 'Logout')}</span>}
           </button>
         </div>
       </aside>

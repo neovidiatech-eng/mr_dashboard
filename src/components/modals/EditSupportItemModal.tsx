@@ -63,9 +63,9 @@ export default function EditSupportItemModal({ isOpen, onClose, onSubmit, catego
                     <div>
                         <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
                             <Edit2 className="w-6 h-6 text-indigo-600" />
-                            <span>Edit Resource</span>
+                            <span>{t('editResource')}</span>
                         </h2>
-                        <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">Update Help Item</p>
+                        <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">{t('updateHelpItem')}</p>
                     </div>
                     <button onClick={onClose} className="p-3 hover:bg-slate-50 rounded-2xl transition-all text-slate-400 hover:text-slate-600">
                         <X className="w-5 h-5" />
@@ -78,12 +78,12 @@ export default function EditSupportItemModal({ isOpen, onClose, onSubmit, catego
                             <div>
                                 <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
                                     <FileText className="w-3.5 h-3.5" />
-                                    Resource Title (Arabic) *
+                                    {t('resourceTitleArabic')} *
                                 </label>
                                 <input
                                     type="text"
                                     dir="rtl"
-                                    placeholder="كيفية الانضمام للجلسة"
+                                    placeholder={t('resourceTitleArabicPlaceholder')}
                                     {...register('title_ar')}
                                     className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
                                 />
@@ -93,12 +93,12 @@ export default function EditSupportItemModal({ isOpen, onClose, onSubmit, catego
                             <div>
                                 <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
                                     <FileText className="w-3.5 h-3.5" />
-                                    Resource Title (English)
+                                    {t('resourceTitleEnglish')}
                                 </label>
                                 <input
                                     type="text"
                                     dir="ltr"
-                                    placeholder="How to join a session"
+                                    placeholder={t('resourceTitleEnglishPlaceholder')}
                                     {...register('title_en')}
                                     className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
                                 />
@@ -108,7 +108,7 @@ export default function EditSupportItemModal({ isOpen, onClose, onSubmit, catego
                         <div className="text-start">
                             <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
                                 <Layout className="w-3.5 h-3.5" />
-                                Category
+                                {t('category')}
                             </label>
                             <Controller
                                 name="categoryId"
@@ -127,11 +127,11 @@ export default function EditSupportItemModal({ isOpen, onClose, onSubmit, catego
                         <div className="text-start">
                             <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
                                 <Link className="w-3.5 h-3.5" />
-                                Resource URL
+                                {t('resourceUrl')}
                             </label>
                             <input
                                 type="text"
-                                placeholder="https://example.com/guide"
+                                placeholder={t('resourceUrlPlaceholder')}
                                 {...register('url')}
                                 className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none"
                             />
@@ -142,12 +142,12 @@ export default function EditSupportItemModal({ isOpen, onClose, onSubmit, catego
                             <div>
                                 <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
                                     <FileText className="w-3.5 h-3.5" />
-                                    Description (Arabic)
+                                    {t('descriptionArabic')}
                                 </label>
                                 <textarea
                                     rows={3}
                                     dir="rtl"
-                                    placeholder="وصف مختصر للمصدر بالعربية..."
+                                    placeholder={t('descriptionArabicPlaceholder')}
                                     {...register('description_ar')}
                                     className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none resize-none"
                                 />
@@ -156,12 +156,12 @@ export default function EditSupportItemModal({ isOpen, onClose, onSubmit, catego
                             <div>
                                 <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
                                     <FileText className="w-3.5 h-3.5" />
-                                    Description (English)
+                                    {t('descriptionEnglish')}
                                 </label>
                                 <textarea
                                     rows={3}
                                     dir="ltr"
-                                    placeholder="Brief summary of resource in English..."
+                                    placeholder={t('descriptionEnglishPlaceholder')}
                                     {...register('description_en')}
                                     className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all outline-none resize-none"
                                 />
@@ -176,7 +176,7 @@ export default function EditSupportItemModal({ isOpen, onClose, onSubmit, catego
                                 className="w-5 h-5 rounded-lg border-slate-200 text-indigo-600 focus:ring-indigo-500 transition-all cursor-pointer"
                             />
                             <label htmlFor="item-active" className="text-sm font-bold text-slate-600 cursor-pointer">
-                                Active Resource
+                                {t('activeResource')}
                             </label>
                         </div>
                     </form>
@@ -195,7 +195,7 @@ export default function EditSupportItemModal({ isOpen, onClose, onSubmit, catego
                         type="submit"
                         className="flex-[2] px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl transition-all font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-100"
                     >
-                        Save Changes
+                        {t('saveChanges')}
                     </button>
                 </div>
             </div>

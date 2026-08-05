@@ -357,11 +357,11 @@ export default function AddSessionModal({
 
             <div>
               <h2 className="text-xl font-bold text-gray-900">
-                Create New Session
+                {t('createNewSession')}
               </h2>
 
               <p className="text-sm text-gray-400">
-                Configure and schedule sessions.
+                {t('configureAndSchedule')}
               </p>
             </div>
           </div>
@@ -386,10 +386,10 @@ export default function AddSessionModal({
             <label className="mb-6 p-4 rounded-2xl border border-indigo-100 bg-indigo-50/50 flex items-center justify-between cursor-pointer">
               <div>
                 <p className="text-xs font-black text-indigo-700 uppercase tracking-widest">
-                  Group Session
+                  {t('groupSession')}
                 </p>
                 <p className="text-xs text-gray-400 mt-0.5">
-                  One session shared by multiple students on a group plan
+                  {t('groupSessionDesc')}
                 </p>
               </div>
               <input
@@ -407,7 +407,7 @@ export default function AddSessionModal({
                 <div>
                   <label className="label">
                     <Search className="w-3.5 h-3.5" />
-                    Student
+                    {t('studentLabel')}
                   </label>
 
                   <Controller
@@ -423,7 +423,7 @@ export default function AddSessionModal({
                         }
                         value={field.value}
                         onChange={field.onChange}
-                        placeholder="Select Student"
+                        placeholder={t('selectStudent')}
                       />
                     )}
                   />
@@ -441,13 +441,13 @@ export default function AddSessionModal({
                 <div>
                   <label className="label">
                     <Layers className="w-3.5 h-3.5" />
-                    Max Students
+                    {t('maxStudents')}
                   </label>
 
                   <input
                     type="text"
                     {...register('maxStudents')}
-                    placeholder="e.g. 5 or unlimited"
+                    placeholder={t('maxStudentsPlaceholder')}
                     className="input"
                   />
                 </div>
@@ -457,7 +457,7 @@ export default function AddSessionModal({
               <div>
                 <label className="label">
                   <Search className="w-3.5 h-3.5" />
-                  Instructor
+                  {t('instructor')}
                 </label>
 
                 <Controller
@@ -475,7 +475,7 @@ export default function AddSessionModal({
                       }
                       value={field.value}
                       onChange={field.onChange}
-                      placeholder="Select Instructor"
+                      placeholder={t('selectInstructor')}
                     />
                   )}
                 />
@@ -493,21 +493,21 @@ export default function AddSessionModal({
               <div className="mb-6">
                 <label className="label">
                   <Search className="w-3.5 h-3.5" />
-                  Group Students ({watchStudentIds.length} selected)
+                  {t('groupStudentsLabel')} ({watchStudentIds.length} {t('selectedCount')})
                 </label>
 
                 <input
                   type="text"
                   value={groupStudentSearch}
                   onChange={(e) => setGroupStudentSearch(e.target.value)}
-                  placeholder="Search students..."
+                  placeholder={t('searchStudents')}
                   className="input mb-2"
                 />
 
                 <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-2xl divide-y divide-gray-100">
                   {groupEligibleStudents.length === 0 && (
                     <p className="p-4 text-xs text-gray-400">
-                      No students on a group plan found.
+                      {t('noGroupStudentsFound')}
                     </p>
                   )}
 
@@ -521,7 +521,7 @@ export default function AddSessionModal({
                           {student.user.name}
                         </p>
                         <p className="text-xs text-gray-400">
-                          {student.plan?.name || 'No Plan'}
+                          {student.plan?.name || t('noPlan')}
                         </p>
                       </div>
                       <input
@@ -552,14 +552,14 @@ export default function AddSessionModal({
               <div className="mb-6">
                 <label className="label">
                   <Video className="w-3.5 h-3.5" />
-                  Session Title
+                  {t('sessionTitle')}
                 </label>
 
 
                 <input
                   type="text"
                   {...register('title')}
-                  placeholder="Session Title"
+                  placeholder={t('sessionTitle')}
                   className="input"
                 />
 
@@ -576,12 +576,12 @@ export default function AddSessionModal({
             <div className="mb-6">
               <label className="label">
                 <AlertCircle className="w-3.5 h-3.5" />
-                Description
+                {t('descriptionLabel')}
               </label>
 
               <textarea
                 {...register('description')}
-                placeholder="Description..."
+                placeholder={t('descriptionPlaceholder')}
                 className="textarea"
               />
 
@@ -599,7 +599,7 @@ export default function AddSessionModal({
               <div>
                 <label className="label">
                   <BookOpen className="w-3.5 h-3.5" />
-                  course
+                  {t('courseLabel')}
                 </label>
 
                 <Controller
@@ -610,7 +610,7 @@ export default function AddSessionModal({
                       options={courseOptions}
                       value={field.value}
                       onChange={field.onChange}
-                      placeholder="Select Subject"
+                      placeholder={t('selectCourse')}
                     />
                   )}
                 />
@@ -626,7 +626,7 @@ export default function AddSessionModal({
               <div>
                 <label className="label">
                   <Layers className="w-3.5 h-3.5" />
-                  Language
+                  {t('languageLabel')}
                 </label>
 
                 <Controller
@@ -635,8 +635,8 @@ export default function AddSessionModal({
                   render={({ field }) => (
                     <CustomSelect
                       options={[
-                        { value: 'en', label: 'English' },
-                        { value: 'ar', label: 'Arabic' },
+                        { value: 'en', label: t('english') },
+                        { value: 'ar', label: t('arabic') },
                       ]}
                       value={field.value}
                       onChange={field.onChange}
@@ -650,7 +650,7 @@ export default function AddSessionModal({
             <div className="mb-6">
               <label className="label">
                 <AlertCircle className="w-3.5 h-3.5" />
-                Notification Time
+                {t('notificationTime')}
               </label>
 
               <Controller
@@ -659,9 +659,9 @@ export default function AddSessionModal({
                 render={({ field }) => (
                   <CustomSelect
                     options={[
-                      { value: '10', label: '10 Minutes before' },
-                      { value: '30', label: '30 Minutes before' },
-                      { value: '60', label: '60 Minutes before' },
+                      { value: '10', label: t('min10') },
+                      { value: '30', label: t('min30') },
+                      { value: '60', label: t('min60') },
                     ]}
                     value={field.value}
                     onChange={field.onChange}
@@ -687,7 +687,7 @@ export default function AddSessionModal({
               <div>
                 <label className="label">
                   <MonitorPlay className="w-3.5 h-3.5" />
-                  Meeting Link
+                  {t('meetingLink')}
                 </label>
 
                 <input
@@ -710,13 +710,13 @@ export default function AddSessionModal({
                   <div>
                     <label className="label">
                       <Video className="w-3.5 h-3.5" />
-                      Video URL
+                      {t('videoUrl')}
                     </label>
 
                     <input
                       type="url"
                       {...register('videoUrl')}
-                      placeholder="Recording URL..."
+                      placeholder={t('recordingUrl')}
                       className="input"
                     />
 
@@ -731,13 +731,13 @@ export default function AddSessionModal({
                   <div>
                     <label className="label">
                       <Layers className="w-3.5 h-3.5" />
-                      Slides URL
+                      {t('slidesUrl')}
                     </label>
 
                     <input
                       type="url"
                       // {...register('slidesUrl')}
-                      placeholder="Presentation URL..."
+                      placeholder={t('presentationUrl')}
                       className="input"
                     />
 
@@ -755,12 +755,12 @@ export default function AddSessionModal({
             <div className="mb-6">
               <label className="label">
                 <AlertTriangle className="w-3.5 h-3.5" />
-                Notes
+                {t('notesLabel')}
               </label>
 
               <textarea
                 {...register('notes')}
-                placeholder="Private notes..."
+                placeholder={t('privateNotes')}
                 className="textarea"
               />
 
@@ -784,7 +784,7 @@ export default function AddSessionModal({
                 onClick={onClose}
                 className="secondary-btn"
               >
-                Cancel
+                {t('cancelBtn')}
               </button>
 
               <button
@@ -792,8 +792,8 @@ export default function AddSessionModal({
                 className="primary-btn"
               >
                 {schedulingMode === 'single'
-                  ? 'Create Session'
-                  : 'Schedule Batch'}
+                  ? t('createSessionBtn')
+                  : t('scheduleBatchBtn')}
               </button>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { Bell, LogOut, Menu } from "lucide-react";
+import { Bell, LogOut, Menu, Globe } from "lucide-react";
 
 import { useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { useProfile } from "../../features/student/hooks/useProfile";
 import { useTeacherProfile } from "../../features/teacher/hooks/useTeacherProfile";
 import { disconnectSocket } from "../../lib/socket";
 import MiniHeaderTimer from "../ui/Counter";
+import { useTranslation } from "react-i18next";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -21,6 +22,13 @@ export default function Header({
   userName,
   isCollapsed,
 }: HeaderProps) {
+  const { i18n } = useTranslation();
+
+  const toggleLanguage = () => {
+    const currentLang = i18n.language.split('-')[0];
+    const nextLang = currentLang === 'ar' ? 'en' : 'ar';
+    i18n.changeLanguage(nextLang);
+  };
 
   const isStudent = userRole === "student";
   const isTeacher = userRole === "teacher";
@@ -38,7 +46,7 @@ export default function Header({
 
   const marginClass = useMemo(() => {
     if (userRole === "student") return "";
-    return isCollapsed ? "lg:ml-20" : "lg:ml-72";
+    return isCollapsed ? "lg:ms-20" : "lg:ms-72";
   }, [userRole, isCollapsed]);
 
   const isTeacherOrStudent = isTeacher || isStudent;
@@ -122,7 +130,15 @@ export default function Header({
         )}
 
         {/* 2. Right Side: Profile / Actions */}
-        <div className="flex items-center gap-2 md:gap-6 shrink-0">
+        <div className="flex items-center gap-2 md:gap-6 shrink-0 justify-end items-end">
+          <button
+            onClick={toggleLanguage}
+            className="p-2 text-gray-500 hover:text-primary hover:bg-primary-light rounded-xl transition-all border border-transparent hover:border-slate-100"
+            title={i18n.language.startsWith('ar') ? 'English' : 'عربي'}
+          >
+            <Globe className="w-5 h-5 md:w-6 md:h-6" />
+          </button>
+
           {isTeacherOrStudent ? (
             <div className="flex items-center gap-2 md:gap-4">
               <DesktopProfile

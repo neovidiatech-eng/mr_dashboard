@@ -13,7 +13,7 @@ export default function StudentDashboardLayout({
   userRole = 'student',
 }: StudentDashboardLayoutProps) {
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex flex-col font-['Inter']" dir="ltr">
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col font-['Inter']">
       <Header
         userRole={userRole}
       />

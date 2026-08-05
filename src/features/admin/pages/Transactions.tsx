@@ -14,9 +14,11 @@ import ViewTransactionModal from "../../../components/modals/ViewTransactionModa
 import { useTransactions } from "../hooks/useTransaction";
 import { Transaction, TransactionType } from "../../../types/transaction";
 import Pagination from "../../../components/ui/Pagination";
+import { useTranslation } from "react-i18next";
 
 export default function Transactions() {
   const { language } = useLanguage();
+  const { t } = useTranslation();
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -174,7 +176,7 @@ export default function Transactions() {
                 </h1>
 
                 <p className="text-sm text-gray-500">
-                  {filteredTransactions.length} Transactions
+                  {filteredTransactions.length} {t('transaction')}
                 </p>
               </div>
           </div>
@@ -370,7 +372,7 @@ export default function Transactions() {
                     {/* Reason */}
                     <td className="px-6 py-5">
                       <p className="text-sm text-gray-800">
-                        {transaction.reason || "-"}
+                        {transaction.reason ? t(transaction.reason, transaction.reason) : "-"}
                       </p>
                     </td>
 

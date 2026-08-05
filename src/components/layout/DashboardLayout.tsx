@@ -14,7 +14,7 @@ export default function DashboardLayout({
   const isRtl = language === 'ar';
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col" dir={isRtl ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header
         onMenuClick={() => setSidebarOpen(!sidebarOpen)}
         userRole="teacher"
@@ -27,7 +27,7 @@ export default function DashboardLayout({
           isCollapsed={isCollapsed}
           setIsCollapsed={setIsCollapsed}
         />
-        <main className={`flex-1 overflow-x-hidden overflow-y-auto transition-all duration-300 ${isRtl ? (isCollapsed ? 'lg:mr-20' : 'lg:mr-72') : (isCollapsed ? 'lg:ml-20' : 'lg:ml-72')}`}>
+        <main className={`flex-1 overflow-x-hidden overflow-y-auto transition-all duration-300 ${isCollapsed ? 'lg:ms-20' : 'lg:ms-72'}`}>
           <div className="p-4 sm:p-6 lg:p-8">
             {children}
           </div>

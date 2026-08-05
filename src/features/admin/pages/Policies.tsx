@@ -4,6 +4,7 @@ import { Shield, Plus, Edit2, Trash2, Megaphone, Info } from 'lucide-react';
 import { usePolicies, useNotice, useCreatePolicy, useUpdatePolicy, useDeletePolicy, useCreateNotice } from '../../../hooks/usePolicies';
 import AddPolicyModal from './AddPolicyModal';
 import { Policy } from '../../../types/polices';
+import { t } from 'i18next';
 
 const { Title, Text } = Typography;
 
@@ -56,7 +57,7 @@ export default function AdminPoliciesPage() {
 
   const columns = [
     {
-      title: 'POLICY',
+      title: t('table_policy', 'POLICY'),
       key: 'policy',
       render: (record: Policy) => (
         <div className="flex items-center gap-3">
@@ -74,23 +75,23 @@ export default function AdminPoliciesPage() {
       ),
     },
     {
-      title: 'ICON',
+      title: t('table_icon', 'ICON'),
       dataIndex: 'icon',
       key: 'icon',
       render: (icon: string) => <Tag className="rounded-full border-none bg-gray-100 font-bold text-gray-500">{icon}</Tag>,
     },
     {
-      title: 'STATUS',
+      title: t('table_status', 'STATUS'),
       dataIndex: 'active',
       key: 'active',
       render: (active: boolean) => (
         <Tag color={active ? 'green' : 'red'} className="rounded-full font-bold uppercase text-[10px] px-3">
-          {active ? 'Active' : 'Inactive'}
+          {active ? t('active', 'Active') : t('inactive', 'Inactive')}
         </Tag>
       ),
     },
     {
-      title: 'LAST UPDATED',
+      title: t('table_last_updated', 'LAST UPDATED'),
       dataIndex: 'updatedAt',
       key: 'updatedAt',
       render: (date: string) => (
@@ -100,7 +101,7 @@ export default function AdminPoliciesPage() {
       ),
     },
     {
-      title: 'ACTIONS',
+      title: t('table_actions', 'ACTIONS'),
       key: 'actions',
       render: (record: Policy) => (
         <Space size="middle">
@@ -137,8 +138,8 @@ export default function AdminPoliciesPage() {
     <div className="p-8 max-w-[1600px] mx-auto animate-fade-in font-['Outfit']">
       <header className="mb-10 flex items-center justify-between">
         <div>
-          <Title level={2} className="!mb-1 !font-bold">Policies Management</Title>
-          <Text className="text-gray-400 font-medium">Create and manage institutional guidelines and teacher notices</Text>
+          <Title level={2} className="!mb-1 !font-bold">{t('policiesManagement', 'Policies Management')}</Title>
+          <Text className="text-gray-400 font-medium">{t('policiesDesc', 'Create and manage institutional guidelines and teacher notices')}</Text>
         </div>
         <Button 
           type="primary" 
@@ -150,7 +151,7 @@ export default function AdminPoliciesPage() {
             setModalVisible(true);
           }}
         >
-          Add New Policy
+          {t('addNewPolicy', 'Add New Policy')}
         </Button>
       </header>
 
@@ -174,24 +175,24 @@ export default function AdminPoliciesPage() {
             title={
               <div className="flex items-center gap-2 py-2">
                 <Megaphone size={20} className="text-indigo-600" />
-                <span className="font-bold text-gray-900">Important Notice</span>
+                <span className="font-bold text-gray-900">{t('importantNotice', 'Important Notice')}</span>
               </div>
             }
           >
             {noticeLoading ? (
-              <div className="py-10 text-center text-gray-400">Loading notice...</div>
+              <div className="py-10 text-center text-gray-400">{t('loadingNotice', 'Loading notice...')}</div>
             ) : (
               <div className="space-y-6">
                 <div>
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Notice Title</label>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">{t('noticeTitle', 'Notice Title')}</label>
                   <div className="p-4 bg-white border border-gray-100 rounded-2xl font-bold text-gray-800">
-                    {notice?.title || 'No title set'}
+                    {notice?.title || t('noTitleSet', 'No title set')}
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Notice Content</label>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">{t('noticeContent', 'Notice Content')}</label>
                   <div className="p-4 bg-white border border-gray-100 rounded-2xl text-sm text-gray-500 leading-relaxed min-h-[100px]">
-                    {notice?.content || 'No content set'}
+                    {notice?.content || t('noContentSet', 'No content set')}
                   </div>
                 </div>
                 <Button 
@@ -202,13 +203,13 @@ export default function AdminPoliciesPage() {
                     setModalVisible(true);
                   }}
                 >
-                  <Edit2 size={16} /> Edit Public Notice
+                  <Edit2 size={16} /> {t('editPublicNotice', 'Edit Public Notice')}
                 </Button>
                 
                 <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex gap-3">
                   <Info size={18} className="text-amber-500 shrink-0 mt-0.5" />
                   <p className="text-[11px] font-medium text-amber-700/80 leading-relaxed">
-                    Changes to the public notice will be visible to all teachers immediately on their dashboard.
+                    {t('publicNoticeWarning', 'Changes to the public notice will be visible to all teachers immediately on their dashboard.')}
                   </p>
                 </div>
               </div>

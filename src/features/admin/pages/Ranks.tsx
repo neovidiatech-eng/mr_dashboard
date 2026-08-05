@@ -6,11 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { Calendar, Edit2, Plus, Search, Trash2, Trophy, Users } from 'lucide-react';
 import ConfirmModal from '../../../components/modals/ConfirmModal';
+import { t } from 'i18next';
 
 
 export default function Ranks() {
     const { t } = useTranslation();
-   
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -65,9 +65,9 @@ export default function Ranks() {
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
                         <Trophy className="w-8 h-8 text-indigo-600" />
-                        Rank Management
+                        {t('ranks_management', 'Rank Management')}
                     </h1>
-                    <p className="text-gray-500 mt-2 font-medium">Define and manage academic ranks and age-based progression.</p>
+                    <p className="text-gray-500 mt-2 font-medium">{t('ranks_subtitle', 'Define and manage academic ranks and age-based progression.')}</p>
                 </div>
 
                 <button
@@ -75,7 +75,7 @@ export default function Ranks() {
                     className="flex items-center gap-2 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-3xl transition-all shadow-lg shadow-indigo-200 active:scale-95 font-bold"
                 >
                     <Plus className="w-5 h-5" />
-                    Create New Rank
+                    {t('ranks_create_new', 'Create New Rank')}
                 </button>
             </div>
 
@@ -86,7 +86,7 @@ export default function Ranks() {
                         <Trophy className="w-6 h-6 text-indigo-600" />
                     </div>
                     <div>
-                        <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">Total Ranks</p>
+                        <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">{t('ranks_total', 'Total Ranks')}</p>
                         <p className="text-2xl font-bold text-gray-900">{ranks.length}</p>
                     </div>
                 </div>
@@ -95,8 +95,8 @@ export default function Ranks() {
                         <Calendar className="w-6 h-6 text-amber-600" />
                     </div>
                     <div>
-                        <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">Last Updated</p>
-                        <p className="text-2xl font-bold text-gray-900">Today</p>
+                        <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">{t('ranks_last_updated', 'Last Updated')}</p>
+                        <p className="text-2xl font-bold text-gray-900">{t('today', 'Today')}</p>
                     </div>
                 </div>
             </div>
@@ -107,7 +107,7 @@ export default function Ranks() {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
                         type="text"
-                        placeholder="Search ranks by name..."
+                        placeholder={t('ranks_search', 'Search ranks by name...')}
                         className="w-full pl-12 pr-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -151,8 +151,8 @@ export default function Ranks() {
                     <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6">
                         <Trophy className="w-10 h-10 text-gray-300" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900">No Ranks Found</h3>
-                    <p className="text-gray-500 mt-2 max-w-sm">No ranks match your search criteria. Try adjusting your filters or create a new rank.</p>
+                    <h3 className="text-xl font-bold text-gray-900">{t('ranks_no_found', 'No Ranks Found')}</h3>
+                    <p className="text-gray-500 mt-2 max-w-sm">{t('ranks_no_found_desc', 'No ranks match your search criteria. Try adjusting your filters or create a new rank.')}</p>
                 </div>
             )}
 
@@ -177,6 +177,9 @@ export default function Ranks() {
 
 // Internal wrapper to make the provided RankCard look more "Premium" while still using it
 function EnhancedRankCard({ rank }: { rank: RankItem }) {
+    const { t, i18n } = useTranslation();
+    const isArabic = i18n.language.startsWith('ar');
+
     return (
         <div className="relative overflow-hidden bg-white rounded-[32px] p-1 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
             {/* Decorative gradient background based on rank color */}
@@ -203,13 +206,13 @@ function EnhancedRankCard({ rank }: { rank: RankItem }) {
                 </div>
 
                 <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-indigo-600 transition-colors">
-                    {rank.name_ar || rank.name_en || rank.name}
+                    {isArabic ? (rank.name_ar || rank.name_en || rank.name) : (rank.name_en || rank.name_ar || rank.name)}
                 </h3>
-                {rank.name_en && rank.name_ar && (
-                    <p className="text-xs text-gray-400 font-medium mb-2">{rank.name_en}</p>
+                {((isArabic && rank.name_en) || (!isArabic && rank.name_ar)) && (
+                    <p className="text-xs text-gray-400 font-medium mb-2">{isArabic ? rank.name_en : rank.name_ar}</p>
                 )}
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-tighter mb-4">
-                    Academic Progression
+                   {t("accademicProgression")}
                 </p>
 
                 <div className="space-y-3 pt-4 border-t border-gray-50">
@@ -217,26 +220,28 @@ function EnhancedRankCard({ rank }: { rank: RankItem }) {
                         <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-gray-500 flex items-center gap-2">
                                 <Users className="w-3.5 h-3.5" />
-                                Study Stage
+                                {t('studyAge')}
                             </span>
                             <span className="text-xs font-bold bg-indigo-50 text-indigo-700 px-2 py-1 rounded-lg">
-                                {rank.stageName_ar || rank.stageName_en || rank.stageName}
+                                {isArabic 
+                                    ? (rank.stageName_ar || rank.stageName_en || rank.stageName) 
+                                    : (rank.stageName_en || rank.stageName_ar || rank.stageName)}
                             </span>
                         </div>
                     )}
                     <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-gray-500 flex items-center gap-2">
                             <Users className="w-3.5 h-3.5" />
-                            Age Group
+                            {t("ageGroup")}
                         </span>
                         <span className="text-xs font-bold text-gray-900 bg-gray-50 px-2 py-1 rounded-lg">
-                            {rank.ageRange.minAge} - {rank.ageRange.maxAge} Yrs
+                            {rank.ageRange.minAge} - {rank.ageRange.maxAge} {t('yrs')}
                         </span>
                     </div>
                     <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-gray-500 flex items-center gap-2">
                             <Calendar className="w-3.5 h-3.5" />
-                            Created
+                            {t('created')}
                         </span>
                         <span className="text-xs font-bold text-gray-400">
                             {new Date(rank.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}

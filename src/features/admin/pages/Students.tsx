@@ -164,7 +164,7 @@ export default function Students() {
       ),
     },
     {
-      title: t('User Name'),
+      title: t('userName', 'User Name'),
       render: (_: any, record: Student) => (
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center text-primary font-bold text-xs">
@@ -362,6 +362,7 @@ export default function Students() {
               dataSource={currentStudents}
               rowKey="id"
               pagination={false}
+              locale={{ emptyText: t('no_data', 'No data') }}
               className="w-full min-w-[1000px]"
               rowClassName="hover:bg-gray-50/50 transition-colors group cursor-pointer"
             />
@@ -372,7 +373,7 @@ export default function Students() {
         {!isLoading && totalItems > 0 && (
           <div className="p-4 border-t border-gray-50 flex items-center justify-between">
             <span className="text-xs text-gray-400 font-bold ml-2">
-              Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} students
+              {t('showing')} {(currentPage - 1) * itemsPerPage + 1} {t('to')} {Math.min(currentPage * itemsPerPage, totalItems)} {t('of')} {totalItems} {t('sidebar_students', 'Students')}
             </span>
             <div className="flex items-center gap-1.5">
               <button

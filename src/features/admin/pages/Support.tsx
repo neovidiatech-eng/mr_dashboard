@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { 
-    Plus, 
-    Search, 
-    HelpCircle, 
-    Edit2, 
-    Trash2, 
-    ExternalLink, 
+import { useTranslation } from 'react-i18next';
+import {
+    Plus,
+    Search,
+    HelpCircle,
+    Edit2,
+    Trash2,
+    ExternalLink,
     FolderPlus,
     Loader2,
     CheckCircle2,
@@ -22,16 +23,17 @@ import { SupportCategoryFormData, SupportItemFormData } from '../../../lib/schem
 import { SupportCategory, SupportItem } from '../../../types/support';
 
 export default function Support() {
+    const { t } = useTranslation();
     const { language } = useLanguage();
-    const { 
-        categories, 
-        isLoadingCategories, 
+    const {
+        categories,
+        isLoadingCategories,
         createSupport,
         updateSupport,
-        deleteSupport, 
+        deleteSupport,
         createCategory,
         updateCategory,
-        deleteCategory 
+        deleteCategory
     } = useSupport();
     const { confirm, ConfirmDialog } = useConfirm();
     const [searchQuery, setSearchQuery] = useState('');
@@ -46,7 +48,7 @@ export default function Support() {
     const [selectedCategory, setSelectedCategory] = useState<SupportCategory | null>(null);
     const [selectedItem, setSelectedItem] = useState<SupportItem | null>(null);
 
-    const filteredCategories = categories.filter(cat => 
+    const filteredCategories = categories.filter(cat =>
         cat.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         cat.supports.some(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()))
     );
@@ -84,13 +86,13 @@ export default function Support() {
 
     const handleEditCategory = async (data: SupportCategoryFormData) => {
         if (selectedCategory) {
-          try {
-            await updateCategory({ id: selectedCategory.id, data });
-            return true;
-          } catch (error) {
-            console.error(error);
-            return false;
-          }
+            try {
+                await updateCategory({ id: selectedCategory.id, data });
+                return true;
+            } catch (error) {
+                console.error(error);
+                return false;
+            }
         }
         return false;
     };
@@ -107,13 +109,13 @@ export default function Support() {
 
     const handleEditSupport = async (data: SupportItemFormData) => {
         if (selectedItem) {
-          try {
-            await updateSupport({ id: selectedItem.id, data });
-            return true;
-          } catch (error) {
-            console.error(error);
-            return false;
-          }
+            try {
+                await updateSupport({ id: selectedItem.id, data });
+                return true;
+            } catch (error) {
+                console.error(error);
+                return false;
+            }
         }
         return false;
     };
@@ -127,25 +129,25 @@ export default function Support() {
                         <HelpCircle className="w-8 h-8 text-indigo-600" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Support Management</h1>
-                        <p className="text-sm font-bold text-slate-400 mt-1 uppercase tracking-widest">Help Center & Resources</p>
+                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">{t('supportManagement', 'Support Management')}</h1>
+                        <p className="text-sm font-bold text-slate-400 mt-1 uppercase tracking-widest">{t('helpCenter', 'Help Center & Resources')}</p>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button 
+                    <button
                         onClick={() => setIsAddCategoryOpen(true)}
                         className="flex items-center gap-2 px-6 py-3.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-2xl transition-all font-black text-xs uppercase tracking-widest border border-slate-100"
                     >
                         <FolderPlus className="w-4 h-4" />
-                        Add Category
+                        {t('addCategory', 'Add Category')}
                     </button>
-                    <button 
+                    <button
                         onClick={() => setIsAddItemOpen(true)}
                         className="flex items-center gap-2 px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl transition-all font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-100"
                     >
                         <Plus className="w-4 h-4" />
-                        Create Resource
+                        {t('createResource', 'Create Resource')}
                     </button>
                 </div>
             </div>
@@ -153,18 +155,18 @@ export default function Support() {
             {/* Search & Stats */}
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 <div className="lg:col-span-3 relative">
-                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                    <input 
+                    <Search className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 ${language === 'ar' ? 'right-6' : 'left-6'}`} />
+                    <input
                         type="text"
-                        placeholder="Search categories or resources..."
+                        placeholder={t('searchCategories', 'Search categories or resources...')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-14 pr-6 py-5 bg-white border border-slate-100 rounded-3xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-indigo-50/50 focus:border-indigo-200 outline-none transition-all shadow-sm"
+                        className={`w-full py-5 bg-white border border-slate-100 rounded-3xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-indigo-50/50 focus:border-indigo-200 outline-none transition-all shadow-sm ${language === 'ar' ? 'pr-14 pl-6' : 'pl-14 pr-6'}`}
                     />
                 </div>
                 <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between">
                     <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Categories</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('totalCategories', 'Total Categories')}</p>
                         <p className="text-2xl font-black text-slate-900 mt-1">{categories.length}</p>
                     </div>
                     <div className="p-3 bg-indigo-50 rounded-xl">
@@ -177,7 +179,7 @@ export default function Support() {
             {isLoadingCategories ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-4">
                     <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
-                    <p className="text-sm font-black text-slate-400 uppercase tracking-widest">Loading Resources...</p>
+                    <p className="text-sm font-black text-slate-400 uppercase tracking-widest">{t('loadingResources', 'Loading Resources...')}</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-10">
@@ -187,11 +189,11 @@ export default function Support() {
                                 <div className="flex items-center gap-4">
                                     <h2 className="text-lg font-black text-slate-900 tracking-tight">{category.title}</h2>
                                     <span className="px-3 py-1 bg-slate-100 text-[10px] font-black text-slate-500 rounded-full uppercase tracking-widest">
-                                        {category.supports.length} Resources
+                                        {category.supports.length} {t('resources', 'Resources')}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <button 
+                                    <button
                                         onClick={() => {
                                             setSelectedCategory(category);
                                             setIsEditCategoryOpen(true);
@@ -200,7 +202,7 @@ export default function Support() {
                                     >
                                         <Edit2 className="w-4 h-4" />
                                     </button>
-                                    <button 
+                                    <button
                                         onClick={() => handleDeleteCategory(category.id)}
                                         className="p-2 hover:bg-white hover:shadow-sm rounded-xl transition-all text-slate-400 hover:text-red-600"
                                     >
@@ -211,7 +213,7 @@ export default function Support() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {category.supports.map((support) => (
-                                    <div 
+                                    <div
                                         key={support.id}
                                         className="group bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all duration-300"
                                     >
@@ -224,7 +226,7 @@ export default function Support() {
                                                 )}
                                             </div>
                                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <button 
+                                                <button
                                                     onClick={() => {
                                                         setSelectedItem(support);
                                                         setIsEditItemOpen(true);
@@ -233,7 +235,7 @@ export default function Support() {
                                                 >
                                                     <Edit2 className="w-3.5 h-3.5" />
                                                 </button>
-                                                <button 
+                                                <button
                                                     onClick={() => handleDeleteSupport(support.id)}
                                                     className="p-2 hover:bg-slate-50 rounded-lg text-slate-400 hover:text-red-600"
                                                 >
@@ -250,30 +252,30 @@ export default function Support() {
                                         <div className="pt-6 border-t border-slate-50 flex items-center justify-between">
                                             <div className="flex items-center gap-2">
                                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">
-                                                    {support.readingCount} Views
+                                                    {support.readingCount} {t('views')}
                                                 </span>
                                             </div>
-                                            <a 
-                                                href={support.url} 
-                                                target="_blank" 
+                                            <a
+                                                href={support.url}
+                                                target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="flex items-center gap-2 text-[10px] font-black text-indigo-600 uppercase tracking-widest hover:gap-3 transition-all"
                                             >
-                                                Visit Resource
+                                                {t('resource')}
                                                 <ExternalLink className="w-3 h-3" />
                                             </a>
                                         </div>
                                     </div>
                                 ))}
-                                
-                                <button 
+
+                                <button
                                     onClick={() => setIsAddItemOpen(true)}
                                     className="flex flex-col items-center justify-center p-8 rounded-[32px] border-2 border-dashed border-slate-200 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all group"
                                 >
                                     <div className="p-3 bg-slate-50 group-hover:bg-indigo-50 rounded-2xl transition-colors">
                                         <Plus className="w-6 h-6 text-slate-400 group-hover:text-indigo-600" />
                                     </div>
-                                    <p className="mt-4 text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-indigo-600">Add Resource</p>
+                                    <p className="mt-4 text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-indigo-600">{t("addResource")}</p>
                                 </button>
                             </div>
                         </div>

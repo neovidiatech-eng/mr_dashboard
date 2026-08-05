@@ -235,8 +235,7 @@ export default function Parents() {
       {showAddModal && (
         <AddParentModal
           onClose={() => setShowAddModal(false)}
-          onAdd={handleAddParent}
-        />
+          onAdd={handleAddParent} isOpen={false}        />
       )}
 
       {showEditModal && selectedParent && (

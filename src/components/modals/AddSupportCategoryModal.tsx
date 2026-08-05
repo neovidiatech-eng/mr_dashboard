@@ -44,9 +44,9 @@ export default function AddSupportCategoryModal({ isOpen, onClose, onSubmit }: A
                     <div>
                         <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
                             <FolderPlus className="w-6 h-6 text-primary" />
-                            <span>Add Category</span>
+                            <span>{t('addCategory')}</span>
                         </h2>
-                        <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">Support Section</p>
+                        <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">{t('supportSection')}</p>
                     </div>
                     <button onClick={onClose} className="p-3 hover:bg-slate-50 rounded-2xl transition-all text-slate-400 hover:text-slate-600">
                         <X className="w-5 h-5" />
@@ -57,12 +57,12 @@ export default function AddSupportCategoryModal({ isOpen, onClose, onSubmit }: A
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-start">
                         <div>
                             <label className="text-xs font-black text-slate-500 mb-2 uppercase tracking-wider block">
-                                Category Title (Arabic) *
+                                {t('categoryTitleArabic')} *
                             </label>
                             <input
                                 type="text"
                                 dir="rtl"
-                                placeholder="مثال: الدعم الفني"
+                                placeholder={t('categoryTitleArabicPlaceholder')}
                                 {...register('title_ar')}
                                 className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none"
                             />
@@ -71,12 +71,12 @@ export default function AddSupportCategoryModal({ isOpen, onClose, onSubmit }: A
 
                         <div>
                             <label className="text-xs font-black text-slate-500 mb-2 uppercase tracking-wider block">
-                                Category Title (English)
+                                {t('categoryTitleEnglish')}
                             </label>
                             <input
                                 type="text"
                                 dir="ltr"
-                                placeholder="e.g. Technical Support"
+                                placeholder={t('categoryTitleEnglishPlaceholder')}
                                 {...register('title_en')}
                                 className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none"
                             />
@@ -95,7 +95,7 @@ export default function AddSupportCategoryModal({ isOpen, onClose, onSubmit }: A
                             type="submit"
                             className="flex-[2] px-8 py-4 bg-primary hover:bg-primary-dark text-white rounded-2xl transition-all font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/20"
                         >
-                            Create Category
+                            {t('createCategory')}
                         </button>
                     </div>
                 </form>

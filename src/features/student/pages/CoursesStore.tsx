@@ -75,13 +75,13 @@ export default function CoursesStore() {
                 <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center mb-4">
                   <BookOpen className="w-6 h-6 text-indigo-600" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-1">{course.title}</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-1">{language === 'ar' ? course.title_ar || course.title : course.title_en || course.title}</h3>
                 {course.category && (
                   <span className="inline-block text-[10px] font-bold px-2 py-1 rounded-lg mb-2" style={{ backgroundColor: `${course.category.color}20`, color: course.category.color }}>
                     {language === 'ar' ? course.category.name_ar : (course.category.name_en || course.category.name_ar)}
                   </span>
                 )}
-                <p className="text-sm text-gray-400 mb-4 line-clamp-2">{course.description}</p>
+                <p className="text-sm text-gray-400 mb-4 line-clamp-2">{language === 'ar' ? course.description_ar || course.description : course.description_en || course.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-black text-gray-900">
                     {course.price ? `${course.price}` : text.noPrice[language]}

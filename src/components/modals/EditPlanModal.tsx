@@ -74,7 +74,7 @@ export default function EditPlanModal({
               <Plus className="w-6 h-6 text-indigo-600" />
               <span>{t('editPlan')}</span>
             </h2>
-            <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">Update Package Details</p>
+            <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">{t('updatePackageDetails')}</p>
           </div>
           <button onClick={onClose} className="p-3 hover:bg-slate-50 rounded-2xl transition-all text-slate-400 hover:text-slate-600">
             <X className="w-5 h-5" />
@@ -88,29 +88,29 @@ export default function EditPlanModal({
               
               {/* Identity Section */}
               <div className="space-y-5">
-                <h3 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-4">Plan Identity</h3>
+                <h3 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-4">{t('planIdentity')}</h3>
                 
                 <div>
                   <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
-                    Name
+                    {t('name')}
                   </label>
                   <input 
                     {...register('name')}
                     className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all" 
-                    placeholder="اسم الخطة بالعربي"
+                    placeholder={t('planNamePlaceholder')}
                   />
                   {errors.name && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.name.message}</p>}
                 </div>
 
                 <div>
                   <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
-                    Description
+                    {t('description')}
                   </label>
                   <textarea 
                     {...register('description')}
                     rows={3} 
                     className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all resize-none" 
-                    placeholder="Short description of this plan..."
+                    placeholder={t('planDescriptionPlaceholder')}
                   />
                   {errors.description && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.description.message}</p>}
                 </div>
@@ -118,12 +118,12 @@ export default function EditPlanModal({
 
               {/* Pricing & Structure */}
               <div className="space-y-5">
-                <h3 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-4">Pricing & Structure</h3>
+                <h3 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-4">{t('pricingAndStructure')}</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
                     <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
-                      Price
+                      {t('price')}
                     </label>
                     <input 
                       type="number"
@@ -135,7 +135,7 @@ export default function EditPlanModal({
 
                   <div>
                     <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
-                      Currency
+                      {t('currency')}
                     </label>
                     <Controller
                       name="currencyId"
@@ -156,7 +156,7 @@ export default function EditPlanModal({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
                     <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
-                      Duration (Months)
+                      {t('durationMonths')}
                     </label>
                     <input 
                       type="number"
@@ -168,7 +168,7 @@ export default function EditPlanModal({
 
                   <div>
                     <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
-                      Sessions Count
+                      {t('sessionsCount')}
                     </label>
                     <input 
                       type="number"
@@ -183,7 +183,7 @@ export default function EditPlanModal({
               {/* Features Section */}
               <div className="space-y-5">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em]">Features & Benefits</h3>
+                  <h3 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em]">{t('featuresAndBenefits')}</h3>
                   <button 
                     type="button" 
                     onClick={addFeature}
@@ -201,7 +201,7 @@ export default function EditPlanModal({
                         <input
                           value={feature}
                           onChange={(e) => updateFeature(index, e.target.value)}
-                          placeholder="Ex: 24/7 Support"
+                          placeholder={t('featurePlaceholder')}
                           className="w-full bg-transparent border-none focus:ring-0 text-sm font-bold text-slate-700 px-3 py-1.5"
                         />
                       </div>
@@ -220,12 +220,12 @@ export default function EditPlanModal({
 
               {/* Configuration Section */}
               <div className="space-y-5">
-                <h3 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-4">Configuration</h3>
+                <h3 className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.2em] mb-4">{t('configuration')}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="bg-slate-50 rounded-2xl px-6 py-4 flex items-center justify-between">
                     <div>
-                      <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Visibility</p>
-                      <p className="text-xs font-bold text-slate-400 mt-0.5">Plan Status</p>
+                      <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t('visibility')}</p>
+                      <p className="text-xs font-bold text-slate-400 mt-0.5">{t('planStatus')}</p>
                     </div>
                   </div>
 

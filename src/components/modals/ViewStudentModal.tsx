@@ -61,7 +61,7 @@ export default function ViewStudentModal({ isOpen, onClose, studentData: initial
                   {studentData.status === 'approved' ? t('active') : t('pending')}
                 </span>
                 <span className="text-gray-400 text-xs font-bold px-2 border-l border-gray-200">
-                  ID: #{studentData.id.slice(0, 8)}
+                  {t('id')}: #{studentData.id.slice(0, 8)}
                 </span>
               </div>
             </div>
@@ -170,7 +170,7 @@ export default function ViewStudentModal({ isOpen, onClose, studentData: initial
                           {review.reviewer?.name?.charAt(0).toUpperCase() || 'R'}
                         </div>
                         <div>
-                          <p className="text-xs font-bold text-gray-900">{review.reviewer?.name || 'Reviewer'}</p>
+                          <p className="text-xs font-bold text-gray-900">{review.reviewer?.name || t('reviewer')}</p>
                           <p className="text-[10px] text-gray-400 font-bold">{new Date(review.createdAt).toLocaleDateString()}</p>
                         </div>
                       </div>

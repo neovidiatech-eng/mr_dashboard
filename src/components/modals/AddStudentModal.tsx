@@ -202,7 +202,6 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
                     type="text"
                     value={nameValue ? nameValue.toLowerCase().replace(/\s+/g, '.') : ''}
                     disabled
-                    placeholder="ex :- student_name"
                     className={`w-full px-4 py-3 bg-gray-100 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-500 outline-none ring-2 ${errors.email ? 'ring-red-500/20' : 'ring-transparent'} focus:ring-indigo-500/10 transition-all placeholder:text-gray-300 pr-24 ltr:pr-24 rtl:pl-24 cursor-not-allowed`}
                     dir="ltr"
                   />
@@ -388,10 +387,10 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
                     type={showPassword ? 'text' : 'password'}
                     {...register('password')}
                     placeholder="••••••••"
-                    className={`w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ${errors.password ? 'ring-red-500/20' : 'ring-transparent'} focus:ring-indigo-500/10 transition-all placeholder:text-gray-300`}
+                    className={`w-full pl-4 pr-12 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ${errors.password ? 'ring-red-500/20' : 'ring-transparent'} focus:ring-indigo-500/10 transition-all placeholder:text-gray-300`}
                     dir="ltr"
                   />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute end-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>

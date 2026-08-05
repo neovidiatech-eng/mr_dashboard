@@ -11,7 +11,30 @@ import ViewReportModal from '../../../components/modals/ViewReportModal';
 
 export default function Reports() {
   const { t, i18n } = useTranslation();
-  const language = i18n.language.split('-')[0];
+  const language = (i18n.language.split('-')[0] === 'ar' ? 'ar' : 'en') as 'ar' | 'en';
+
+  const text = {
+    searchReports: { ar: 'البحث عن تقارير...', en: 'searchReports' },
+    totalReports: { ar: 'إجمالي التقارير', en: 'TOTALREPORTS' },
+    avgRating: { ar: 'متوسط التقييم', en: 'AVGRATING' },
+    teacherLabel: { ar: 'المعلم', en: 'Teacher' },
+    week: { ar: 'الأسبوع', en: 'WEEK' },
+    performance: { ar: 'الأداء', en: 'PERFORMANCE' },
+    classes: { ar: 'الحصص', en: 'CLASSES' },
+    students: { ar: 'الطلاب', en: 'STUDENTS' },
+    summary: { ar: 'الملخص', en: 'SUMMARY' },
+    rating: { ar: 'التقييم', en: 'RATING' },
+    status: { ar: 'الحالة', en: 'Status' },
+    submitted: { ar: 'تم التسليم', en: 'SUBMITTED' },
+    actions: { ar: 'الإجراءات', en: 'Actions' },
+    deleteReportTitle: { ar: 'حذف التقرير', en: 'Delete Report' },
+    deleteReportContent: { ar: 'هل أنت متأكد من حذف هذا التقرير؟ لا يمكن التراجع عن هذا الإجراء.', en: 'Are you sure you want to delete this report? This action cannot be undone.' },
+    yesDelete: { ar: 'نعم، احذف', en: 'Yes, Delete' },
+    cancel: { ar: 'إلغاء', en: 'Cancel' },
+    teacherWeeklyReports: { ar: 'التقارير الأسبوعية للمعلمين', en: 'Teacher Weekly Reports' },
+    manageReportsDescription: { ar: 'مراجعة وتحليل تقارير أداء المعلمين', en: 'Review and analyze teacher performance reports' },
+    download: { ar: 'تحميل', en: 'download' }
+  };
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -46,7 +69,7 @@ export default function Reports() {
     return [
       {
         id: 'total_reports',
-        label: t('totalReports') || 'Total Reports',
+        label: text.totalReports[language],
         value: reportsList.length,
         icon: FileText,
         bgColor: 'bg-indigo-50/50',
@@ -55,7 +78,7 @@ export default function Reports() {
       },
       {
         id: 'avg_rating',
-        label: t('avgRating') || 'Avg Rating',
+        label: text.avgRating[language],
         value: avgRating.toFixed(1),
         icon: Star,
         bgColor: 'bg-amber-50/50',
@@ -63,7 +86,7 @@ export default function Reports() {
         iconColor: 'text-amber-600',
       },
     ];
-  }, [reportsList, t]);
+  }, [reportsList, language]);
 
   const filteredReports = useMemo(() => {
     return reportsList.filter((report: TeacherReport) => {
@@ -117,7 +140,7 @@ export default function Reports() {
 
   const columns: ColumnsType<TeacherReport> = [
     {
-      title: t('teacherLabel') || 'Teacher',
+      title: text.teacherLabel[language],
       key: 'teacher',
       render: (_: unknown, record: TeacherReport) => (
         <div className="flex items-center gap-3">
@@ -132,7 +155,7 @@ export default function Reports() {
       ),
     },
     {
-      title: t('week') || 'Week',
+      title: text.week[language],
       key: 'week',
       render: (_: unknown, record: TeacherReport) => (
         <div className="flex flex-col">
@@ -146,17 +169,17 @@ export default function Reports() {
       ),
     },
     {
-      title: t('performance') || 'Performance',
+      title: text.performance[language],
       key: 'performance',
       render: (_: unknown, record: TeacherReport) => (
         <div className="space-y-1">
           <div className="flex items-center gap-4">
             <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">{t('classes') || 'Classes'}</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">{text.classes[language]}</span>
               <span className="text-sm font-black text-gray-700">{record.totalClasses}</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">{t('students') || 'Students'}</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">{text.students[language]}</span>
               <span className="text-sm font-black text-gray-700">{record.studentsTaught}</span>
             </div>
           </div>
@@ -164,7 +187,7 @@ export default function Reports() {
       ),
     },
     {
-      title: t('summary') || 'Summary',
+      title: text.summary[language],
       dataIndex: 'teachingSummary',
       key: 'teachingSummary',
       width: 300,
@@ -175,7 +198,7 @@ export default function Reports() {
       ),
     },
     {
-      title: t('rating') || 'Rating',
+      title: text.rating[language],
       key: 'rating',
       render: (_: unknown, record: TeacherReport) => (
         <div className="flex flex-col gap-1">
@@ -185,16 +208,16 @@ export default function Reports() {
       ),
     },
     {
-      title: t('status') || 'Status',
+      title: text.status[language],
       key: 'status',
       render: () => (
         <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-primary-light text-primary border border-primary/20">
-          {t('submitted') || 'Submitted'}
+          {text.submitted[language]}
         </span>
       ),
     },
     {
-      title: t('actions') || 'Actions',
+      title: text.actions[language],
       key: 'actions',
       align: 'right' as const,
       render: (_: unknown, record: TeacherReport) => (
@@ -213,11 +236,11 @@ export default function Reports() {
             onClick={(e) => {
               e.stopPropagation();
               Modal.confirm({
-                title: t('deleteReportTitle') || 'Delete Report',
-                content: t('deleteReportContent') || 'Are you sure you want to delete this report? This action cannot be undone.',
-                okText: t('yesDelete') || 'Yes, Delete',
+                title: text.deleteReportTitle[language],
+                content: text.deleteReportContent[language],
+                okText: text.yesDelete[language],
                 okType: 'danger',
-                cancelText: t('cancel') || 'Cancel',
+                cancelText: text.cancel[language],
                 onOk: async () => {
                   if (record.id) {
                     await deleteReport(record.id);
@@ -239,15 +262,15 @@ export default function Reports() {
 
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Teacher Weekly Reports</h1>
-          <p className="text-gray-500 text-sm font-medium mt-1">{t('manageReportsDescription') || 'Review and analyze teacher performance reports'}</p>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight">{text.teacherWeeklyReports[language]}</h1>
+          <p className="text-gray-500 text-sm font-medium mt-1">{text.manageReportsDescription[language]}</p>
         </div>
         <button
           onClick={handleDownloadCSV}
           className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 text-gray-600 hover:text-indigo-600 hover:border-indigo-200 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 font-bold text-sm"
         >
           <Download className="w-4 h-4" />
-          {t('download') || 'Download'}
+          {text.download[language]}
         </button>
       </div>
 
@@ -278,7 +301,7 @@ export default function Reports() {
             <Search className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4`} />
             <input
               type="text"
-              placeholder={t('searchReports') || 'Search by teacher name...'}
+              placeholder={text.searchReports[language]}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className={`w-full ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-3 bg-white border border-gray-100 rounded-2xl text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent transition-all placeholder:text-gray-400 shadow-sm`}

@@ -6,7 +6,10 @@ export interface AgeRange {
 }
 
 export interface Rank {
+  id?: string;
   name: string;
+  name_ar?: string;
+  name_en?: string;
   slug: string;
   color: string;
   ageRange: AgeRange;

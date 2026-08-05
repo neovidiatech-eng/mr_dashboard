@@ -155,7 +155,7 @@ export default function Assignments() {
                         {language === 'ar' ? assignment.subject?.name_ar : assignment.subject?.name_en || assignment.subject?.name_ar}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-start text-gray-900 font-medium">{assignment.title}</td>
+                    <td className="px-6 py-4 text-start text-gray-900 font-medium">{language === 'ar' ? assignment.title_ar || assignment.title : assignment.title_en || assignment.title}</td>
                     <td className="px-6 py-4 text-start text-gray-900">{assignment.teacher?.user?.name}</td>
                     <td className="px-6 py-4 text-start text-gray-600">
                       {new Date(assignment.dueDate).toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-US')}

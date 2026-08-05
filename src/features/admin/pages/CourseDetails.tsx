@@ -19,8 +19,11 @@ import { useQueryClient } from '@tanstack/react-query';
 import AddLectureModal from './AddLectureModal';
 import { Lecture } from '../../../types/lectures';
 import UniversalVideoPlayer from '../../../components/ui/UniversalVideoPlayer';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 export default function CourseDetails() {
+  const { t, language } = useLanguage();
+  const isAr = language === 'ar';
   const { courseId } = useParams();
   const navigate = useNavigate();
   const [selectedLessonId, setSelectedLessonId] = useState<string>('');
@@ -54,9 +57,9 @@ export default function CourseDetails() {
   const handleDeleteLecture = (lectureId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     Modal.confirm({
-      title: 'Delete Lecture?',
-      content: 'Are you sure you want to remove this lecture from the course?',
-      okText: 'Delete',
+      title: t('deleteLectureConfirmTitle'),
+      content: t('deleteLectureConfirmDesc'),
+      okText: t('delete'),
       okType: 'danger',
       onOk: () => {
         deleteLecture(lectureId, {
@@ -73,7 +76,7 @@ export default function CourseDetails() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-90px)] bg-[#f8fafc]">
-        <Spin size="large" tip="Loading course details..." />
+        <Spin size="large" tip={t('loadingCourseDetails')} />
       </div>
     );
   }
@@ -81,9 +84,9 @@ export default function CourseDetails() {
   if (!selectedCourse) {
     return (
       <div className="p-8 bg-[#f8fafc] min-h-[calc(100vh-90px)] flex flex-col items-center justify-center" dir="ltr">
-        <Empty description="Course not found" />
+        <Empty description={t('courseNotFound')} />
         <Button onClick={handleBack} className="mt-4 rounded-xl font-bold">
-          Back to Curriculum
+          {t('backToCurriculum')}
         </Button>
       </div>
     );
@@ -102,9 +105,9 @@ export default function CourseDetails() {
           </button>
           <div>
             <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
-              Curriculum <ChevronRight size={10} /> <span className="text-primary">{selectedCourse.title}</span>
+              {t('curriculum')} <ChevronRight size={10} /> <span className="text-primary">{isAr ? selectedCourse.title_ar || selectedCourse.title : selectedCourse.title_en || selectedCourse.title}</span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">{selectedCourse.title}</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{isAr ? selectedCourse.title_ar || selectedCourse.title : selectedCourse.title_en || selectedCourse.title}</h1>
           </div>
         </div>
         <button
@@ -112,7 +115,7 @@ export default function CourseDetails() {
           className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-white bg-primary hover:bg-primary-dark transition-all shadow-md shadow-primary/20 active:scale-95"
         >
           <Plus size={16} />
-          Add Lecture
+          {t('addLectureBtn')}
         </button>
       </div>
 
@@ -121,8 +124,8 @@ export default function CourseDetails() {
         <div className="w-[350px] flex flex-col gap-4 overflow-y-auto no-scrollbar">
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
             <div className="p-4 border-b border-gray-50 bg-gray-50/50 flex items-center justify-between">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Course Content</span>
-              <span className="text-xs font-bold text-gray-500">{lectures.length} Lectures</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('courseContent')}</span>
+              <span className="text-xs font-bold text-gray-500">{lectures.length} {t('lecturesCount')}</span>
             </div>
             <div className="max-h-[60vh] overflow-y-auto no-scrollbar">
               {lectures.length > 0 ? (
@@ -138,11 +141,11 @@ export default function CourseDetails() {
                       </div>
                       <div className="flex flex-col">
                         <span className={`text-sm font-bold ${selectedLessonId === lecture.id ? 'text-primary' : 'text-gray-700'}`}>
-                          {lecture.title_ar || lecture.title_en || lecture.title}
+                          {isAr ? lecture.title_ar || lecture.title : lecture.title_en || lecture.title}
                         </span>
                         <div className="flex items-center gap-2 mt-1">
                           <Video size={10} className={selectedLessonId === lecture.id ? 'text-primary' : 'text-gray-300'} />
-                          <span className="text-[10px] text-gray-400 font-medium">Lecture</span>
+                          <span className="text-[10px] text-gray-400 font-medium">{t('lecture')}</span>
                         </div>
                       </div>
                     </div>
@@ -150,8 +153,8 @@ export default function CourseDetails() {
                       <Dropdown
                         menu={{
                           items: [
-                            { key: 'edit', label: 'Edit', icon: <Edit size={14} />, onClick: (info) => handleEditLecture(lecture, info.domEvent as any) },
-                            { key: 'delete', label: 'Delete', icon: <Trash2 size={14} />, danger: true, onClick: (info) => handleDeleteLecture(lecture.id, info.domEvent as any) },
+                            { key: 'edit', label: t('edit'), icon: <Edit size={14} />, onClick: (info) => handleEditLecture(lecture, info.domEvent as any) },
+                            { key: 'delete', label: t('delete'), icon: <Trash2 size={14} />, danger: true, onClick: (info) => handleDeleteLecture(lecture.id, info.domEvent as any) },
                           ]
                         }}
                         trigger={['click']}
@@ -170,12 +173,12 @@ export default function CourseDetails() {
                 ))
               ) : (
                 <div className="p-8 text-center">
-                  <Empty description="No lectures yet" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                  <Empty description={t('noLecturesYet')} image={Empty.PRESENTED_IMAGE_SIMPLE} />
                   <button
                     onClick={() => setIsAddLectureModalVisible(true)}
                     className="mt-2 px-4 py-1.5 rounded-lg text-[11px] font-bold text-white bg-primary hover:bg-primary-dark transition-all shadow-sm"
                   >
-                    + Add First Lecture
+                    {t('addFirstLecture')}
                   </button>
                 </div>
               )}
@@ -188,11 +191,11 @@ export default function CourseDetails() {
           <div className="flex-1 bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col overflow-hidden">
             <div className="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
               <div>
-                <span className="inline-block px-3 py-1 rounded-full bg-primary-light text-primary text-[10px] font-bold uppercase tracking-widest mb-2">Current Lecture</span>
+                <span className="inline-block px-3 py-1 rounded-full bg-primary-light text-primary text-[10px] font-bold uppercase tracking-widest mb-2">{t('currentLecture')}</span>
                 <h2 className="text-xl font-bold text-gray-900">
-                  {activeLecture ? (activeLecture.title_ar || activeLecture.title_en || activeLecture.title) : 'No Lecture Selected'}
+                  {activeLecture ? (isAr ? activeLecture.title_ar || activeLecture.title : activeLecture.title_en || activeLecture.title) : t('noLectureSelected')}
                 </h2>
-                <p className="text-[11px] font-bold text-gray-400">Last Update: {activeLecture ? new Date(activeLecture.updatedAt).toLocaleDateString() : '-'}</p>
+                <p className="text-[11px] font-bold text-gray-400">{t('lastUpdate')}: {activeLecture ? new Date(activeLecture.updatedAt).toLocaleDateString() : '-'}</p>
               </div>
             </div>
 
@@ -203,10 +206,10 @@ export default function CourseDetails() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 text-gray-600">
                         <Video size={16} className="text-primary" />
-                        <span className="text-sm font-bold">Video Content</span>
+                        <span className="text-sm font-bold">{t('videoContent')}</span>
                       </div>
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                        MP4 - {activeLecture.videoUrl ? 'Ready' : 'Not Set'}
+                        MP4 - {activeLecture.videoUrl ? t('ready') : t('notSet')}
                       </span>
                     </div>
                     <UniversalVideoPlayer url={activeLecture?.videoUrl || (activeLecture as any)?.video_url || (activeLecture as any)?.url} />
@@ -215,10 +218,10 @@ export default function CourseDetails() {
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 text-gray-600">
                       <FileText size={16} className="text-primary" />
-                      <span className="text-sm font-bold">Lecture Description</span>
+                      <span className="text-sm font-bold">{t('lectureDescription')}</span>
                     </div>
                     <div className="p-6 rounded-2xl bg-white border border-gray-100 text-gray-600 leading-relaxed">
-                      {activeLecture.content_ar || activeLecture.content_en || activeLecture.content || 'No content provided for this lecture.'}
+                      {isAr ? activeLecture.content_ar || activeLecture.content : activeLecture.content_en || activeLecture.content || t('noContentProvided')}
                     </div>
                   </div>
 
@@ -226,7 +229,7 @@ export default function CourseDetails() {
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 text-gray-600">
                         <FileText size={16} className="text-primary" />
-                        <span className="text-sm font-bold">Lecture Resources (PDF)</span>
+                        <span className="text-sm font-bold">{t('lectureResources')}</span>
                       </div>
                       <a
                         href={activeLecture.pdfUrl}
@@ -238,8 +241,8 @@ export default function CourseDetails() {
                           <FileText size={24} />
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">Download Lecture Notes</p>
-                          <p className="text-[11px] text-gray-500">PDF Document • Click to view or download</p>
+                          <p className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">{t('downloadLectureNotes')}</p>
+                          <p className="text-[11px] text-gray-500">{t('pdfDocument')}</p>
                         </div>
                         <Button type="text" icon={<ChevronRight size={18} />} className="text-primary/60 group-hover:text-primary" />
                       </a>
@@ -250,7 +253,7 @@ export default function CourseDetails() {
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 text-gray-600">
                         <Presentation size={16} className="text-purple-500" />
-                        <span className="text-sm font-bold">Lecture Slides</span>
+                        <span className="text-sm font-bold">{t('lectureSlides')}</span>
                       </div>
                       <a
                         href={activeLecture.slidesUrl}
@@ -262,8 +265,8 @@ export default function CourseDetails() {
                           <Presentation size={24} />
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm font-bold text-gray-900 group-hover:text-purple-600 transition-colors">View Slides</p>
-                          <p className="text-[11px] text-gray-500">Slide Deck • Click to view</p>
+                          <p className="text-sm font-bold text-gray-900 group-hover:text-purple-600 transition-colors">{t('viewSlides')}</p>
+                          <p className="text-[11px] text-gray-500">{t('slideDeck')}</p>
                         </div>
                         <Button type="text" icon={<ChevronRight size={18} />} className="text-purple-400 group-hover:text-purple-600" />
                       </a>
@@ -273,7 +276,7 @@ export default function CourseDetails() {
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-center">
                   <BookOpen size={64} className="text-gray-200 mb-4" />
-                  <h3 className="text-lg font-bold text-gray-400">Select a lecture to view details</h3>
+                  <h3 className="text-lg font-bold text-gray-400">{t('selectLectureToView')}</h3>
                 </div>
               )}
             </div>

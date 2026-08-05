@@ -208,7 +208,7 @@ export default function Teachers() {
                       : 'text-gray-400 hover:text-gray-600'
                    }`}
                  >
-                   {status === 'all' ? 'All' : t(status)}
+                   {t(status)}
                  </button>
                ))}
              </div>
@@ -224,15 +224,15 @@ export default function Teachers() {
               <table className="w-full">
                 <thead>
                   <tr className="bg-gray-50/50 border-b border-gray-100">
-                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">Teacher</th>
-                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">Email</th>
-                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">  User Name</th>
-                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">  Password</th>
-                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">Phone</th>
-                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">Price</th>
-                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">Rating</th>
-                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">Status</th>
-                    <th className="px-8 py-5 text-end text-xs font-black uppercase tracking-widest text-gray-400">Actions</th>
+                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">{t('table_teacher', 'Teacher')}</th>
+                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">{t('table_email', 'Email')}</th>
+                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">{t('table_user_name', 'User Name')}</th>
+                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">{t('table_password', 'Password')}</th>
+                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">{t('table_phone', 'Phone')}</th>
+                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">{t('table_price', 'Price')}</th>
+                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">{t('table_rating', 'Rating')}</th>
+                    <th className="px-8 py-5 text-start text-xs font-black uppercase tracking-widest text-gray-400">{t('table_status', 'Status')}</th>
+                    <th className="px-8 py-5 text-end text-xs font-black uppercase tracking-widest text-gray-400">{t('table_actions', 'Actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
@@ -245,7 +245,7 @@ export default function Teachers() {
                           </div>
                           <div>
                             <p className="text-sm font-black text-gray-900">{teacher.user?.name}</p>
-                            <p className="text-[10px] font-bold text-gray-400 uppercase mt-0.5">Instructor</p>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase mt-0.5">{t('instructorRole', 'Instructor')}</p>
                           </div>
                         </div>
                       </td>
