@@ -39,6 +39,7 @@ const StudentDashboard = lazy(
 const TeacherDashboard = lazy(
   () => import("./pages/TeacherDashboard/TeacherDashboard"),
 );
+const OfflinePage = lazy(() => import("./pages/OfflinePage"));
 
 // Centralized Loading Fallback UI
 const LoadingFallback = () => (
@@ -140,6 +141,10 @@ function App() {
                           element={<TeacherDashboard />}
                         />
                       </Route>
+
+                      {/* Offline & QR Code Scanned Routes */}
+                      <Route path="/offline-page" element={<OfflinePage />} />
+                      <Route path="/qr-scan" element={<OfflinePage />} />
 
                       <Route
                         path="/"
