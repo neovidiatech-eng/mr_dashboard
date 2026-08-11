@@ -74,18 +74,16 @@ export default function Login({ onLoginSuccess }: LoginProps) {
         message.success(result.message || t('loginSuccess'));
  
 
-        // navigation حسب role
-        
-        // if (role === "teacher") {
-        //   navigate("/teacher-dashboard");
-        // } else if (role === "student") {
-        //   navigate("/student-dashboard");
-        // } else {
-        //   navigate("/dashboard");
-        // }
+        // Handle redirect if user scanned QR code before logging in
+        const searchParams = new URLSearchParams(window.location.search);
+        const redirectUrl = searchParams.get("redirect") || sessionStorage.getItem("redirect_after_login");
 
-                navigate(getDashboardPathForRole(role));
-
+        if (redirectUrl) {
+          sessionStorage.removeItem("redirect_after_login");
+          navigate(redirectUrl, { replace: true });
+        } else {
+          navigate(getDashboardPathForRole(role));
+        }
 
         onLoginSuccess();
         connectSocket(token);

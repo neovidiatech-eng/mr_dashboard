@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { Table, Button, Space, Tag, Popconfirm, Card, Typography } from 'antd';
 import { Shield, Plus, Edit2, Trash2, Megaphone, Info } from 'lucide-react';
 import { usePolicies, useNotice, useCreatePolicy, useUpdatePolicy, useDeletePolicy, useCreateNotice } from '../../../hooks/usePolicies';

@@ -25,7 +25,8 @@ import {
   HelpCircle,
   Tag,
   ShoppingCart,
-  Star
+  Star,
+  File
 } from 'lucide-react';
 import TransactionRequests from "../../features/admin/pages/TransactionRequests";
 
@@ -70,6 +71,7 @@ const RanksPage = lazy(() => import("../../features/admin/pages/Ranks"));
 const PoliciesPage = lazy(() => import("../../features/admin/pages/Policies"));
 const ReportsPage = lazy(() => import("../../features/admin/pages/Reports"));
 const SupportPage = lazy(() => import("../../features/admin/pages/Support"));
+const PostsPage = lazy(() => import("../../features/admin/pages/Posts"));
 
 
 export const adminDashboardRoutes: RouteConfig[] = [
@@ -221,6 +223,13 @@ export const adminDashboardRoutes: RouteConfig[] = [
       },
     ],
   },
+    {
+      id: "posts",
+      label: "sidebar_posts",
+      icon: File,
+      path: "posts",
+      element: <PostsPage />,
+    },
   {
     id: "requests",
     label: "Requests Management",

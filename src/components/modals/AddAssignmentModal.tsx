@@ -4,7 +4,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import CustomSelect from '../ui/CustomSelect';
 import DatePickerField from '../ui/DatePickerField';
 import { AssignmentFormData, getAssignmentSchema } from '../../lib/schemas/AssignmentSchema';
-import { useForm } from 'react-hook-form';
+import { Resolver, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useGetStudents, useCreateAssignment, useUpdateAssignment } from '../../hooks/useAssignment';
 import { HomeworkItem } from '../../types/assignment';
@@ -36,7 +36,7 @@ export default function AddAssignmentModal({ isOpen, onClose, initialData }: Add
     watch,
     formState: { errors },
   } = useForm<AssignmentFormData>({
-    resolver: zodResolver(getAssignmentSchema(t)),
+    resolver: zodResolver(getAssignmentSchema(t)) as Resolver<AssignmentFormData>,
     defaultValues: {
       studentId: '',
       title_ar: '',
