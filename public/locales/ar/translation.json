@@ -816,5 +816,10 @@
     "POLICIES_READ": "قراءة السياسات",
     "SETTINGS_UPDATE": "تحديث الإعدادات",
     "SETTINGS_READ": "قراءة الإعدادات"
-  }
+  },
+  "online": "أونلاين",
+  "onsite": "حضوري",
+  "qrCode": "كود QR",
+  "download": "تحميل"
+
 }

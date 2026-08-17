@@ -108,6 +108,11 @@ export default function EditStudentModal({
     { value: 'female', label: language === 'ar' ? 'أنثى' : 'Female' },
   ];
 
+  const typeOptions = [
+    { value: 'online', label: t('online') },
+    { value: 'onsite', label: t('onsite') },
+  ];
+
   const countryOptions = [
     { value: 'egypt', label: language === 'ar' ? 'مصر' : 'Egypt' },
     { value: 'saudi', label: language === 'ar' ? 'السعودية' : 'Saudi Arabia' },
@@ -334,6 +339,8 @@ export default function EditStudentModal({
                 )}
               />
             </div>
+            
+         
 
             {/* Footer Actions */}
             <div className="flex items-center gap-4 mt-8 pt-4 border-t border-gray-100 bg-white/80 backdrop-blur-md">

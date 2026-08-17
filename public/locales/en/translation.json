@@ -802,5 +802,9 @@
     "POLICIES_READ": "POLICIES READ",
     "SETTINGS_UPDATE": "SETTINGS UPDATE",
     "SETTINGS_READ": "SETTINGS READ"
-  }
+  },
+  "online": "Online",
+  "onsite": "Onsite",
+  "qrCode": "QR Code",
+  "download": "Download"
 }

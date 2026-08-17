@@ -8,6 +8,7 @@ export const getStudentSchema = (t: TFunc) => z.object({
   phone_code: z.string().min(1, t("validation.required")),
   phone: z.string().min(1, t("validation.required")),
   gender: z.enum(['male', 'female']),
+  type: z.enum(['online', 'onsite']),
   birthDate: z.string(t("validation.required")),
   plan: z.string(t("validation.required")),
   country: z.string().min(1, t("validation.required")),
@@ -80,6 +81,15 @@ export const getStudentSchema = (t: TFunc) => z.object({
         path: ["phone"],
       });
     }
+  }
+
+  // Require startingLectureId if startingCourseId is provided
+  if (data.startingCourseId && data.startingCourseId.trim() !== "" && (!data.startingLectureId || data.startingLectureId.trim() === "")) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: t("validation.required"),
+      path: ["startingLectureId"],
+    });
   }
 });
 

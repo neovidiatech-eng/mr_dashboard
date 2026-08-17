@@ -1,5 +1,5 @@
 import { useState, lazy, useMemo, useEffect } from 'react';
-import { Search, Eye, EyeOff, Pencil, Trash2, Plus, Users, UserCheck, UserX, ClipboardList, ChevronDown, MoreVertical, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Eye, Pencil, Trash2, Plus, Users, UserCheck, UserX, ClipboardList, ChevronDown, MoreVertical, ChevronLeft, ChevronRight } from 'lucide-react';
 import WhatsAppPhone from '../../../components/ui/WhatsAppPhone';
 import { useTranslation } from 'react-i18next';
 import { useStudents, useCreateStudent, useUpdateStudent, useDeleteStudent } from '../hooks/useStudents';
@@ -437,6 +437,7 @@ export default function Students() {
               phone: studentData.phone,
               phone_code: studentData.phone_code,
               gender: studentData.gender,
+              type: studentData.type,
               country: studentData.country,
               active: studentData.status === 'approved',
               timezone: studentData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -499,6 +500,7 @@ export default function Students() {
               country: selectedStudent.country ? selectedStudent.country.toLowerCase() : 'egypt',
               status: (selectedStudent.status || 'pending') as any,
               gender: selectedStudent.gender || 'male',
+              type: selectedStudent.type || 'online',
               plan: selectedStudent.planId || '',
               rankId: selectedStudent.rankId || '',
               password: selectedStudent.user.password || '',
@@ -516,6 +518,7 @@ export default function Students() {
               country: updatedData.country,
               birth_date: (updatedData.birthDate && updatedData.birthDate !== "") ? new Date(updatedData.birthDate).toISOString() : null,
               gender: updatedData.gender,
+              type: updatedData.type,
               active: updatedData.status === 'approved',
             };
 
