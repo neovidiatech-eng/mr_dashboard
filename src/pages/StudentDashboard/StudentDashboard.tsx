@@ -454,7 +454,7 @@ export default function StudentDashboard() {
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 </div>
                 <h4 className="text-2xl font-black text-slate-800 tracking-tighter group-hover:text-blue-600 transition-colors">
-                  {metadata?.rank?.name || 'No Rank'}
+                  {metadata?.rank?.name || 'No Level'}
                 </h4>
                 <div className="flex items-center gap-2 text-slate-400">
                   <BookOpen size={16} className="text-blue-400" />
@@ -480,7 +480,7 @@ export default function StudentDashboard() {
             </div>
             <div className="space-y-1">
               <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Next Milestone</p>
-              <h5 className="text-lg font-bold text-slate-600 group-hover:text-slate-800 leading-tight">Keep learning to unlock the next rank!</h5>
+              <h5 className="text-lg font-bold text-slate-600 group-hover:text-slate-800 leading-tight">Keep learning to unlock the next level!</h5>
             </div>
           </div>
         </div>

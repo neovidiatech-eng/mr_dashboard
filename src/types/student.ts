@@ -1,13 +1,14 @@
 import { Plan } from "./plan";
 
 export type StudentStatus = 'pending' | 'approved' | 'rejected';
-
+export type StudentType = "online" | "onsite";
 
 export interface UserDetails {
   id: string;
   email: string;
   name: string;
   username:string;
+  type:StudentType;
   phone: string;
   code_country: string;
   status: string;
@@ -30,6 +31,8 @@ export interface Student {
   id: string;
   user_id: string;
   birth_date: string;
+  qrToken:string;
+  type:StudentType;
   gender: 'male' | 'female';
   active: boolean;
   createdAt: string;

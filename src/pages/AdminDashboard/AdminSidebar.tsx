@@ -181,7 +181,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_requests', 'Requests')}</span>}
                 </NavLink>
               )}
-              {hasRouteAccess('teachers') && (
+              {/* {hasRouteAccess('teachers') && (
                 <NavLink
                   to="/dashboard/teachers"
                   onClick={onClose}
@@ -194,8 +194,8 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   <User className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
                   {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_teachers', 'Teachers')}</span>}
                 </NavLink>
-              )}
-
+              )} */}
+{/* 
               {hasRouteAccess('teacher-availability') && (
                 <NavLink
                   to="/dashboard/teacher-availability"
@@ -209,7 +209,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   <Clock className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
                   {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_teacher_availability', 'Teacher Availability')}</span>}
                 </NavLink>
-              )}
+              )} */}
 
               {hasRouteAccess('plans') && (
                 <NavLink
@@ -249,10 +249,10 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                     w-full flex items-center gap-4 ${isCollapsed ? 'justify-center px-2' : 'px-5'} py-3.5 rounded-xl font-bold transition-all
                     ${isActive ? 'bg-primary-light text-primary' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}
                   `}
-                  title={isCollapsed ? "Ranks" : ''}
+                  title={isCollapsed ? "Levels" : ''}
                 >
                   <Trophy className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_ranks', 'Ranks')}</span>}
+                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('levels', 'Levels')}</span>}
                 </NavLink>
               )}
 

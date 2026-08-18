@@ -1,10 +1,12 @@
-import { X, Mail, Phone, MapPin, ClipboardList, Clock, Trophy, Star, MessageSquare } from 'lucide-react';
+import { X, Mail, Phone, MapPin, ClipboardList, Clock, Trophy, Star, MessageSquare, Download } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import WhatsAppPhone from '../ui/WhatsAppPhone';
 import { useTranslation } from 'react-i18next';
 import { Student } from '../../types/student';
 import { useGetRank } from '../../features/admin/hooks/useRank';
 import { useStudentById } from '../../features/admin/hooks/useStudents';
+import { QRCodeSVG } from 'qrcode.react';
+import { useRef } from 'react';
 
 interface ViewStudentModalProps {
   isOpen: boolean;
@@ -22,6 +24,57 @@ export default function ViewStudentModal({ isOpen, onClose, studentData: initial
   const { data: rankData } = useGetRank(studentData?.rankId || "");
 
   const rank = rankData?.data;
+
+  const studentToken = studentData?.qrToken;
+  const qrLink = `https://dashboard.mr-mahmoud.com/offline-page?token=${studentToken}`;
+
+  const qrRef = useRef<HTMLDivElement>(null);
+
+  const downloadQRCode = (format: 'png' | 'jpg' = 'png') => {
+    const svgElement = qrRef.current?.querySelector('svg')
+    if (!svgElement) return;
+    const svgData = new XMLSerializer().serializeToString(svgElement);
+    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' })
+    const URLObject = window.URL || window.webkitURL || window;
+    const blobURL = URLObject.createObjectURL(svgBlob);
+
+    const image = new Image();
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      const qrSize = 300;
+      const padding = 30;
+      const size = qrSize + (padding * 2)
+      canvas.width = size;
+      canvas.height = size;
+
+      const context = canvas.getContext('2d');
+      if (!context) return;
+
+      if (format === 'jpg') {
+        context.fillStyle = "#ffffff";
+        context.fillRect(0, 0, size, size);
+      }
+
+      context.drawImage(image, padding, padding, qrSize, qrSize);
+
+      const imgType = format === 'jpg' ? 'image/jpeg' : 'image/png';
+      const imageURL = canvas.toDataURL(imgType, 1.0);
+
+
+      const downloadLink = document.createElement('a')
+      downloadLink.href = imageURL;
+      downloadLink.download = `QR-${studentData?.user.name || 'Student'}.${format}`;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      URLObject.revokeObjectURL(blobURL);
+    }
+
+    image.src = blobURL;
+  };
+
+
+
   if (!isOpen || !studentData) return null;
 
   return (
@@ -37,12 +90,12 @@ export default function ViewStudentModal({ isOpen, onClose, studentData: initial
 
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-20"
+            className="absolute top-4 end-4 p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors z-20"
           >
             <X className="w-5 h-5" />
           </button>
 
-          <div className="absolute -bottom-12 left-8 flex items-end gap-6">
+          <div className="absolute -bottom-16 start-8 flex items-end gap-6">
             <div className="w-24 h-24 rounded-[22px] bg-white p-1.5 shadow-lg relative">
               {isLoading && (
                 <div className="absolute inset-0 bg-white/50 backdrop-blur-sm rounded-[22px] flex items-center justify-center z-10">
@@ -70,8 +123,39 @@ export default function ViewStudentModal({ isOpen, onClose, studentData: initial
 
 
         {/* Content Body */}
-        <div className="flex-1 overflow-y-auto mt-14 p-8 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto mt-14 p-6 custom-scrollbar">
+          {/*Qr Code */}
+
+          <div className='mb-8 flex flex-col'>
+            {studentToken ? (
+              <div className="flex flex-col items-center justify-center p-4  bg-white ">
+                <h3 className="mb-2 text-sm font-semibold text-gray-700">{t('qrCode')}</h3>
+                <div ref={qrRef}>
+                  <QRCodeSVG
+                    value={qrLink}
+                    size={150}
+                    level="H"
+                  />
+                </div>
+                <div className="flex items-center justify-center gap-2 mt-4">
+                  <button
+                    onClick={() => downloadQRCode('jpg')}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg text-xs font-bold transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    {t('download')}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p></p>
+            )}
+
+
+
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
 
             {/* Contact Information */}
             <div className="space-y-6">
@@ -197,6 +281,8 @@ export default function ViewStudentModal({ isOpen, onClose, studentData: initial
               </div>
             )}
           </div>
+
+
         </div>
 
         {/* Footer */}

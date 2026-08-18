@@ -43,7 +43,7 @@ export interface RouteConfig {
 // --- Lazy Loading Admin Page Components from Features ---
 const UsersPage = lazy(() => import("../../features/admin/pages/Users"));
 const StudentsPage = lazy(() => import("../../features/admin/pages/Students"));
-const TeachersPage = lazy(() => import("../../features/admin/pages/Teachers"));
+// const TeachersPage = lazy(() => import("../../features/admin/pages/Teachers"));
 const ParentsPage = lazy(() => import("../../features/admin/pages/Parents"));
 const SessionsPage = lazy(() => import("../../features/admin/pages/Sessions"));
 const ReviewsPage = lazy(() => import("../../features/admin/pages/Reviews"));
@@ -56,8 +56,8 @@ const PlansPage = lazy(() => import("../../features/admin/pages/Plans"));
 const CurrenciesPage = lazy(() => import("../../features/admin/pages/Currencies"));
 const ExpensesPage = lazy(() => import("../../features/admin/pages/Expenses"));
 const TransactionsPage = lazy(() => import("../../features/admin/pages/Transactions"));
-const TeacherRequestsPage = lazy(() => import("../../features/admin/pages/TeacherRequests"));
-const TeacherAvailabilityPage = lazy(() => import("../../features/admin/pages/TeacherAvailability"));
+// const TeacherRequestsPage = lazy(() => import("../../features/admin/pages/TeacherRequests"));
+// const TeacherAvailabilityPage = lazy(() => import("../../features/admin/pages/TeacherAvailability"));
 const SubjectsPage = lazy(() => import("../../features/admin/pages/Subjects"));
 const CategoriesPage = lazy(() => import("../../features/admin/pages/Categories"));
 const CoursePurchaseRequestsPage = lazy(() => import("../../features/admin/pages/CoursePurchaseRequests"));
@@ -110,49 +110,49 @@ export const adminDashboardRoutes: RouteConfig[] = [
       },
     ],
   },
-  {
-    id: "teachers-section",
-    label: "sidebar_teachers",
-    icon: GraduationCap,
-    path: "teachers-group",
-    subItems: [
-      {
-        id: "teachers",
-        label: "sidebar_teachers",
-        icon: GraduationCap,
-        path: "teachers",
-        element: <TeachersPage />,
-      },
-      {
-        id: "teacher-reports",
-        label: "sidebar_reports",
-        icon: FileText,
-        path: "reports",
-        element: <ReportsPage />,
-      },
-      {
-        id: "teacher-requests",
-        label: "sidebar_requests",
-        icon: FileQuestion,
-        path: "teacher-requests",
-        element: <TeacherRequestsPage />,
-      },
-      {
-        id: "teacher-availability",
-        label: "sidebar_available",
-        icon: Clock,
-        path: "teacher-availability",
-        element: <TeacherAvailabilityPage />,
-      },
-      {
-        id: "subjects",
-        label: "sidebar_subjects",
-        icon: Book,
-        path: "subjects",
-        element: <SubjectsPage />,
-      },
-    ],
-  },
+  // {
+  //   id: "teachers-section",
+  //   label: "sidebar_teachers",
+  //   icon: GraduationCap,
+  //   path: "teachers-group",
+  //   subItems: [
+  //     {
+  //       id: "teachers",
+  //       label: "sidebar_teachers",
+  //       icon: GraduationCap,
+  //       path: "teachers",
+  //       element: <TeachersPage />,
+  //     },
+  //     {
+  //       id: "teacher-reports",
+  //       label: "sidebar_reports",
+  //       icon: FileText,
+  //       path: "reports",
+  //       element: <ReportsPage />,
+  //     },
+  //     {
+  //       id: "teacher-requests",
+  //       label: "sidebar_requests",
+  //       icon: FileQuestion,
+  //       path: "teacher-requests",
+  //       element: <TeacherRequestsPage />,
+  //     },
+  //     {
+  //       id: "teacher-availability",
+  //       label: "sidebar_available",
+  //       icon: Clock,
+  //       path: "teacher-availability",
+  //       element: <TeacherAvailabilityPage />,
+  //     },
+  //     {
+  //       id: "subjects",
+  //       label: "sidebar_subjects",
+  //       icon: Book,
+  //       path: "subjects",
+  //       element: <SubjectsPage />,
+  //     },
+  //   ],
+  // },
   {
     id: "content",
     label: "sidebar_academic_content",
@@ -282,7 +282,7 @@ export const adminDashboardRoutes: RouteConfig[] = [
   },
   {
     id: 'ranks',
-    label: 'Academic Ranks',
+    label: 'Academic Levels',
     icon: Trophy,
     path: 'ranks',
     element: <RanksPage />

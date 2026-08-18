@@ -9,6 +9,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlans } from '../../features/admin/hooks/usePlans';
 import { useGetRanks } from '../../features/admin/hooks/useRank';
 import { useCourses } from '../../hooks/useCourses';
+import { FaBuilding, FaComputer, FaPerson, FaPersonDress } from "react-icons/fa6";
+
+
 
 interface AddStudentModalProps {
   isOpen: boolean;
@@ -27,6 +30,7 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
       phone_code: '+20',
       status: 'approved',
       gender: 'male',
+      type: 'online',
       country: 'Egypt',
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     }
@@ -129,8 +133,13 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
   ];
 
   const genderOptions = [
-    { value: 'male', label: t('male') },
-    { value: 'female', label: t('female') },
+    { value: 'male', label: t('male'), icon: FaPerson },
+    { value: 'female', label: t('female'), icon: FaPersonDress },
+  ];
+
+  const typeOptions = [
+    { value: 'online', label: t('online'), icon: FaComputer },
+    { value: 'onsite', label: t('onsite'), icon: FaBuilding },
   ];
 
   const countryOptions = [
@@ -252,7 +261,7 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
                 name="birthDate"
                 control={control}
                 render={({ field }) => (
-                  <div className="text-start">
+                  <div className="text-start md:col-span-2">
                     <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">{t('birthDate')}</label>
                     <DatePickerField
                       value={field.value}
@@ -263,23 +272,140 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
                   </div>
                 )}
               />
+            </div>
 
-              <Controller
-                name="gender"
-                control={control}
-                render={({ field }) => (
-                  <div className="text-start">
-                    <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">{t('gender')}</label>
-                    <CustomSelect
-                      value={field.value}
-                      options={genderOptions}
-                      onChange={field.onChange}
-                      className="rounded-2xl border-none bg-gray-50"
-                    />
-                    {errors.gender && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.gender.message}</p>}
-                  </div>
-                )}
-              />
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+              <div className="md:col-span-2">
+                <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">{t('type')}</label>
+                <Controller
+                  name="type"
+                  control={control}
+                  render={({ field }) => (
+                    <div className='grid grid-cols-2 gap-3'>
+                      {typeOptions.map((option) => {
+                        const isSelected = field.value === option.value;
+                        return (
+                          <div
+                            key={option.value}
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => field.onChange(option.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                field.onChange(option.value);
+                              }
+                            }}
+                            className={`
+                              group flex cursor-pointer flex-row items-center justify-center
+                              gap-2.5 rounded-xl border-2 py-2 px-2
+                              transition-all duration-200 ease-out
+                              hover:-translate-y-0.5 hover:shadow-md
+                              focus:outline-none focus:ring-2 focus:ring-[#800020]/30
+                              ${isSelected
+                                ? "border-[#800020] bg-[#800020] shadow-lg shadow-[#800020]/20"
+                                : "border-[#800020]/20 bg-white hover:border-[#800020]/50 hover:bg-[#800020]/5"
+                              }
+                            `}
+                          >
+                            <div
+                              className={`
+                                flex h-8 w-8 shrink-0 items-center justify-center rounded-full
+                                transition-colors duration-200
+                                ${isSelected
+                                  ? "bg-white/15"
+                                  : "bg-[#800020]/10 group-hover:bg-[#800020]/15"
+                                }
+                              `}
+                            >
+                              <option.icon
+                                size={16}
+                                strokeWidth={2}
+                                className={isSelected ? "text-white" : "text-[#800020]"}
+                              />
+                            </div>
+                            <p
+                              className={`
+                                text-xs font-bold transition-colors
+                                ${isSelected ? "text-white" : "text-[#800020]"}
+                              `}
+                            >
+                              {option.label}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                />
+                {errors.type && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.type.message}</p>}
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">{t('gender')}</label>
+                <Controller
+                  name="gender"
+                  control={control}
+                  render={({ field }) => (
+                    <div className='grid grid-cols-2 gap-3'>
+                      {genderOptions.map((option) => {
+                        const isSelected = field.value === option.value;
+                        return (
+                          <div
+                            key={option.value}
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => field.onChange(option.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                field.onChange(option.value);
+                              }
+                            }}
+                            className={`
+                              group flex cursor-pointer flex-row items-center justify-center
+                              gap-2.5 rounded-xl border-2 py-2 px-2
+                              transition-all duration-200 ease-out
+                              hover:-translate-y-0.5 hover:shadow-md
+                              focus:outline-none focus:ring-2 focus:ring-[#800020]/30
+                              ${isSelected
+                                ? "border-[#800020] bg-[#800020] shadow-lg shadow-[#800020]/20"
+                                : "border-[#800020]/20 bg-white hover:border-[#800020]/50 hover:bg-[#800020]/5"
+                              }
+                            `}
+                          >
+                            <div
+                              className={`
+                                flex h-8 w-8 shrink-0 items-center justify-center rounded-full
+                                transition-colors duration-200
+                                ${isSelected
+                                  ? "bg-white/15"
+                                  : "bg-[#800020]/10 group-hover:bg-[#800020]/15"
+                                }
+                              `}
+                            >
+                              <option.icon
+                                size={16}
+                                strokeWidth={2}
+                                className={isSelected ? "text-white" : "text-[#800020]"}
+                              />
+                            </div>
+                            <p
+                              className={`
+                                text-xs font-bold transition-colors
+                                ${isSelected ? "text-white" : "text-[#800020]"}
+                              `}
+                            >
+                              {option.label}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                />
+                {errors.gender && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.gender.message}</p>}
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
