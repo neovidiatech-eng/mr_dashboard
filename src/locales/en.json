@@ -105,7 +105,6 @@
   "welcomeDashboard": "Welcome to the Dashboard",
   "dashboardSubtitle": "Comprehensive look at platform statistics",
   "subscribeToUnlock": "Subscribe Now to unlock all features",
-  "students": "Students",
   "sessions": "Sessions",
   "expenses": "Expenses",
   "currencySAR": "SAR",
@@ -420,5 +419,24 @@
   "rating": "Rating",
   "submitted": "Submitted",
   "classes": "Classes",
-  "students": "Students"
+  "students": "Students",
+  "offlinePage": {
+    "checkingAuth": "Checking authentication...",
+    "pleaseWait": "Please wait a moment",
+    "unidentifiedStudent": "Unidentified Student",
+    "notAvailable": "Not available",
+    "notSpecified": "Not specified",
+    "activeStatus": "Active",
+    "scanConfirmed": "Scanned and login confirmed",
+    "loadingStudentData": "Loading student data...",
+    "errorFetchingData": "Error fetching data",
+    "defaultFetchError": "Could not fetch student data. Please check the scanned code.",
+    "studentIdLabel": "Student ID:",
+    "emailLabel": "Email:",
+    "phoneLabel": "Phone Number:",
+    "countryLabel": "Country:",
+    "accountStatusLabel": "Account Status:",
+    "attendedSessionsLabel": "Attended Sessions:",
+    "goToDashboard": "Go to Student Dashboard"
+  }
 }

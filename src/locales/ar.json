@@ -424,5 +424,24 @@
   "summary": "الملخص",
   "rating": "التقييم",
   "submitted": "تم التسليم",
-  "classes": "حصص"
+  "classes": "حصص",
+  "offlinePage": {
+    "checkingAuth": "جاري التحقق من تسجيل الدخول...",
+    "pleaseWait": "يرجى الانتظار لحظات",
+    "unidentifiedStudent": "طالب غير محدد",
+    "notAvailable": "غير متوفر",
+    "notSpecified": "غير محدد",
+    "activeStatus": "نشط",
+    "scanConfirmed": "تم المسح وتأكيد مسجل الدخول",
+    "loadingStudentData": "جاري تحميل بيانات الطالب...",
+    "errorFetchingData": "خطأ في جلب البيانات",
+    "defaultFetchError": "تعذر جلب بيانات الطالب. يرجى التأكد من الكود الممسوح.",
+    "studentIdLabel": "معرف الطالب (Student ID):",
+    "emailLabel": "البريد الإلكتروني:",
+    "phoneLabel": "رقم الهاتف:",
+    "countryLabel": "الدولة:",
+    "accountStatusLabel": "حالة الحساب:",
+    "attendedSessionsLabel": "الحصص التي تم حضورها:",
+    "goToDashboard": "الانتقال للوحة التحكم الخاصة بالطالب"
+  }
 }

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { Calendar, Edit2, Plus, Search, Trash2, Trophy, Users } from 'lucide-react';
 import ConfirmModal from '../../../components/modals/ConfirmModal';
-import { t } from 'i18next';
+// import { t } from 'i18next';
 
 
 export default function Ranks() {
@@ -65,9 +65,9 @@ export default function Ranks() {
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
                         <Trophy className="w-8 h-8 text-indigo-600" />
-                        {t('ranks_management', 'Rank Management')}
+                        {t('levels_management', 'Level Management')}
                     </h1>
-                    <p className="text-gray-500 mt-2 font-medium">{t('ranks_subtitle', 'Define and manage academic ranks and age-based progression.')}</p>
+                    <p className="text-gray-500 mt-2 font-medium">{t('levels_subtitle', 'Define and manage academic levels and age-based progression.')}</p>
                 </div>
 
                 <button
@@ -75,7 +75,7 @@ export default function Ranks() {
                     className="flex items-center gap-2 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-3xl transition-all shadow-lg shadow-indigo-200 active:scale-95 font-bold"
                 >
                     <Plus className="w-5 h-5" />
-                    {t('ranks_create_new', 'Create New Rank')}
+                    {t('levels_create_new', 'Create New Level')}
                 </button>
             </div>
 
@@ -86,7 +86,7 @@ export default function Ranks() {
                         <Trophy className="w-6 h-6 text-indigo-600" />
                     </div>
                     <div>
-                        <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">{t('ranks_total', 'Total Ranks')}</p>
+                        <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">{t('levels_total', 'Total Levels')}</p>
                         <p className="text-2xl font-bold text-gray-900">{ranks.length}</p>
                     </div>
                 </div>
@@ -95,7 +95,7 @@ export default function Ranks() {
                         <Calendar className="w-6 h-6 text-amber-600" />
                     </div>
                     <div>
-                        <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">{t('ranks_last_updated', 'Last Updated')}</p>
+                        <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">{t('levels_last_updated', 'Last Updated')}</p>
                         <p className="text-2xl font-bold text-gray-900">{t('today', 'Today')}</p>
                     </div>
                 </div>
@@ -107,7 +107,7 @@ export default function Ranks() {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
                         type="text"
-                        placeholder={t('ranks_search', 'Search ranks by name...')}
+                        placeholder={t('levels_search', 'Search levels by name...')}
                         className="w-full pl-12 pr-4 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-medium"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -151,8 +151,8 @@ export default function Ranks() {
                     <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6">
                         <Trophy className="w-10 h-10 text-gray-300" />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900">{t('ranks_no_found', 'No Ranks Found')}</h3>
-                    <p className="text-gray-500 mt-2 max-w-sm">{t('ranks_no_found_desc', 'No ranks match your search criteria. Try adjusting your filters or create a new rank.')}</p>
+                    <h3 className="text-xl font-bold text-gray-900">{t('ranks_no_found', 'No Levels Found')}</h3>
+                    <p className="text-gray-500 mt-2 max-w-sm">{t('ranks_no_found_desc', 'No levels match your search criteria. Try adjusting your filters or create a new level.')}</p>
                 </div>
             )}
 
@@ -169,7 +169,7 @@ export default function Ranks() {
                 onClose={() => setIsDeleteModalOpen(false)}
                 onConfirm={onConfirmDelete}
                 title={t('confirmDeleteTitle') || 'Confirm Delete'}
-                message={t('confirmDeleteRank') || 'Are you sure you want to delete this rank?'}
+                message={t('confirmDeleteLevel') || 'Are you sure you want to delete this level?'}
             />
         </div>
     );

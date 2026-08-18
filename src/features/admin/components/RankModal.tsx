@@ -102,10 +102,10 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
               </div>
               <div>
                 <h2 className="text-xl font-bold text-gray-900">
-                  {isUpdate ? (language === 'ar' ? 'تحديث الرتبة' : 'Update Rank') : (language === 'ar' ? 'إضافة رتبة جديدة' : 'Add New Rank')}
+                  {isUpdate ? (language === 'ar' ? 'تحديث المستوى' : 'Update Level') : (language === 'ar' ? 'إضافة مستوى جديد' : 'Add New Level')}
                 </h2>
                 <p className="text-sm text-gray-400 font-medium">
-                  {language === 'ar' ? 'أدخل تفاصيل الرتبة الأكاديمية' : 'Enter the academic rank details'}
+                  {language === 'ar' ? 'أدخل تفاصيل المستوى الأكاديمي' : 'Enter the academic level details'}
                 </p>
               </div>
             </div>
@@ -119,7 +119,7 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
                 <Trophy className="w-4 h-4" />
-                {language === 'ar' ? 'اسم الرتبة (بالعربية)' : 'Rank Name (Arabic)'}
+                {language === 'ar' ? 'اسم المستوى (بالعربية)' : 'Level Name (Arabic)'}
               </label>
               <input
                 type="text"
@@ -135,7 +135,7 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
                 <Trophy className="w-4 h-4" />
-                {language === 'ar' ? 'اسم الرتبة (بالإنجليزية)' : 'Rank Name (English)'}
+                {language === 'ar' ? 'اسم المستوى (بالإنجليزية)' : 'Level Name (English)'}
               </label>
               <input
                 type="text"
@@ -151,7 +151,7 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
                 <Palette className="w-4 h-4" />
-                {language === 'ar' ? 'لون الرتبة' : 'Rank Color'}
+                {language === 'ar' ? 'لون المستوى' : 'Level Color'}
               </label>
               <div className="flex items-center gap-4">
                 <input

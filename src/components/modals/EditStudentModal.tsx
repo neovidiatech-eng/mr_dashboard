@@ -272,7 +272,7 @@ export default function EditStudentModal({
                 render={({ field }) => (
                   <div className="text-start">
                     <label className="flex items-center justify-between text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
-                      <span>{t('rank')}</span>
+                      <span>{t('level')}</span>
                       {birthDateValue && <span className="text-indigo-600 normal-case font-bold">{t('autoSelectedByAge')}</span>}
                     </label>
                     <CustomSelect

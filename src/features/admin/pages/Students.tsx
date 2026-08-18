@@ -201,7 +201,7 @@ export default function Students() {
       ),
     },
     {
-      title: t('academicRank') || 'Rank',
+      title: t('academicRank') || 'Level',
       render: (_: any, record: Student) => (
         <span className="inline-flex px-3 py-1 bg-primary-light text-primary rounded-full text-[10px] font-bold border border-indigo-100 uppercase tracking-wider">
           {record.rank?.name || '---'}

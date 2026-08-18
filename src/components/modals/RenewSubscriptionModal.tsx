@@ -38,12 +38,12 @@ export default function RenewSubscriptionModal({
 
   const text = {
     title: { ar: "تجديد الاشتراك", en: "Renew Subscription" },
-    subtitle: { ar: "اختر الخطة والمرحلة والكورس لتجديد اشتراك", en: "Select plan, rank, and course to renew subscription for" },
+    subtitle: { ar: "اختر الخطة والمرحلة والكورس لتجديد اشتراك", en: "Select plan, level, and course to renew subscription for" },
     plan: { ar: "الخطة", en: "Plan" },
-    rank: { ar: "المرحلة", en: "Rank" },
+    rank: { ar: "المستوى", en: "Level" },
     course: { ar: "الكورس", en: "Course" },
     selectPlan: { ar: "اختر الخطة...", en: "Select a plan..." },
-    selectRank: { ar: "اختر المرحلة...", en: "Select a rank..." },
+    selectRank: { ar: "اختر المستوى...", en: "Select a level..." },
     selectCourse: { ar: "اختر الكورس...", en: "Select a course..." },
     cancel: { ar: "إلغاء", en: "Cancel" },
     renew: { ar: "تجديد", en: "Renew" },
