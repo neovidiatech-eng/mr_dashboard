@@ -32,6 +32,13 @@ const GuestGuard = () => {
   const role = localStorage.getItem('role');
 
   if (token) {
+    // Check if there's a pending QR code redirect (e.g., after scanning and logging in)
+    const qrRedirect = sessionStorage.getItem("__qr_redirect__");
+    if (qrRedirect) {
+      sessionStorage.removeItem("__qr_redirect__");
+      return <Navigate to={qrRedirect} replace />;
+    }
+
     if (role) return <Navigate to={getDashboardPathForRole(role)} replace />;
     
     // If token exists but no role is found, clear and stay at login
@@ -43,4 +50,4 @@ const GuestGuard = () => {
   return <Outlet />;
 };
 
-export default GuestGuard;
+export default GuestGuard;
