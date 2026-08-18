@@ -26,7 +26,7 @@ export default function ViewStudentModal({ isOpen, onClose, studentData: initial
   const rank = rankData?.data;
 
   const studentToken = studentData?.qrToken;
-  const qrLink = `https://dashboard.mr-mahmoud.com/offline-page?token=${studentToken}`;
+  const qrLink = `https://mr-dashboard-lyart.vercel.app/offline-page?token=${studentToken}`;
 
   const qrRef = useRef<HTMLDivElement>(null);
 
