@@ -70,24 +70,32 @@ export default function Login({ onLoginSuccess }: LoginProps) {
 
         const permissions = result.data?.permissions || result.permissions || [];
         storeAuthPermissions(permissions, data.rememberMe || false);
-        onLoginSuccess();
         message.success(result.message || t('loginSuccess'));
- 
 
         // Handle redirect if user scanned QR code before logging in
-        const searchParams = new URLSearchParams(window.location.search);
-        const redirectUrl = searchParams.get("redirect") || sessionStorage.getItem("redirect_after_login");
+        const currentSearchParams = new URLSearchParams(window.location.search);
+        const redirectUrl = currentSearchParams.get("redirect") || sessionStorage.getItem("redirect_after_login");
 
         if (redirectUrl) {
           sessionStorage.removeItem("redirect_after_login");
-          navigate(redirectUrl, { replace: true });
-        } else {
-          navigate(getDashboardPathForRole(role));
+          // Store the redirect target before calling onLoginSuccess
+          // so GuestGuard re-render doesn't navigate away first
+          sessionStorage.setItem("__qr_redirect__", redirectUrl);
         }
 
         onLoginSuccess();
         connectSocket(token);
         ErrorService.success(t("loginSuccess"));
+
+        // Navigate after the state update so GuestGuard doesn't override
+        const finalRedirect = sessionStorage.getItem("__qr_redirect__");
+        if (finalRedirect) {
+          sessionStorage.removeItem("__qr_redirect__");
+          setTimeout(() => navigate(finalRedirect, { replace: true }), 0);
+        } else {
+          navigate(getDashboardPathForRole(role));
+        }
+
       }
     } catch (error) {
       console.error("Login failed:", error);
