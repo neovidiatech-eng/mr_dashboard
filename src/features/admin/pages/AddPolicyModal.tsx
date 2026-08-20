@@ -68,30 +68,32 @@ export default function AddPolicyModal({ visible, onClose, onSave, loading, edit
   }, [visible, editingPolicy, reset]);
 
   const onSubmit = async (values: PolicyFormData) => {
-    const formattedValues = {
-      ...values,
-      title: values.title_ar,
-      color: typeof values.color === 'string' ? values.color : (values.color as any)?.toHexString?.() || '#800020',
-    };
+    const colorHex = typeof values.color === 'string' ? values.color : (values.color as any)?.toHexString?.() || '#800020';
     
     if (isNotice) {
-      const noticeData = {
-        title: formattedValues.title_ar,
-        title_ar: formattedValues.title_ar,
-        title_en: formattedValues.title_en,
-        content: formattedValues.content_ar || formattedValues.description_ar,
-        content_ar: formattedValues.content_ar || formattedValues.description_ar,
-        content_en: formattedValues.content_en || formattedValues.description_en,
-        active: formattedValues.active
+      const noticeData: any = {
+        title_ar: values.title_ar,
+        active: values.active,
       };
+      if (values.title_en) noticeData.title_en = values.title_en;
+      if (values.content_ar || values.description_ar) {
+        noticeData.content_ar = values.content_ar || values.description_ar;
+      }
+      if (values.content_en || values.description_en) {
+        noticeData.content_en = values.content_en || values.description_en;
+      }
       await onSave(noticeData);
     } else {
-      const { content, content_ar, content_en, ...policyData } = formattedValues;
-      const finalPolicy = {
-        ...policyData,
-        description: formattedValues.description_ar,
+      const policyData: any = {
+        title_ar: values.title_ar,
+        color: colorHex,
+        active: values.active,
       };
-      await onSave(finalPolicy);
+      if (values.title_en) policyData.title_en = values.title_en;
+      if (values.description_ar) policyData.description_ar = values.description_ar;
+      if (values.description_en) policyData.description_en = values.description_en;
+      if (values.icon) policyData.icon = values.icon;
+      await onSave(policyData);
     }
   };
 

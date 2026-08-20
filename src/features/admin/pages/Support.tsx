@@ -48,10 +48,15 @@ export default function Support() {
     const [selectedCategory, setSelectedCategory] = useState<SupportCategory | null>(null);
     const [selectedItem, setSelectedItem] = useState<SupportItem | null>(null);
 
-    const filteredCategories = categories.filter(cat =>
-        cat.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        cat.supports.some(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
+    const filteredCategories = categories.filter(cat => {
+        const catTitle = (language === 'ar' ? (cat.title_ar || cat.title_en || cat.title) : (cat.title_en || cat.title_ar || cat.title)) || cat.title || '';
+        const matchesCat = catTitle.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesItem = (cat.supports || []).some(s => {
+            const itemTitle = (language === 'ar' ? (s.title_ar || s.title_en || s.title) : (s.title_en || s.title_ar || s.title)) || s.title || '';
+            return itemTitle.toLowerCase().includes(searchQuery.toLowerCase());
+        });
+        return matchesCat || matchesItem;
+    });
 
     const handleDeleteSupport = async (id: string) => {
         const confirmed = await confirm({
@@ -187,7 +192,11 @@ export default function Support() {
                         <div key={category.id} className="space-y-6">
                             <div className="flex items-center justify-between px-2">
                                 <div className="flex items-center gap-4">
-                                    <h2 className="text-lg font-black text-slate-900 tracking-tight">{category.title}</h2>
+                                    <h2 className="text-lg font-black text-slate-900 tracking-tight">
+                                        {language === 'ar'
+                                            ? (category.title_ar || category.title_en || category.title)
+                                            : (category.title_en || category.title_ar || category.title) || category.title || `${t('category', 'Category')} (${category.id.slice(0, 8)})`}
+                                    </h2>
                                     <span className="px-3 py-1 bg-slate-100 text-[10px] font-black text-slate-500 rounded-full uppercase tracking-widest">
                                         {category.supports.length} {t('resources', 'Resources')}
                                     </span>
@@ -244,9 +253,15 @@ export default function Support() {
                                             </div>
                                         </div>
 
-                                        <h3 className="font-black text-slate-900 mb-2 line-clamp-1">{support.title}</h3>
+                                        <h3 className="font-black text-slate-900 mb-2 line-clamp-1">
+                                            {language === 'ar'
+                                                ? (support.title_ar || support.title_en || support.title)
+                                                : (support.title_en || support.title_ar || support.title) || support.title}
+                                        </h3>
                                         <p className="text-xs font-bold text-slate-400 leading-relaxed line-clamp-2 mb-6">
-                                            {support.description}
+                                            {language === 'ar'
+                                                ? (support.description_ar || support.description_en || support.description)
+                                                : (support.description_en || support.description_ar || support.description) || support.description}
                                         </p>
 
                                         <div className="pt-6 border-t border-slate-50 flex items-center justify-between">

@@ -9,9 +9,6 @@ import {
   GraduationCap,
   Play,
   UserCheck,
-  FileQuestion,
-  Clock,
-  Book,
   Calendar,
   FileText,
   ClipboardList,
@@ -26,7 +23,8 @@ import {
   Tag,
   ShoppingCart,
   Star,
-  File
+  File,
+  Eye
 } from 'lucide-react';
 import TransactionRequests from "../../features/admin/pages/TransactionRequests";
 
@@ -72,6 +70,7 @@ const PoliciesPage = lazy(() => import("../../features/admin/pages/Policies"));
 const ReportsPage = lazy(() => import("../../features/admin/pages/Reports"));
 const SupportPage = lazy(() => import("../../features/admin/pages/Support"));
 const PostsPage = lazy(() => import("../../features/admin/pages/Posts"));
+const AttendancePage = lazy(() => import("../../features/admin/pages/Attendance"));
 
 
 export const adminDashboardRoutes: RouteConfig[] = [
@@ -153,6 +152,13 @@ export const adminDashboardRoutes: RouteConfig[] = [
   //     },
   //   ],
   // },
+  {
+    id: "attendance",
+    label: "sidebar_attendance",
+    icon: Eye,
+    path: "attendance",
+    element: <AttendancePage />,
+  },
   {
     id: "content",
     label: "sidebar_academic_content",

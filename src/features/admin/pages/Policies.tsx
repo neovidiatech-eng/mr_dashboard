@@ -68,8 +68,8 @@ export default function AdminPoliciesPage() {
             <Shield size={20} />
           </div>
           <div>
-            <div className="font-bold text-gray-900">{record.title}</div>
-            <div className="text-xs text-gray-400 line-clamp-1">{record.description}</div>
+            <div className="font-bold text-gray-900">{record.title_ar || record.title_en || record.title}</div>
+            <div className="text-xs text-gray-400 line-clamp-1">{record.description_ar || record.description_en || record.description}</div>
           </div>
         </div>
       ),
@@ -186,13 +186,13 @@ export default function AdminPoliciesPage() {
                 <div>
                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">{t('noticeTitle', 'Notice Title')}</label>
                   <div className="p-4 bg-white border border-gray-100 rounded-2xl font-bold text-gray-800">
-                    {notice?.title || t('noTitleSet', 'No title set')}
+                    {notice?.title_ar || notice?.title_en || notice?.title || t('noTitleSet', 'No title set')}
                   </div>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">{t('noticeContent', 'Notice Content')}</label>
                   <div className="p-4 bg-white border border-gray-100 rounded-2xl text-sm text-gray-500 leading-relaxed min-h-[100px]">
-                    {notice?.content || t('noContentSet', 'No content set')}
+                    {notice?.content_ar || notice?.content_en || notice?.content || t('noContentSet', 'No content set')}
                   </div>
                 </div>
                 <Button 
