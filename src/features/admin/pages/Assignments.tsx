@@ -6,12 +6,15 @@ import { useGetAssignments } from '../../../hooks/useAssignment';
 import { HomeworkItem } from '../../../types/assignment';
 import { TableSkeleton } from '../../../components/ui/CustomSkeleton';
 import { Table, Dropdown } from 'antd';
+import ViewAssignmentModal from '../../../components/modals/ViewAssignmentModal';
 
 export default function Assignments() {
   const { language } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedAssignmentForView, setSelectedAssignmentForView] = useState<HomeworkItem | null>(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const itemsPerPage = 10;
 
   const { data: assignmentsData, isLoading } = useGetAssignments();
@@ -35,6 +38,7 @@ export default function Assignments() {
     allStatuses: { ar: 'كل الحالات', en: 'All Statuses' },
     pending: { ar: 'قيد الانتظار', en: 'Pending' },
     submitted: { ar: 'تم التسليم', en: 'Submitted' },
+    graded: { ar: 'تم التصحيح', en: 'Graded' },
     completed: { ar: 'مكتمل', en: 'Completed' },
     view: { ar: 'عرض', en: 'View' },
     noResults: { ar: 'لا توجد واجبات تطابق بحثك', en: 'No assignments match your search' },
@@ -82,14 +86,19 @@ export default function Assignments() {
   ], [assignments, language]);
 
   const filteredAssignments = useMemo(() => {
+    const search = searchTerm.toLowerCase().trim();
     return assignments.filter(assignment => {
       const studentName = assignment.student?.user?.name || '';
       const teacherName = assignment.teacher?.user?.name || '';
+      const title = assignment.title || assignment.title_en || assignment.title_ar || '';
+      const description = assignment.description || assignment.description_en || assignment.description_ar || '';
+
       const matchesSearch =
-        studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        teacherName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        assignment.description.toLowerCase().includes(searchTerm.toLowerCase());
+        !search ||
+        studentName.toLowerCase().includes(search) ||
+        teacherName.toLowerCase().includes(search) ||
+        title.toLowerCase().includes(search) ||
+        description.toLowerCase().includes(search);
 
       const matchesStatus = statusFilter === 'all' || assignment.status === statusFilter;
       return matchesSearch && matchesStatus;
@@ -103,9 +112,10 @@ export default function Assignments() {
   );
 
   const getStatusStyle = (status: string) => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
       case 'pending': return 'bg-amber-50 text-amber-600 border-amber-100';
       case 'submitted': return 'bg-primary-light text-primary border-primary/20';
+      case 'graded':
       case 'completed': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
       default: return 'bg-gray-50 text-gray-600 border-gray-100';
     }
@@ -115,9 +125,10 @@ export default function Assignments() {
     const map: Record<string, Record<string, string>> = {
       pending: text.pending,
       submitted: text.submitted,
+      graded: text.graded,
       completed: text.completed,
     };
-    return map[status]?.[language] || status;
+    return map[status?.toLowerCase()]?.[language] || status;
   };
 
   const columns = [
@@ -143,15 +154,21 @@ export default function Assignments() {
     },
     {
       title: text.titleCol[language],
-      render: (_: any, record: HomeworkItem) => (
-        <span className="text-sm font-bold text-gray-900">{record.title}</span>
-      ),
+      render: (_: any, record: HomeworkItem) => {
+        const title = language === 'ar'
+          ? (record.title_ar || record.title_en || record.title)
+          : (record.title_en || record.title_ar || record.title);
+        return <span className="text-sm font-bold text-gray-900">{title || '—'}</span>;
+      },
     },
     {
       title: text.description[language],
-      render: (_: any, record: HomeworkItem) => (
-        <span className="text-sm text-gray-500 block max-w-[200px] truncate">{record.description}</span>
-      ),
+      render: (_: any, record: HomeworkItem) => {
+        const desc = language === 'ar'
+          ? (record.description_ar || record.description_en || record.description)
+          : (record.description_en || record.description_ar || record.description);
+        return <span className="text-sm text-gray-500 block max-w-[200px] truncate">{desc || '—'}</span>;
+      },
     },
     {
       title: text.dueDate[language],
@@ -204,12 +221,15 @@ export default function Assignments() {
     {
       title: text.actions[language],
       align: 'right' as const,
-      render: (_: any) => {
+      render: (_: any, record: HomeworkItem) => {
         const items = [
           {
             key: 'view',
             label: <span className="flex items-center gap-2 text-xs font-bold text-gray-700"><Eye className="w-3.5 h-3.5" /> {text.view[language]}</span>,
-            onClick: () => {},
+            onClick: () => {
+              setSelectedAssignmentForView(record);
+              setIsViewModalOpen(true);
+            },
           },
         ];
         return (
@@ -305,6 +325,12 @@ export default function Assignments() {
               pagination={false}
               className="w-full min-w-[900px]"
               rowClassName="hover:bg-gray-50/50 transition-colors group cursor-pointer"
+              onRow={(record) => ({
+                onClick: () => {
+                  setSelectedAssignmentForView(record);
+                  setIsViewModalOpen(true);
+                },
+              })}
             />
           )}
         </div>
@@ -343,6 +369,16 @@ export default function Assignments() {
           </div>
         )}
       </div>
+
+      {/* View Assignment Modal */}
+      <ViewAssignmentModal
+        isOpen={isViewModalOpen}
+        onClose={() => {
+          setIsViewModalOpen(false);
+          setSelectedAssignmentForView(null);
+        }}
+        assignment={selectedAssignmentForView}
+      />
 
       <style dangerouslySetInnerHTML={{
         __html: `

@@ -31,10 +31,11 @@ export default function EditSupportCategoryModal({ isOpen, onClose, onSubmit, ca
     }, [category, reset]);
 
     const handleOnSubmit = async (data: SupportCategoryFormData) => {
-        const payload = {
-            ...data,
-            title: data.title_ar,
+        const payload: any = {
+            title_ar: data.title_ar,
+            active: data.active,
         };
+        if (data.title_en) payload.title_en = data.title_en;
         const isSuccess = await onSubmit(payload);
         if (isSuccess) {
             onClose();

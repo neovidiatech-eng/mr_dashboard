@@ -127,7 +127,7 @@ export default function Requests() {
           {/* Header */}
           <div className="mb-3 flex-shrink-0">
             <h1 className="text-2xl font-bold text-gray-900 mb-1">{t('requests_management', 'Requests Management')}</h1>
-            <p className="text-sm font-medium text-gray-500">{t('requests_subtitle', 'Review and handle all student and instructor administrative actions.')}</p>
+            <p className="text-sm font-medium text-gray-500">{t('requests_subtitle', 'Review and handle all student administrative actions.')}</p>
           </div>
 
           <div className="bg-white rounded-t-2xl shadow-sm border border-gray-100 flex flex-col flex-1 overflow-hidden">
@@ -141,12 +141,12 @@ export default function Requests() {
                 >
                   {t('student_requests', 'Student Requests')} ({studentRequests.length})
                 </button>
-                <button 
+                {/* <button 
                   onClick={() => setActiveTab('teacher')}
                   className={`text-sm font-bold pb-4 -mb-[1px] border-b-2 transition-all ${activeTab === 'teacher' ? 'text-[#800020] border-[#800020]' : 'text-gray-400 border-transparent hover:text-gray-700'}`}
                 >
                   {t('instructor_requests', 'Instructor Requests')} ({teacherRequests.length})
-                </button>
+                </button> */}
               </div>
 
             </div>

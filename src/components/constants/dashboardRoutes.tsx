@@ -4,7 +4,6 @@ import {
   Users,
   BookOpen,
   DollarSign,
-  PlayCircle,
   Settings,
   CreditCard,
   GraduationCap,
@@ -59,6 +58,7 @@ const TeacherAvailabilityPage = lazy(
 );
 const SubjectsPage = lazy(() => import("../../features/admin/pages/Subjects"));
 const SettingsPage = lazy(() => import("../../features/admin/pages/Settings"));
+
 
 export const dashboardRoutes: RouteConfig[] = [
   {

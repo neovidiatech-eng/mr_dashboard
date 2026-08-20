@@ -16,7 +16,7 @@ interface EditSupportItemModalProps {
 }
 
 export default function EditSupportItemModal({ isOpen, onClose, onSubmit, categories, support }: EditSupportItemModalProps) {
-    const { t } = useLanguage();
+    const { language, t } = useLanguage();
 
     const { register, handleSubmit, control, reset, formState: { errors } } = useForm<SupportItemFormData>({
         resolver: zodResolver(getSupportItemSchema(t)) as any
@@ -36,17 +36,28 @@ export default function EditSupportItemModal({ isOpen, onClose, onSubmit, catego
         }
     }, [support, reset]);
 
-    const categoryOptions = categories.map(cat => ({
-        value: cat.id,
-        label: cat.title
-    }));
+    const categoryOptions = categories.map(cat => {
+        const catTitle = language === 'ar'
+            ? (cat.title_ar || cat.title_en || cat.title)
+            : (cat.title_en || cat.title_ar || cat.title);
+
+        return {
+            value: cat.id,
+            label: catTitle && catTitle.trim() ? catTitle : `${t('category', 'Category')} (${cat.id.slice(0, 8)})`
+        };
+    });
 
     const handleOnSubmit = async (data: SupportItemFormData) => {
-        const payload = {
-            ...data,
-            title: data.title_ar,
-            description: data.description_ar || '',
+        const payload: any = {
+            title_ar: data.title_ar,
+            url: data.url,
+            categoryId: data.categoryId,
+            active: data.active
         };
+        if (data.title_en) payload.title_en = data.title_en;
+        if (data.description_ar) payload.description_ar = data.description_ar;
+        if (data.description_en) payload.description_en = data.description_en;
+
         const isSuccess = await onSubmit(payload);
         if (isSuccess) {
             onClose();

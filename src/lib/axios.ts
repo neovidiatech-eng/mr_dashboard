@@ -44,25 +44,8 @@ api.interceptors.response.use(
     });
 
     if (status === 401) {
-      // If we get 401, it means the session is invalid or expired
-      // Clear storage regardless of whether a token was found (it's clearly invalid)
-      localStorage.removeItem("token");
-      sessionStorage.removeItem("token");
-      localStorage.removeItem("role");
-
-      const publicPages = ["/login", "/register", "/forgot-password", "/reset-password", "/verify-account"];
-      const currentPath = window.location.pathname;
-
-      // Only redirect if we are not already on a public page to avoid loops
-      if (!publicPages.some(page => currentPath.includes(page))) {
-        ErrorService.error(i18n.t("sessionExpiredError") || "Session expired. Please login again.");
-        window.location.href = "/login";
-      } else {
-        const msg = ErrorService.parseErrorMessage(error);
-        if (msg) {
-          ErrorService.error(msg);
-        }
-      }
+      const msg = ErrorService.parseErrorMessage(error);
+      ErrorService.error(msg || i18n.t("sessionExpiredError") || "Unauthorized or session expired.");
     } else if (status === 403) {
       ErrorService.error(i18n.t("unauthorizedRoleError") || "You do not have permission to perform this action.");
     } else if (status === 404) {
