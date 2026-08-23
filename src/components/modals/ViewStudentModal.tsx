@@ -182,6 +182,21 @@ export default function ViewStudentModal({ isOpen, onClose, studentData: initial
                     className="text-sm font-bold text-gray-800"
                   />
                 </div>
+               
+              </div>
+
+                <div className="flex items-start gap-4 group">
+                <div className="p-2.5 rounded-xl bg-gray-50 text-gray-400 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
+                  <Phone className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{t('parentPhone')}</p>
+                  <WhatsAppPhone
+                    phone={"01270142476"}
+                    className="text-sm font-bold text-gray-800"
+                  />
+                </div>
+               
               </div>
 
               <div className="flex items-start gap-4 group">
@@ -201,7 +216,8 @@ export default function ViewStudentModal({ isOpen, onClose, studentData: initial
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{t('rank')}</p>
                   <p className="text-sm font-bold text-gray-800">{rank?.name}</p>
                 </div>
-              </div>
+              
+              </div>                 
             </div>
 
             {/* Academic Information */}

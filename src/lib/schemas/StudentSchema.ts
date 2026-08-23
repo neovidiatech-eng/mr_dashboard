@@ -18,6 +18,7 @@ export const getStudentSchema = (t: TFunc) => z.object({
   timezone: z.string().optional(),
   startingCourseId: z.string().optional(),
   startingLectureId: z.string().optional(),
+  parentNumber: z.string().optional(),
 }).superRefine((data, ctx) => {
   const { phone_code, phone } = data;
 

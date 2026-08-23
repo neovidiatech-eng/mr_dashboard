@@ -17,7 +17,7 @@ export interface UserDetails {
   updatedAt: string;
   roleId: string;
   provider: string;
-
+  ParentNumber:string;
   password?: string;
   googleId?: string | null;
   image?: string | null;
