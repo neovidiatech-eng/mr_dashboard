@@ -36,6 +36,7 @@ const AdminDashboard = lazy(
 const StudentDashboard = lazy(
   () => import("./pages/StudentDashboard/StudentDashboard"),
 );
+const StudentPortalView = lazy(() => import("./pages/StudentPortalView"));
 const TeacherDashboard = lazy(
   () => import("./pages/TeacherDashboard/TeacherDashboard"),
 );
@@ -132,6 +133,10 @@ function App() {
                         <Route
                           path="/student-dashboard/*"
                           element={<StudentDashboard />}
+                        />
+                        <Route
+                          path="/student-portal"
+                          element={<StudentPortalView />}
                         />
                       </Route>
 

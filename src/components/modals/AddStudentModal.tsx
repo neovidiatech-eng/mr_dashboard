@@ -272,6 +272,24 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
                   </div>
                 )}
               />
+               
+              <Controller
+                name="parentNumber"
+                control={control}
+                render={({ field }) => (
+                  <div className="text-start">
+                    <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">{t('parentPhone')}</label>
+                    <input
+                      type="tel"
+                      {...field}
+                      placeholder="ex :- 01091536978"
+                      className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all placeholder:text-gray-300"
+                      dir="ltr"
+                    />
+                  </div>
+                )}
+              />
+              
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-5">

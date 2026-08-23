@@ -168,10 +168,10 @@ export default function OfflinePage() {
 
               {/* Action Button */}
               <button
-                onClick={() => navigate("/student-dashboard")}
+                onClick={() => navigate("/student-portal")}
                 className="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 group mt-4"
               >
-                <span>الانتقال للوحة التحكم الخاصة بالطالب</span>
+                <span>الانتقال للبوابة الخاصة بالطالب</span>
                 <ArrowRight className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
               </button>
             </>
