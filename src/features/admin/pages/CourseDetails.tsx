@@ -11,15 +11,19 @@ import {
   ArrowLeft,
   BookOpen,
   Presentation,
+  ListChecks,
 } from 'lucide-react';
 import { Button, Dropdown, Modal, Empty, Spin } from 'antd';
 import { useCourseById } from '../../../hooks/useCourses';
 import { useDeleteLecture } from '../../../hooks/useLectures';
 import { useQueryClient } from '@tanstack/react-query';
 import AddLectureModal from './AddLectureModal';
+import AddExam from '../../../components/modals/AddExamModal';
+import { ExamData } from '../../../types/courseExam';
 import { Lecture } from '../../../types/lectures';
 import UniversalVideoPlayer from '../../../components/ui/UniversalVideoPlayer';
 import { useLanguage } from '../../../contexts/LanguageContext';
+import ErrorService from '../../../utils/ErrorService';
 
 export default function CourseDetails() {
   const { t, language } = useLanguage();
@@ -28,6 +32,7 @@ export default function CourseDetails() {
   const navigate = useNavigate();
   const [selectedLessonId, setSelectedLessonId] = useState<string>('');
   const [isAddLectureModalVisible, setIsAddLectureModalVisible] = useState(false);
+  const [isAddExamModalVisible, setIsAddExamModalVisible] = useState(false);
   const [editingLecture, setEditingLecture] = useState<Lecture | null>(null);
 
   const queryClient = useQueryClient();
@@ -46,6 +51,16 @@ export default function CourseDetails() {
 
   const handleBack = () => {
     navigate('/dashboard/curriculum');
+  };
+
+  const handleSaveExam = async (examData: ExamData) => {
+    try {
+      console.log('Created exam for course:', courseId, examData);
+      ErrorService.success(isAr ? 'تم حفظ الامتحان بنجاح!' : 'Exam saved successfully!');
+    } catch (error) {
+      console.error('Failed to save exam:', error);
+      ErrorService.error(isAr ? 'حدث خطأ أثناء حفظ الامتحان' : 'Failed to save exam');
+    }
   };
 
   const handleEditLecture = (lecture: Lecture, e: React.MouseEvent) => {
@@ -110,13 +125,22 @@ export default function CourseDetails() {
             <h1 className="text-2xl font-bold text-gray-900">{isAr ? selectedCourse.title_ar || selectedCourse.title : selectedCourse.title_en || selectedCourse.title}</h1>
           </div>
         </div>
-        <button
-          onClick={() => setIsAddLectureModalVisible(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-white bg-primary hover:bg-primary-dark transition-all shadow-md shadow-primary/20 active:scale-95"
-        >
-          <Plus size={16} />
-          {t('addLectureBtn')}
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsAddExamModalVisible(true)}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-primary bg-primary/10 hover:bg-primary/20 border border-primary/20 transition-all shadow-sm active:scale-95"
+          >
+            <ListChecks size={16} />
+            {isAr ? 'إضافة امتحان' : 'Add Exam'}
+          </button>
+          <button
+            onClick={() => setIsAddLectureModalVisible(true)}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-white bg-primary hover:bg-primary-dark transition-all shadow-md shadow-primary/20 active:scale-95"
+          >
+            <Plus size={16} />
+            {t('addLectureBtn')}
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 flex overflow-hidden gap-6">
@@ -297,6 +321,11 @@ export default function CourseDetails() {
         }}
         courseId={courseId || ''}
         lecture={editingLecture || undefined}
+      />
+      <AddExam
+        isOpen={isAddExamModalVisible}
+        onClose={() => setIsAddExamModalVisible(false)}
+        onSave={handleSaveExam}
       />
     </div>
   );

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Search, CheckCircle, XCircle, Eye, Clock, User, Package, Calendar } from "lucide-react";
+import { Search, CheckCircle, XCircle, Eye, Clock, User, Package, Calendar, Receipt, ImageOff } from "lucide-react";
+import { Image } from "antd";
 import { useLanguage } from "../../../contexts/LanguageContext";
 import Pagination from "../../../components/ui/Pagination";
 import ViewSubscriptionRequestModal from "../../../components/modals/ViewSubscriptionRequestModal";
@@ -11,7 +12,7 @@ import {
   getSubscriptionRequests,
 } from "../services/subscriptionRequestServices";
 import { SubscriptionRequest } from "../../../types/subscription";
-
+import { baseURL } from "../../../consts";
 
 export default function SubscriptionRequests() {
   const { language } = useLanguage();
@@ -46,6 +47,9 @@ export default function SubscriptionRequests() {
     email: { ar: "البريد الإلكتروني", en: "Email" },
     plan: { ar: "الخطة", en: "Plan" },
     price: { ar: "السعر", en: "Price" },
+    receipt: { ar: "إيصال الدفع", en: "Payment Receipt" },
+    hasReceipt: { ar: "مرفق إيصال", en: "Receipt Attached" },
+    noReceipt: { ar: "بدون إيصال", en: "No Receipt" },
     sessionsCount: { ar: "عدد الحصص", en: "Sessions Count" },
     session: { ar: "حصة", en: "session" },
     requestDate: { ar: "تاريخ الطلب", en: "Request Date" },
@@ -233,6 +237,7 @@ export default function SubscriptionRequests() {
                     { label: text.studentName[language], icon: User },
                     { label: text.plan[language], icon: Package },
                     { label: text.price[language], icon: Clock },
+                    { label: text.receipt[language], icon: Receipt },
                     { label: text.requestDate[language], icon: Calendar },
                     { label: text.status[language], icon: CheckCircle },
                     { label: text.actions[language], icon: null }
@@ -265,6 +270,41 @@ export default function SubscriptionRequests() {
                     </td>
                     <td className="px-6 py-5">
                       <span className="text-sm font-black text-slate-900">{request.plan.price}</span>
+                    </td>
+                    <td className="px-6 py-5">
+                      {(() => {
+                        const receiptImg = request.subscrption_img || request.subscription_img;
+                        if (!receiptImg) {
+                          return (
+                            <span className="inline-flex items-center gap-1 text-xs text-slate-400 font-medium">
+                              <ImageOff size={12} />
+                              {text.noReceipt[language]}
+                            </span>
+                          );
+                        }
+                        const fullUrl = receiptImg.startsWith("http") ? receiptImg : `${baseURL}/${receiptImg.replace(/^\//, '')}`;
+                        return (
+                          <div className="flex items-center gap-2">
+                            <div className="w-10 h-10 rounded-xl overflow-hidden bg-white border border-slate-200 shadow-sm flex items-center justify-center flex-shrink-0 cursor-pointer">
+                              <Image
+                                src={fullUrl}
+                                alt="Receipt"
+                                className="w-full h-full object-cover"
+                                preview={{
+                                  mask: (
+                                    <div className="text-[10px] text-white font-bold flex items-center justify-center">
+                                      <Eye size={12} />
+                                    </div>
+                                  )
+                                }}
+                              />
+                            </div>
+                            <span className="text-xs font-bold text-emerald-600 hidden sm:inline">
+                              {text.hasReceipt[language]}
+                            </span>
+                          </div>
+                        );
+                      })()}
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-2 text-sm text-slate-500 font-medium">
