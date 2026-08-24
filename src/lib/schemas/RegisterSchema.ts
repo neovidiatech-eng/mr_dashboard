@@ -15,12 +15,24 @@ export const getRegisterSchema = (t: (key: string, options?: any) => string) =>
     gender: z.string().min(1, t("validation.required")),
     country: z.string().min(1, t("validation.required")),
     password: z.string()
-      .min(8, "Password must be at least 8 characters and include uppercase, lowercase, number, and special character (@$!%*?&^#)")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number")
-      .regex(/[@$!%*?&^#]/, "Password must contain at least one special character"),
+      .min(8, t("validation.passwordMin"))
+      .regex(/[a-z]/, t("validation.passwordLowercase"))
+      .regex(/[A-Z]/, t("validation.passwordUppercase"))
+      .regex(/[0-9]/, t("validation.passwordNumber"))
+      .regex(/[@$!%*?&^#]/, t("validation.passwordSpecial")),
     plan_id: z.string().min(1, t("validation.required")),
+    image: z
+      .union([z.instanceof(File), z.string()])
+      .optional()
+      .nullable()
+      .refine((file) => {
+        if (!file || typeof file === "string") return true;
+        return file.size <= 5 * 1024 * 1024;
+      }, t("validation.imageMax"))
+      .refine((file) => {
+        if (!file || typeof file === "string") return true;
+        return ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type);
+      }, t("validation.imageFormat")),
   })
   .superRefine((data, ctx) => {
     const { codeCountry, phone } = data;

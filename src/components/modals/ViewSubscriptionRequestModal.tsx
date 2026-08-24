@@ -1,8 +1,9 @@
-import { X, User, Package, Calendar, Clock, CheckCircle, XCircle, Info } from 'lucide-react';
+import { X, User, Package, Calendar, Clock, CheckCircle, XCircle, Info, Receipt, Eye, ImageOff } from 'lucide-react';
+import { Image } from 'antd';
 import { useLanguage } from '../../contexts/LanguageContext';
 import WhatsAppPhone from '../ui/WhatsAppPhone';
 import { SubscriptionRequest } from '../../types/subscription';
-
+import { baseURL } from '../../consts';
 
 interface ViewSubscriptionRequestModalProps {
   isOpen: boolean;
@@ -15,10 +16,18 @@ export default function ViewSubscriptionRequestModal({ isOpen, onClose, request 
 
   if (!isOpen) return null;
 
+  const receiptImg = request.subscrption_img || request.subscription_img;
+  const receiptUrl = receiptImg
+    ? (receiptImg.startsWith('http') ? receiptImg : `${baseURL}/${receiptImg.replace(/^\//, '')}`)
+    : null;
+
   const text = {
     title: { ar: 'تفاصيل طلب الاشتراك', en: 'Subscription Request Details' },
     studentInfo: { ar: 'معلومات الطالب', en: 'Student Information' },
     planInfo: { ar: 'تفاصيل الباقة', en: 'Plan Details' },
+    paymentReceipt: { ar: 'إيصال الدفع / التحويل', en: 'Payment Receipt' },
+    previewReceipt: { ar: 'تكبير وعرض الإيصال', en: 'Zoom & Preview Receipt' },
+    noReceiptAttached: { ar: 'لا يوجد إيصال دفع مرفق بهذا الطلب', en: 'No payment receipt attached to this request' },
     studentName: { ar: 'اسم الطالب', en: 'Student Name' },
     parentName: { ar: 'ولي الأمر', en: 'Parent Name' },
     phone: { ar: 'رقم الهاتف', en: 'Phone Number' },
@@ -67,9 +76,9 @@ export default function ViewSubscriptionRequestModal({ isOpen, onClose, request 
 
   return (
     <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in fade-in duration-300">
-      <div className="bg-white rounded-[32px] shadow-2xl max-w-2xl w-full overflow-hidden border border-slate-100 animate-in zoom-in-95 duration-300">
+      <div className="bg-white rounded-[32px] shadow-2xl max-w-2xl w-full overflow-hidden border border-slate-100 animate-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
+        <div className="p-6 sm:p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
           <div className="space-y-1">
             <h2 className="text-2xl font-black text-slate-900 tracking-tight">{text.title[language]}</h2>
             <div className="flex items-center gap-2 text-slate-400 text-sm font-medium">
@@ -85,7 +94,7 @@ export default function ViewSubscriptionRequestModal({ isOpen, onClose, request 
           </button>
         </div>
 
-        <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto no-scrollbar">
+        <div className="p-6 sm:p-8 space-y-8 overflow-y-auto no-scrollbar flex-1">
           {/* Status and Date */}
           <div className="flex flex-wrap items-center justify-between gap-4 p-6 bg-blue-50/30 rounded-[24px] border border-blue-50">
             <div className="space-y-1">
@@ -117,7 +126,6 @@ export default function ViewSubscriptionRequestModal({ isOpen, onClose, request 
                   <p className="text-slate-900 font-bold">{request.user.name}</p>
                 </div>
 
-
                 <div className="group">
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 group-hover:text-blue-500 transition-colors">
                     {text.phone[language]}
@@ -146,7 +154,7 @@ export default function ViewSubscriptionRequestModal({ isOpen, onClose, request 
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
                     {text.plan[language]}
                   </label>
-                  <p className="text-lg font-black text-slate-900">{request.plan.name}</p>
+                  <p className="text-lg font-black text-slate-900">{request.plan?.name || "—"}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -154,14 +162,14 @@ export default function ViewSubscriptionRequestModal({ isOpen, onClose, request 
                     <label className="block text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-1">
                       {text.price[language]}
                     </label>
-                    <p className="text-xl font-black text-emerald-700">{request.plan.price}</p>
+                    <p className="text-xl font-black text-emerald-700">{request.plan?.price ?? "—"}</p>
                   </div>
                   <div className="p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
                     <label className="block text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">
                       {text.sessionsCount[language]}
                     </label>
                     <p className="text-xl font-black text-blue-700">
-                      {request.plan.sessionsCount} <span className="text-xs">{text.session[language]}</span>
+                      {request.plan?.sessionsCount ?? "—"} <span className="text-xs">{text.session[language]}</span>
                     </p>
                   </div>
                 </div>
@@ -169,19 +177,45 @@ export default function ViewSubscriptionRequestModal({ isOpen, onClose, request 
             </div>
           </div>
 
+          {/* Payment Receipt Image Section */}
+          <div className="space-y-4 pt-4 border-t border-slate-100">
+            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+              <Receipt size={14} />
+              {text.paymentReceipt[language]}
+            </h3>
 
+            {receiptUrl ? (
+              <div className="p-4 bg-slate-50 rounded-3xl border border-slate-100">
+                <div className="relative group rounded-2xl overflow-hidden bg-white border border-slate-200 shadow-sm flex items-center justify-center p-2">
+                  <Image
+                    src={receiptUrl}
+                    alt="Payment Receipt"
+                    className="object-contain max-h-80 w-full rounded-xl cursor-pointer"
+                    preview={{
+                      mask: (
+                        <div className="flex items-center gap-2 text-white font-bold text-xs bg-slate-900/60 px-4 py-2 rounded-full backdrop-blur-sm">
+                          <Eye size={16} />
+                          <span>{text.previewReceipt[language]}</span>
+                        </div>
+                      )
+                    }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="p-8 bg-slate-50/60 rounded-3xl border-2 border-dashed border-slate-200 text-center space-y-2">
+                <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                  <ImageOff size={22} />
+                </div>
+                <p className="text-sm font-bold text-slate-500">
+                  {text.noReceiptAttached[language]}
+                </p>
+              </div>
+            )}
+          </div>
         </div>
-
-        {/* Footer */}
-        {/* <div className="p-8 border-t border-slate-50 bg-slate-50/30 flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-8 py-4 bg-slate-900 text-white rounded-2xl hover:bg-slate-800 transition-all font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-200 active:scale-95"
-          >
-            {text.close[language]}
-          </button>
-        </div> */}
       </div>
     </div>
   );
 }
+

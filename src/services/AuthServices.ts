@@ -16,8 +16,10 @@ export const googleRegister = async (data: { idToken: string }) => {
     return response.data;
 }
 
-export const register = async (data: RegisterInput) => {
-    const response = await api.post("/auth/sign-up", data);
+export const register = async (data: RegisterInput | FormData) => {
+    const response = await api.post("/auth/sign-up", data, {
+        headers: data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {},
+    });
     return response.data;
 }
 

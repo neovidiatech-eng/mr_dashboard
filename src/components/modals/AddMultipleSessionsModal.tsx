@@ -16,6 +16,21 @@ export interface SessionPreviewItem {
   day: string;
   time: string;
 }
+
+interface AddMultipleSessionsFormData {
+  title: string;
+  student: string;
+  teacher: string;
+  subject: string;
+  duration: string;
+  monthYear: string;
+  meetingLink: string;
+  description: string;
+  type: string;
+  notification_Time: string;
+  notes: string;
+}
+
 interface AddMultipleSessionsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -33,9 +48,9 @@ export default function AddMultipleSessionsModal({ isOpen, onClose, onAdd }: Add
     setValue,
     reset,
     formState: { errors }
-  } = useForm<MultipleSessionsFormData>({
-    resolver: zodResolver(getMultipleSessionsSchema(t)),
+  } = useForm<AddMultipleSessionsFormData>({
     defaultValues: {
+      title: '',
       duration: '60',
       student: '',
       teacher: '',
@@ -68,8 +83,8 @@ export default function AddMultipleSessionsModal({ isOpen, onClose, onAdd }: Add
     weekDaysData.map(d => ({ ...d, checked: false, time: '10:00' }))
   );
 
-  const { data: studentsData } = useStudents();
-  const { data: teachersData } = useTeacher();
+  const { data: studentsData } = useStudents(1, 1000);
+  const { data: teachersData } = useTeacher({ search: '', page: 1, limit: 1000 });
 
   const students = studentsData?.data?.studentsData || [];
   const teachers = teachersData?.teachers || [];
@@ -87,7 +102,7 @@ export default function AddMultipleSessionsModal({ isOpen, onClose, onAdd }: Add
 
   const selectedStudentData = students.find(s => s.id === watchedStudent);
   const selectedStudentPackage = selectedStudentData ? {
-    name: language === 'ar' ? selectedStudentData.plan?.name_ar : selectedStudentData.plan?.name_en || 'No Package',
+    name: selectedStudentData.plan?.name || 'No Package',
     sessionsRemaining: selectedStudentData.sessions_remaining || 0,
     totalSessions: selectedStudentData.sessions || 0,
   } : null;
@@ -129,7 +144,7 @@ export default function AddMultipleSessionsModal({ isOpen, onClose, onAdd }: Add
     return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
   };
 
-  const onSubmit = async (data: MultipleSessionsFormData) => {
+  const onSubmit = async (data: AddMultipleSessionsFormData) => {
     if (sessionPreview.length === 0) {
       ErrorService.warning(t('addMultipleSessions_selectOneDayMin'));
       return;
@@ -143,8 +158,29 @@ export default function AddMultipleSessionsModal({ isOpen, onClose, onAdd }: Add
       .filter(d => d.checked)
       .map(d => (d.id.charAt(0).toUpperCase() + d.id.slice(1)) as DayOfWeek);
 
+    const [year, month] = data.monthYear ? data.monthYear.split('-').map(Number) : [new Date().getFullYear(), new Date().getMonth() + 1];
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const batchStartDate = `${year}-${String(month).padStart(2, '0')}-01`;
+    const batchEndDate = `${year}-${String(month).padStart(2, '0')}-${String(daysInMonth).padStart(2, '0')}`;
+
     const isSuccess = await onAdd({
-      formData: data,
+      formData: {
+        studentId: data.student,
+        teacherId: data.teacher,
+        courseId: data.subject,
+        link: data.meetingLink,
+        language: language === 'ar' ? 'ar' : 'en',
+        batchStartDate,
+        batchEndDate,
+        startTime: weekDays.find(d => d.checked)?.time || '10:00',
+        selectedDays: selectedDays.map(String),
+        duration: data.duration,
+        description: data.description,
+        notification_Time: data.notification_Time,
+        notes: data.notes,
+        isGroup: false,
+        studentIds: [],
+      },
       sessions: sessionPreview,
       selectedDays
     });

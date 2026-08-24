@@ -37,6 +37,8 @@ export interface SubscriptionRequest {
   planId: string;
   user_id: string;
   status: SubscriptionStatus;
+  subscrption_img?: string | null;
+  subscription_img?: string | null;
   createdAt: string;
   updatedAt: string;
   user: SubscriptionUser;
