@@ -21,6 +21,8 @@ export interface TrueFalseQuestion {
 export interface ExamData {
   title: string;
   duration: number;
+  passPoints?: number;
+  order?: number;
   mcqQuestions: MCQQuestion[];
   trueFalseQuestions: TrueFalseQuestion[];
 }

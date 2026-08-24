@@ -1,7 +1,7 @@
 import { Modal, Button, InputNumber } from 'antd';
 import { useCreateLecture, useUpdateLecture } from '../../../hooks/useLectures';
 import { useQueryClient } from '@tanstack/react-query';
-import { Video, AlignLeft, Type, Hash, Presentation, Globe } from 'lucide-react';
+import { Video, AlignLeft, Type, Hash, Presentation, Globe, Upload, FileText, X } from 'lucide-react';
 import { useEffect } from 'react';
 import { Lecture } from '../../../types/lectures';
 import { useForm, Controller } from 'react-hook-form';
@@ -24,7 +24,7 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
 
     const isEditMode = !!lecture;
 
-    const { register, handleSubmit, reset, control, formState: { errors } } = useForm<LectureFormData>({
+    const { register, handleSubmit, reset, control, setValue, watch, formState: { errors } } = useForm<LectureFormData>({
         resolver: zodResolver(getLectureSchema(t)) as any,
         defaultValues: {
             title_ar: '',
@@ -32,12 +32,15 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
             content_ar: '',
             content_en: '',
             videoUrl: '',
-            pdfUrl: '',
-            slidesUrl: '',
+            pdfFile: null,
+            slizesFile: null,
             order: 1,
             courseId: courseId,
         }
     });
+
+    const pdfFile = watch('pdfFile');
+    const slizesFile = watch('slizesFile');
 
     useEffect(() => {
         if (visible) {
@@ -48,8 +51,8 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
                     content_ar: lecture.content_ar || lecture.content || '',
                     content_en: lecture.content_en || lecture.content || '',
                     videoUrl: lecture.videoUrl || '',
-                    pdfUrl: lecture.pdfUrl || '',
-                    slidesUrl: lecture.slidesUrl || '',
+                    pdfFile: lecture.pdfUrl || null,
+                    slizesFile: lecture.slidesUrl || null,
                     order: lecture.order || 1,
                     courseId: courseId,
                 });
@@ -60,8 +63,8 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
                     content_ar: '',
                     content_en: '',
                     videoUrl: '',
-                    pdfUrl: '',
-                    slidesUrl: '',
+                    pdfFile: null,
+                    slizesFile: null,
                     order: 1,
                     courseId: courseId,
                 });
@@ -80,8 +83,8 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
         };
 
         if (values.videoUrl) payload.videoUrl = values.videoUrl;
-        if (values.pdfUrl) payload.pdfUrl = values.pdfUrl;
-        if (values.slidesUrl) payload.slidesUrl = values.slidesUrl;
+        if (values.pdfFile) payload.pdfFile = values.pdfFile;
+        if (values.slizesFile) payload.slizesFile = values.slizesFile;
 
         if (isEditMode && lecture) {
             updateLecture({ id: lecture.id, data: payload }, {
@@ -218,29 +221,112 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
                     </div>
                 </div>
 
-                {/* PDF & Slides URL */}
+                {/* PDF & Slides File Upload */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* PDF File */}
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <Type size={14} className="text-indigo-500" /> {t('pdfUrl')}
+                            <FileText size={14} className="text-indigo-500" /> {t('pdfUrl')}
                         </label>
-                        <input
-                            {...register('pdfUrl')}
-                            placeholder="https://example.com/lesson1.pdf"
-                            className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
-                        />
-                        {errors.pdfUrl && <p className="text-red-500 text-xs mt-1 font-bold">{errors.pdfUrl.message}</p>}
+                        {!pdfFile ? (
+                            <label className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-200 hover:border-indigo-500 rounded-2xl cursor-pointer bg-gray-50/50 hover:bg-indigo-50/20 transition-all group">
+                                <input
+                                    type="file"
+                                    accept=".pdf,application/pdf"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0] || null;
+                                        setValue('pdfFile', file, { shouldValidate: true });
+                                    }}
+                                />
+                                <div className="w-10 h-10 rounded-xl bg-white group-hover:bg-indigo-100 flex items-center justify-center text-gray-400 group-hover:text-indigo-600 shadow-sm mb-2 transition-all">
+                                    <Upload size={18} />
+                                </div>
+                                <span className="text-xs font-bold text-gray-600 group-hover:text-indigo-600">
+                                    {t('uploadPdf') || 'Choose PDF File'}
+                                </span>
+                                <span className="text-[10px] text-gray-400 mt-0.5">PDF (Max 25MB)</span>
+                            </label>
+                        ) : (
+                            <div className="flex items-center justify-between p-3 bg-indigo-50/40 border border-indigo-100 rounded-2xl">
+                                <div className="flex items-center gap-2.5 overflow-hidden">
+                                    <div className="w-9 h-9 rounded-xl bg-indigo-500 text-white flex items-center justify-center shrink-0">
+                                        <FileText size={16} />
+                                    </div>
+                                    <div className="truncate">
+                                        <p className="text-xs font-bold text-gray-800 truncate max-w-[150px]">
+                                            {typeof pdfFile === 'string' ? pdfFile.split('/').pop() : pdfFile.name}
+                                        </p>
+                                        {pdfFile instanceof File && (
+                                            <p className="text-[10px] text-gray-400 font-medium">
+                                                {(pdfFile.size / (1024 * 1024)).toFixed(2)} MB
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setValue('pdfFile', null, { shouldValidate: true })}
+                                    className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                >
+                                    <X size={14} />
+                                </button>
+                            </div>
+                        )}
+                        {errors.pdfFile && <p className="text-red-500 text-xs mt-1 font-bold">{errors.pdfFile.message}</p>}
                     </div>
+
+                    {/* Slides File */}
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
                             <Presentation size={14} className="text-indigo-500" /> {t('slidesUrl')}
                         </label>
-                        <input
-                            {...register('slidesUrl')}
-                            placeholder="https://example.com/lesson1.pptx"
-                            className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
-                        />
-                        {errors.slidesUrl && <p className="text-red-500 text-xs mt-1 font-bold">{errors.slidesUrl.message}</p>}
+                        {!slizesFile ? (
+                            <label className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-200 hover:border-indigo-500 rounded-2xl cursor-pointer bg-gray-50/50 hover:bg-indigo-50/20 transition-all group">
+                                <input
+                                    type="file"
+                                    accept=".ppt,.pptx,.pdf"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0] || null;
+                                        setValue('slizesFile', file, { shouldValidate: true });
+                                    }}
+                                />
+                                <div className="w-10 h-10 rounded-xl bg-white group-hover:bg-indigo-100 flex items-center justify-center text-gray-400 group-hover:text-indigo-600 shadow-sm mb-2 transition-all">
+                                    <Upload size={18} />
+                                </div>
+                                <span className="text-xs font-bold text-gray-600 group-hover:text-indigo-600">
+                                    {t('uploadSlides') || 'Choose Slides File'}
+                                </span>
+                                <span className="text-[10px] text-gray-400 mt-0.5">PPT, PPTX, PDF (Max 25MB)</span>
+                            </label>
+                        ) : (
+                            <div className="flex items-center justify-between p-3 bg-indigo-50/40 border border-indigo-100 rounded-2xl">
+                                <div className="flex items-center gap-2.5 overflow-hidden">
+                                    <div className="w-9 h-9 rounded-xl bg-indigo-500 text-white flex items-center justify-center shrink-0">
+                                        <Presentation size={16} />
+                                    </div>
+                                    <div className="truncate">
+                                        <p className="text-xs font-bold text-gray-800 truncate max-w-[150px]">
+                                            {typeof slizesFile === 'string' ? slizesFile.split('/').pop() : slizesFile.name}
+                                        </p>
+                                        {slizesFile instanceof File && (
+                                            <p className="text-[10px] text-gray-400 font-medium">
+                                                {(slizesFile.size / (1024 * 1024)).toFixed(2)} MB
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setValue('slizesFile', null, { shouldValidate: true })}
+                                    className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                >
+                                    <X size={14} />
+                                </button>
+                            </div>
+                        )}
+                        {errors.slizesFile && <p className="text-red-500 text-xs mt-1 font-bold">{errors.slizesFile.message}</p>}
                     </div>
                 </div>
 
@@ -265,3 +351,4 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
         </Modal>
     );
 }
+

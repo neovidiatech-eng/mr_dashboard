@@ -19,6 +19,8 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
   // Exam general info
   const [examTitle, setExamTitle] = useState('');
   const [examDuration, setExamDuration] = useState(30);
+  const [passPoints, setPassPoints] = useState(50);
+  const [examOrder, setExamOrder] = useState(1);
 
   // MCQ Questions State
   const [mcqQuestions, setMcqQuestions] = useState<MCQQuestion[]>([
@@ -230,6 +232,8 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
     const payload: ExamData = {
       title: examTitle,
       duration: Number(examDuration) || 30,
+      passPoints: Number(passPoints) || 0,
+      order: Number(examOrder) || 1,
       mcqQuestions,
       trueFalseQuestions,
     };
@@ -245,7 +249,10 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div
+        dir={isAr ? 'rtl' : 'ltr'}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 text-start"
+      >
         {/* Header */}
         <div className="bg-primary px-6 py-4 flex items-center justify-between text-white shrink-0">
           <div className="flex items-center gap-3">
@@ -271,16 +278,17 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
 
         {/* Exam Title & Duration Bar */}
         <div className="p-6 bg-slate-50 border-b border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
-          <div className="md:col-span-2">
+          <div className="md:col-span-3">
             <label className="block text-xs font-semibold text-slate-600 mb-1">
               {isAr ? 'عنوان الامتحان *' : 'Exam Title *'}
             </label>
             <input
               type="text"
+              dir={isAr ? 'rtl' : 'ltr'}
               value={examTitle}
               onChange={(e) => setExamTitle(e.target.value)}
               placeholder={isAr ? 'مثال: اختبار الشهر الأول في الرياضيات' : 'e.g. Monthly Math Quiz'}
-              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
+              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
             />
           </div>
           <div>
@@ -290,9 +298,36 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
             <input
               type="number"
               min="5"
+              dir={isAr ? 'rtl' : 'ltr'}
               value={examDuration}
               onChange={(e) => setExamDuration(Number(e.target.value))}
-              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
+              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 mb-1">
+              {isAr ? 'درجات النجاح' : 'Pass Points'}
+            </label>
+            <input
+              type="number"
+              min="0"
+              dir={isAr ? 'rtl' : 'ltr'}
+              value={passPoints}
+              onChange={(e) => setPassPoints(Number(e.target.value))}
+              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 mb-1">
+              {isAr ? 'الترتيب' : ' Order'}
+            </label>
+            <input
+              type="number"
+              min="1"
+              dir={isAr ? 'rtl' : 'ltr'}
+              value={examOrder}
+              onChange={(e) => setExamOrder(Number(e.target.value))}
+              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
             />
           </div>
         </div>
@@ -382,10 +417,11 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
                     </label>
                     <input
                       type="text"
+                      dir={isAr ? 'rtl' : 'ltr'}
                       value={q.text}
                       onChange={(e) => handleMCQTextChange(qIndex, e.target.value)}
                       placeholder={isAr ? 'اكتب نص السؤال هنا...' : 'Type the question text here...'}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
                     />
                   </div>
 
@@ -422,10 +458,11 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
                           {/* Option Text Input */}
                           <input
                             type="text"
+                            dir={isAr ? 'rtl' : 'ltr'}
                             value={opt.text}
                             onChange={(e) => handleOptionTextChange(qIndex, optIndex, e.target.value)}
                             placeholder={`${isAr ? 'الاختيار' : 'Option'} ${optIndex + 1}`}
-                            className="flex-1 bg-transparent px-2 py-1 text-sm outline-none text-slate-800 font-medium"
+                            className="flex-1 bg-transparent px-2 py-1 text-sm outline-none text-slate-800 font-medium text-start"
                           />
 
                           {opt.isCorrect && (
@@ -520,10 +557,11 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
                     </label>
                     <input
                       type="text"
+                      dir={isAr ? 'rtl' : 'ltr'}
                       value={q.text}
                       onChange={(e) => handleTFTextChange(qIndex, e.target.value)}
                       placeholder={isAr ? 'اكتب العبارة هنا لمعرفة إن كانت صحيحة أم خاطئة...' : 'Type statement here...'}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
                     />
                   </div>
 

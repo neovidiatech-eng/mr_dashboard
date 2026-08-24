@@ -12,6 +12,7 @@ import {
   AlignLeft
 } from 'lucide-react';
 import { Post } from '../../../types/postss';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 interface ViewPostModalProps {
   visible: boolean;
@@ -26,6 +27,7 @@ export default function ViewPostModal({
   post,
   onEdit,
 }: ViewPostModalProps) {
+  const { t, language } = useLanguage();
   const [activeLangTab, setActiveLangTab] = useState<'both' | 'ar' | 'en'>('both');
 
   if (!post) return null;
@@ -33,7 +35,7 @@ export default function ViewPostModal({
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return 'N/A';
     try {
-      return new Date(dateStr).toLocaleDateString('en-US', {
+      return new Date(dateStr).toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-US', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -60,9 +62,9 @@ export default function ViewPostModal({
               <Eye size={20} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-gray-900">Post Details</h3>
+              <h3 className="text-lg font-bold text-gray-900">{t('post_details')}</h3>
               <p className="text-xs font-medium text-gray-400">
-                View blog post or news announcement content
+                {t('post_details_subtitle')}
               </p>
             </div>
           </div>
@@ -72,13 +74,13 @@ export default function ViewPostModal({
               color={post.type === 'news' ? 'purple' : 'blue'}
             >
               {post.type === 'news' ? <Newspaper size={13} /> : <FileText size={13} />}
-              {post.type || 'blog'}
+              {post.type === 'news' ? t('post_type_news') : t('post_type_blog')}
             </Tag>
             <Tag
               color={post.published ? 'green' : 'gold'}
               className="rounded-full font-bold uppercase text-[10px] px-3 py-0.5 border-none"
             >
-              {post.published ? 'Published' : 'Draft'}
+              {post.published ? t('post_published') : t('post_draft')}
             </Tag>
           </div>
         </div>
@@ -90,7 +92,7 @@ export default function ViewPostModal({
           <div className="relative rounded-2xl overflow-hidden bg-gray-100 max-h-64 flex items-center justify-center border border-gray-100 shadow-sm">
             <Image
               src={post.coverImage}
-              alt={post.title_en || post.title_ar}
+              alt={language === 'ar' ? (post.title_ar || post.title_en) : (post.title_en || post.title_ar)}
               className="w-full object-cover max-h-64"
               fallback="https://placehold.co/800x400?text=Post+Image"
             />
@@ -99,7 +101,7 @@ export default function ViewPostModal({
           <div className="w-full h-32 rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50 flex items-center justify-center text-indigo-300 border border-indigo-100/50">
             <div className="flex items-center gap-2 font-medium text-indigo-400">
               {post.type === 'news' ? <Newspaper size={32} /> : <FileText size={32} />}
-              <span>No cover image provided</span>
+              <span>{t('no_cover_image')}</span>
             </div>
           </div>
         )}
@@ -108,17 +110,17 @@ export default function ViewPostModal({
         <div className="flex flex-wrap items-center justify-between gap-4 p-4 bg-gray-50/80 rounded-2xl text-xs font-semibold text-gray-500 border border-gray-100">
           <div className="flex items-center gap-2">
             <Calendar size={15} className="text-primary" />
-            <span>Created: <strong className="text-gray-700">{formatDate(post.createdAt)}</strong></span>
+            <span>{t('created_at_label')} <strong className="text-gray-700">{formatDate(post.createdAt)}</strong></span>
           </div>
           {post.updatedAt && (
             <div className="flex items-center gap-2">
               <Clock size={15} className="text-amber-500" />
-              <span>Updated: <strong className="text-gray-700">{formatDate(post.updatedAt)}</strong></span>
+              <span>{t('updated_at_label')} <strong className="text-gray-700">{formatDate(post.updatedAt)}</strong></span>
             </div>
           )}
           <div className="flex items-center gap-2">
             <Globe size={15} className="text-indigo-500" />
-            <span>Bilingual (AR / EN)</span>
+            <span>{t('bilingual_posts')}</span>
           </div>
         </div>
 
@@ -133,7 +135,7 @@ export default function ViewPostModal({
                 key: 'both',
                 label: (
                   <span className="flex items-center gap-2 font-bold px-1">
-                    <Globe size={15} /> Both Languages
+                    <Globe size={15} /> {t('both_languages')}
                   </span>
                 ),
               },
@@ -141,7 +143,7 @@ export default function ViewPostModal({
                 key: 'ar',
                 label: (
                   <span className="flex items-center gap-2 font-bold px-1">
-                    🇦🇪 العربية (Arabic)
+                    🇦🇪 {t('arabic_tab')}
                   </span>
                 ),
               },
@@ -149,7 +151,7 @@ export default function ViewPostModal({
                 key: 'en',
                 label: (
                   <span className="flex items-center gap-2 font-bold px-1">
-                    🇬🇧 English
+                    🇬🇧 {t('english_tab')}
                   </span>
                 ),
               },
@@ -164,26 +166,26 @@ export default function ViewPostModal({
             <div className="p-5 rounded-2xl bg-amber-50/30 border border-amber-100/60 space-y-4" dir="rtl">
               <div className="flex items-center gap-2 text-xs font-bold text-amber-700 uppercase tracking-wider">
                 <BookOpen size={15} />
-                المحتوى باللغة العربية
+                {t('arabic_content_header')}
               </div>
               
               <div>
                 <h2 className="text-xl font-bold text-gray-900 leading-snug">
-                  {post.title_ar || <span className="text-gray-400 italic">لا يوجد عنوان بالعربية</span>}
+                  {post.title_ar || <span className="text-gray-400 italic">{t('no_arabic_title')}</span>}
                 </h2>
               </div>
 
               {post.excerpt_ar && (
                 <div className="p-3.5 bg-white/80 rounded-xl border border-amber-100 text-sm text-gray-600 font-medium italic leading-relaxed">
                   <div className="flex items-center gap-1.5 text-xs text-amber-600 font-bold not-italic mb-1">
-                    <AlignLeft size={13} /> الملخص:
+                    <AlignLeft size={13} /> {t('excerpt_label')}
                   </div>
                   {post.excerpt_ar}
                 </div>
               )}
 
               <div className="prose max-w-none text-gray-800 text-sm leading-relaxed whitespace-pre-line font-medium pt-1">
-                {post.content_ar || <span className="text-gray-400 italic">لا يوجد محتوى بالعربية</span>}
+                {post.content_ar || <span className="text-gray-400 italic">{t('no_arabic_content')}</span>}
               </div>
             </div>
           )}
@@ -193,26 +195,26 @@ export default function ViewPostModal({
             <div className="p-5 rounded-2xl bg-blue-50/30 border border-blue-100/60 space-y-4" dir="ltr">
               <div className="flex items-center gap-2 text-xs font-bold text-blue-700 uppercase tracking-wider">
                 <BookOpen size={15} />
-                English Content
+                {t('english_content_header')}
               </div>
 
               <div>
                 <h2 className="text-xl font-bold text-gray-900 leading-snug">
-                  {post.title_en || <span className="text-gray-400 italic">No English title</span>}
+                  {post.title_en || <span className="text-gray-400 italic">{t('no_english_title')}</span>}
                 </h2>
               </div>
 
               {post.excerpt_en && (
                 <div className="p-3.5 bg-white/80 rounded-xl border border-blue-100 text-sm text-gray-600 font-medium italic leading-relaxed">
                   <div className="flex items-center gap-1.5 text-xs text-blue-600 font-bold not-italic mb-1">
-                    <AlignLeft size={13} /> Summary / Excerpt:
+                    <AlignLeft size={13} /> {t('excerpt_label')}
                   </div>
                   {post.excerpt_en}
                 </div>
               )}
 
               <div className="prose max-w-none text-gray-800 text-sm leading-relaxed whitespace-pre-line font-medium pt-1">
-                {post.content_en || <span className="text-gray-400 italic">No English content</span>}
+                {post.content_en || <span className="text-gray-400 italic">{t('no_english_content')}</span>}
               </div>
             </div>
           )}
@@ -221,7 +223,7 @@ export default function ViewPostModal({
         {/* Modal Actions */}
         <div className="flex items-center justify-between pt-4 border-t border-gray-100">
           <Button onClick={onClose} className="h-11 px-6 rounded-xl font-bold text-gray-600">
-            Close
+            {t('close') || t('cancel') || 'Close'}
           </Button>
 
           {onEdit && (
@@ -234,7 +236,7 @@ export default function ViewPostModal({
               }}
               className="h-11 px-6 rounded-xl font-bold bg-primary hover:!bg-primary-dark border-none shadow-lg shadow-primary/20 flex items-center gap-2"
             >
-              Edit Post
+              {t('edit_post')}
             </Button>
           )}
         </div>
@@ -242,3 +244,4 @@ export default function ViewPostModal({
     </Modal>
   );
 }
+

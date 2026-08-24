@@ -90,10 +90,10 @@ export default function AddPostModal({
           </div>
           <div>
             <h3 className="text-lg font-bold text-gray-900">
-              {editingPost ? 'Edit Post' : 'Create New Post'}
+              {editingPost ? t('edit_post') : t('create_new_post')}
             </h3>
             <p className="text-xs font-medium text-gray-400">
-              Publish blog articles or news updates (bilingual)
+              {t('add_post_subtitle')}
             </p>
           </div>
         </div>
@@ -110,7 +110,7 @@ export default function AddPostModal({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-              <Globe size={14} className="text-primary" /> Post Type *
+              <Globe size={14} className="text-primary" /> {t('post_type_label')} *
             </label>
             <Controller
               name="type"
@@ -120,8 +120,8 @@ export default function AddPostModal({
                   {...field}
                   className="w-full h-11"
                   options={[
-                    { value: 'blog', label: 'Blog Article' },
-                    { value: 'news', label: 'News Announcement' },
+                    { value: 'blog', label: t('blog_article_option') },
+                    { value: 'news', label: t('news_announcement_option') },
                   ]}
                 />
               )}
@@ -131,7 +131,7 @@ export default function AddPostModal({
 
           <div>
             <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-              <ImageIcon size={14} className="text-primary" /> Cover Image URL
+              <ImageIcon size={14} className="text-primary" /> {t('cover_image_url')}
             </label>
             <input
               {...register('coverImage')}
@@ -148,12 +148,12 @@ export default function AddPostModal({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-              <Type size={14} className="text-primary" /> Arabic Title (العنوان بالعربية) *
+              <Type size={14} className="text-primary" /> {t('post_title_ar_label')} *
             </label>
             <input
               dir="rtl"
               {...register('title_ar')}
-              placeholder="عنوان المقال أو الخبر"
+              placeholder={t('post_title_ar_placeholder')}
               className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm font-bold"
             />
             {errors.title_ar && (
@@ -163,12 +163,12 @@ export default function AddPostModal({
 
           <div>
             <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-              <Type size={14} className="text-primary" /> English Title *
+              <Type size={14} className="text-primary" /> {t('post_title_en_label')} *
             </label>
             <input
               dir="ltr"
               {...register('title_en')}
-              placeholder="Post title in English"
+              placeholder={t('post_title_en_placeholder')}
               className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm font-bold"
             />
             {errors.title_en && (
@@ -181,26 +181,26 @@ export default function AddPostModal({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-              <AlignLeft size={14} className="text-primary" /> Arabic Excerpt (ملخص بالعربية)
+              <AlignLeft size={14} className="text-primary" /> {t('post_excerpt_ar_label')}
             </label>
             <textarea
               dir="rtl"
               rows={3}
               {...register('excerpt_ar')}
-              placeholder="ملخص قصير للمقال..."
+              placeholder={t('post_excerpt_ar_placeholder')}
               className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm resize-none"
             />
           </div>
 
           <div>
             <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-              <AlignLeft size={14} className="text-primary" /> English Excerpt
+              <AlignLeft size={14} className="text-primary" /> {t('post_excerpt_en_label')}
             </label>
             <textarea
               dir="ltr"
               rows={3}
               {...register('excerpt_en')}
-              placeholder="Short summary in English..."
+              placeholder={t('post_excerpt_en_placeholder')}
               className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm resize-none"
             />
           </div>
@@ -209,13 +209,13 @@ export default function AddPostModal({
         {/* Content Arabic */}
         <div>
           <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-            <FileText size={14} className="text-primary" /> Arabic Content (المحتوى بالعربية) *
+            <FileText size={14} className="text-primary" /> {t('post_content_ar_label')} *
           </label>
           <textarea
             dir="rtl"
             rows={5}
             {...register('content_ar')}
-            placeholder="أدخل محتوى المقال أو الخبر بالكامل..."
+            placeholder={t('post_content_ar_placeholder')}
             className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm resize-none"
           />
           {errors.content_ar && (
@@ -226,13 +226,13 @@ export default function AddPostModal({
         {/* Content English */}
         <div>
           <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-            <FileText size={14} className="text-primary" /> English Content *
+            <FileText size={14} className="text-primary" /> {t('post_content_en_label')} *
           </label>
           <textarea
             dir="ltr"
             rows={5}
             {...register('content_en')}
-            placeholder="Enter full post content in English..."
+            placeholder={t('post_content_en_placeholder')}
             className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm resize-none"
           />
           {errors.content_en && (
@@ -243,7 +243,7 @@ export default function AddPostModal({
         {/* Published Toggle */}
         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
           <Text className="text-sm font-bold text-gray-700 flex items-center gap-2">
-            <Activity size={14} className="text-primary" /> Publish Immediately
+            <Activity size={14} className="text-primary" /> {t('publish_immediately')}
           </Text>
           <Controller
             name="published"
@@ -257,7 +257,7 @@ export default function AddPostModal({
         {/* Modal Actions */}
         <div className="flex justify-end gap-3 pt-4 border-t border-gray-50">
           <Button onClick={onClose} className="h-11 px-6 rounded-xl font-bold text-gray-600">
-            Cancel
+            {t('cancelBtn') || t('cancel') || 'Cancel'}
           </Button>
           <Button
             type="primary"
@@ -265,7 +265,7 @@ export default function AddPostModal({
             loading={loading}
             className="h-11 px-10 rounded-xl font-bold bg-primary hover:!bg-primary-dark border-none shadow-lg shadow-primary/20"
           >
-            {editingPost ? 'Update Post' : 'Create Post'}
+            {editingPost ? t('update_post_btn') : t('create_post_btn')}
           </Button>
         </div>
       </form>

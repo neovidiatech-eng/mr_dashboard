@@ -6,10 +6,12 @@ import AddPostModal from './AddPostModal';
 import ViewPostModal from './ViewPostModal';
 import { Post } from '../../../types/postss';
 import { PostFormData } from '../../../lib/schemas/PostSchema';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 const { Title, Text } = Typography;
 
 export default function Posts() {
+  const { t, language } = useLanguage();
   const [modalVisible, setModalVisible] = useState(false);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [viewModalVisible, setViewModalVisible] = useState(false);
@@ -65,14 +67,14 @@ export default function Posts() {
 
   const columns = [
     {
-      title: 'POST',
+      title: t('table_post'),
       key: 'post',
       render: (record: Post) => (
         <div className="flex items-center gap-3">
           {record.coverImage ? (
             <Image
               src={record.coverImage}
-              alt={record.title_en || record.title_ar}
+              alt={language === 'ar' ? (record.title_ar || record.title_en) : (record.title_en || record.title_ar)}
               width={48}
               height={48}
               className="rounded-xl object-cover"
@@ -91,15 +93,17 @@ export default function Posts() {
             }}
           >
             <div className="font-bold text-gray-900 line-clamp-1 group-hover:text-primary transition-colors">
-              {record.title_en || record.title_ar}
+              {language === 'ar' ? (record.title_ar || record.title_en) : (record.title_en || record.title_ar)}
             </div>
-            <div className="text-xs text-gray-400 font-medium dir-rtl line-clamp-1">{record.title_ar}</div>
+            <div className="text-xs text-gray-400 font-medium line-clamp-1">
+              {language === 'ar' ? record.title_en : record.title_ar}
+            </div>
           </div>
         </div>
       ),
     },
     {
-      title: 'TYPE',
+      title: t('table_type'),
       dataIndex: 'type',
       key: 'type',
       render: (type: string) => (
@@ -108,12 +112,12 @@ export default function Posts() {
           color={type === 'news' ? 'purple' : 'blue'}
         >
           {type === 'news' ? <Newspaper size={12} /> : <FileText size={12} />}
-          {type || 'blog'}
+          {type === 'news' ? t('post_type_news') : t('post_type_blog')}
         </Tag>
       ),
     },
     {
-      title: 'STATUS',
+      title: t('table_status'),
       dataIndex: 'published',
       key: 'published',
       render: (published: boolean) => (
@@ -121,26 +125,25 @@ export default function Posts() {
           color={published ? 'green' : 'gold'}
           className="rounded-full font-bold uppercase text-[10px] px-3 border-none"
         >
-          {published ? 'Published' : 'Draft'}
+          {published ? t('post_published') : t('post_draft')}
         </Tag>
       ),
     },
     {
-      title: 'CREATED DATE',
+      title: t('table_created_date'),
       dataIndex: 'createdAt',
       key: 'createdAt',
       render: (date: string) => (
         <div className="text-xs font-medium text-gray-500">
-          {date ? new Date(date).toLocaleDateString() : 'N/A'}
+          {date ? new Date(date).toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-US') : 'N/A'}
         </div>
       ),
     },
     {
-      title: 'ACTIONS',
+      title: t('table_actions'),
       key: 'actions',
       render: (record: Post) => (
         <Space size="small">
-            
           <Button
             type="text"
             icon={<Edit2 size={16} />}
@@ -160,11 +163,11 @@ export default function Posts() {
             }}
           />
           <Popconfirm
-            title="Delete post"
-            description="Are you sure you want to delete this post?"
+            title={t('delete_post_title')}
+            description={t('delete_post_confirm')}
             onConfirm={() => deletePost(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText={t('yes') || 'نعم'}
+            cancelText={t('no') || 'لا'}
             okButtonProps={{ danger: true }}
           >
             <Button
@@ -185,9 +188,9 @@ export default function Posts() {
       <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <Title level={2} className="!mb-1 !font-bold text-gray-900 flex items-center gap-3">
-            Posts Management <Sparkles className="text-amber-500" size={24} />
+            {t('posts_management')} <Sparkles className="text-amber-500" size={24} />
           </Title>
-          <Text className="text-gray-400 font-medium">Create and publish Blog Articles & News updates</Text>
+          <Text className="text-gray-400 font-medium">{t('posts_management_desc')}</Text>
         </div>
         <Button
           type="primary"
@@ -198,7 +201,7 @@ export default function Posts() {
             setModalVisible(true);
           }}
         >
-          Add New Post
+          {t('add_new_post')}
         </Button>
       </header>
 
@@ -207,7 +210,7 @@ export default function Posts() {
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
           <Input
             prefix={<Search size={16} className="text-gray-400" />}
-            placeholder="Search posts..."
+            placeholder={t('search_posts_placeholder')}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -224,15 +227,15 @@ export default function Posts() {
             }}
             className="w-full sm:w-44 h-10"
             options={[
-              { value: 'all', label: 'All Types' },
-              { value: 'blog', label: 'Blog Articles' },
-              { value: 'news', label: 'News Updates' },
+              { value: 'all', label: t('all_types') },
+              { value: 'blog', label: t('blog_articles') },
+              { value: 'news', label: t('news_updates') },
             ]}
           />
         </div>
 
         <div className="text-xs font-bold text-gray-400 flex items-center gap-2">
-          <Globe size={14} /> Bilingual Posts (AR/EN)
+          <Globe size={14} /> {t('bilingual_posts')}
         </div>
       </div>
 
@@ -285,3 +288,4 @@ export default function Posts() {
     </div>
   );
 }
+

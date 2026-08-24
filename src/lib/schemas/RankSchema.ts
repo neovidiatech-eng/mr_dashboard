@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const rankSchema = z.object({
-  name_ar: z.string().min(1, 'اسم المرحلة بالعربية مطلوب'),
+  name_ar: z.string().min(1, 'المرحلة الدراسية بالعربية مطلوبة'),
   name_en: z.string().min(1, 'English level name is required'),
   color: z.string().min(1, 'Color is required').regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Invalid hex color'),
   ageRange: z.object({

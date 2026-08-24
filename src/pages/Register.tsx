@@ -58,6 +58,7 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
     defaultValues: {
       name: "",
       phone: "",
+      parentPhone: "",
       email: "",
       codeCountry: "+20",
       birth_date: "",
@@ -123,6 +124,10 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
           formData.append(key, value);
         }
       });
+      if (data.parentPhone) {
+        formData.append("parentNumber", data.parentPhone);
+        formData.append("ParentNumber", data.parentPhone);
+      }
       const result = await registerService(formData);
       if (result.status === 201 || result.status === 200) {
         ErrorService.success(t("registeredSuccess"));
@@ -271,6 +276,35 @@ return (
               )}
             </div>
 
+            {/* Parent Phone */}
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-gray-700 mx-1">
+                {t("parentPhone")} *
+              </label>
+              <div className="flex gap-3" dir="ltr">
+                <Controller
+                  name="parentPhone"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      type="tel"
+                      prefix={<Phone className="w-4 h-4 text-gray-400" />}
+                      placeholder="01012345678"
+                      status={errors.parentPhone ? "error" : ""}
+                      className="w-full shadow-sm"
+                    />
+                  )}
+                />
+              </div>
+              {errors.parentPhone && (
+                <p className="text-red-500 text-xs mt-1 font-medium mx-1 flex items-center gap-1">
+                  <span className="w-1 h-1 bg-red-500 rounded-full" />
+                  {errors.parentPhone.message}
+                </p>
+              )}
+            </div>
+
             {/* Birth Date */}
             <div className="space-y-2">
               <label className="block text-sm font-bold text-gray-700 mx-1">
@@ -358,7 +392,7 @@ return (
             </div>
 
             {/* Password */}
-            <div className="md:col-span-2 space-y-2">
+            <div className="space-y-2">
               <label className="block text-sm font-bold text-gray-700 mx-1">
                 {t("password")} *
               </label>

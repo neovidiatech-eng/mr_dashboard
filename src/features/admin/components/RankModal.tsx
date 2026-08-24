@@ -102,10 +102,10 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
               </div>
               <div>
                 <h2 className="text-xl font-bold text-gray-900">
-                  {isUpdate ? (language === 'ar' ? 'تحديث المستوى' : 'Update Level') : (language === 'ar' ? 'إضافة مستوى جديد' : 'Add New Level')}
+                  {isUpdate ? (language === 'ar' ? 'تعديل المرحلة الدراسية' : 'Update Academic Level') : (language === 'ar' ? 'إضافة مرحلة دراسية جديدة' : 'Add New Academic Level')}
                 </h2>
                 <p className="text-sm text-gray-400 font-medium">
-                  {language === 'ar' ? 'أدخل تفاصيل المستوى الأكاديمي' : 'Enter the academic level details'}
+                  {language === 'ar' ? 'أدخل تفاصيل المرحلة الدراسية' : 'Enter the academic level details'}
                 </p>
               </div>
             </div>
@@ -119,13 +119,13 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
                 <Trophy className="w-4 h-4" />
-                {language === 'ar' ? 'اسم المستوى (بالعربية)' : 'Level Name (Arabic)'}
+                {language === 'ar' ? 'المرحلة الدراسية (بالعربية)' : 'Academic Level (Arabic)'}
               </label>
               <input
                 type="text"
                 dir="rtl"
                 className={`w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start ${errors.name_ar ? 'ring-2 ring-red-500' : ''}`}
-                placeholder="مثل: الفئة الفضية"
+                placeholder="مثل: المرحلة الثانوية"
                 {...register('name_ar')}
               />
               {errors.name_ar && <p className="text-xs text-red-500 font-bold px-2">{errors.name_ar.message}</p>}
@@ -135,13 +135,13 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
                 <Trophy className="w-4 h-4" />
-                {language === 'ar' ? 'اسم المستوى (بالإنجليزية)' : 'Level Name (English)'}
+                {language === 'ar' ? 'المرحلة الدراسية (بالإنجليزية)' : 'Academic Level (English)'}
               </label>
               <input
                 type="text"
                 dir="ltr"
                 className={`w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start ${errors.name_en ? 'ring-2 ring-red-500' : ''}`}
-                placeholder="e.g. Silver Tier"
+                placeholder="e.g. High School"
                 {...register('name_en')}
               />
               {errors.name_en && <p className="text-xs text-red-500 font-bold px-2">{errors.name_en.message}</p>}
@@ -151,7 +151,7 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
                 <Palette className="w-4 h-4" />
-                {language === 'ar' ? 'لون المستوى' : 'Level Color'}
+                {language === 'ar' ? 'لون المرحلة الدراسية' : 'Level Color'}
               </label>
               <div className="flex items-center gap-4">
                 <input
@@ -174,13 +174,13 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
                 <Users className="w-4 h-4" />
-                {language === 'ar' ? 'المرحلة الدراسية (بالعربية)' : 'Study Stage (Arabic)'}
+                {language === 'ar' ? 'السنة الدراسية (بالعربية)' : 'Academic Year (Arabic)'}
               </label>
               <input
                 type="text"
                 dir="rtl"
                 className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start"
-                placeholder="مثل: ابتدائي"
+                placeholder="مثل: الصف الأول الثانوي"
                 {...register('stageName_ar')}
               />
             </div>
@@ -189,13 +189,13 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
                 <Users className="w-4 h-4" />
-                {language === 'ar' ? 'المرحلة الدراسية (بالإنجليزية)' : 'Study Stage (English)'}
+                {language === 'ar' ? 'السنة الدراسية (بالإنجليزية)' : 'Academic Year (English)'}
               </label>
               <input
                 type="text"
                 dir="ltr"
                 className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start"
-                placeholder="e.g. Primary"
+                placeholder="e.g. Grade 10"
                 {...register('stageName_en')}
               />
             </div>
