@@ -36,8 +36,10 @@ export interface DashboardPlan {
 
 export interface DashboardRankCourse {
     id: string;
-    title: string;
-    description: string;
+    title_ar: string;
+    title_en: string;
+    description_ar: string;
+    description_en: string;
     rankId: string;
     image: string;
     createdAt: string;
@@ -46,7 +48,8 @@ export interface DashboardRankCourse {
 
 export interface DashboardRank {
     id: string;
-    name: string;
+    name_ar: string;
+    name_en: string;
     courses: DashboardRankCourse[];
 }
 

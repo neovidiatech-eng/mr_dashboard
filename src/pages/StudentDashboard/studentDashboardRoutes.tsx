@@ -2,7 +2,6 @@ import  { lazy, ReactNode } from "react";
 import {
   Home,
   BookOpen,
-  PlayCircle,
   Play,
   Calendar,
   FileText,
@@ -56,6 +55,9 @@ const SubscriptionPage = lazy(
 );
 const CoursesStorePage = lazy(
   () => import("../../features/student/pages/CoursesStore"),
+);
+const MockExamPage = lazy(
+  () => import("../../features/student/pages/Materials/MockExamPage"),
 );
 
 export const studentDashboardRoutes: StudentRouteConfig[] = [
@@ -165,5 +167,11 @@ export const studentDashboardRoutes: StudentRouteConfig[] = [
     label: "Take Exam",
     path: "exams/:examId",
     element: <TakeExamPage />,
+  },
+  {
+    id: "student-mock-exam",
+    label: "Mock Exam",
+    path: "Materials/Levels/:curriculumId/mock-exam",
+    element: <MockExamPage />,
   },
 ];

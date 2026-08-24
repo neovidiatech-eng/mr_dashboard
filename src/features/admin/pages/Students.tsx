@@ -204,7 +204,7 @@ export default function Students() {
       title: t('academicRank') || 'Level',
       render: (_: any, record: Student) => (
         <span className="inline-flex px-3 py-1 bg-primary-light text-primary rounded-full text-[10px] font-bold border border-indigo-100 uppercase tracking-wider">
-          {record.rank?.name || '---'}
+          {record.rank?.name || (language === 'ar' ? record.rank?.name_ar : record.rank?.name_en) || '---'}
         </span>
       ),
     },
@@ -441,6 +441,7 @@ export default function Students() {
               country: studentData.country,
               active: studentData.status === 'approved',
               timezone: studentData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+              ...(studentData.parentNumber ? { parentNumber: studentData.parentNumber } : {}),
             };
 
             if (studentData.birthDate && studentData.birthDate !== "") {
@@ -505,6 +506,7 @@ export default function Students() {
               rankId: selectedStudent.rankId || '',
               password: selectedStudent.user.password || '',
               birthDate: selectedStudent.birth_date ? selectedStudent.birth_date.split('T')[0] : '',
+              parentNumber: selectedStudent.user.ParentNumber || '',
             }
             : null
         }
@@ -520,6 +522,7 @@ export default function Students() {
               gender: updatedData.gender,
               type: updatedData.type,
               active: updatedData.status === 'approved',
+              ...(updatedData.parentNumber ? { ParentNumber: updatedData.parentNumber } : {}),
             };
 
             if (updatedData.plan && updatedData.plan.trim() !== "") {

@@ -183,6 +183,7 @@ import {
 } from "react-router-dom";
 
 import { useState } from "react";
+import { useLanguage } from "../../../../contexts/LanguageContext";
 
 import VideoModal from "../../../../components/modals/VideoModal";
 
@@ -195,6 +196,7 @@ export default function CurriculumDetails() {
   const navigate = useNavigate();
   const { curriculumId } = useParams();
   const location = useLocation();
+  const { language } = useLanguage();
 
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [selectedVideoName, setSelectedVideoName] = useState("");
@@ -271,9 +273,19 @@ export default function CurriculumDetails() {
       ) : (
         <>
           {/* Header */}
-          <h1 className="text-3xl font-bold text-slate-800 mb-8">
-            {courseTitle}
-          </h1>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <h1 className="text-3xl font-bold text-slate-800">
+              {courseTitle}
+            </h1>
+            
+            {/* Mock Exam Button */}
+            <button
+              onClick={() => navigate("mock-exam")}
+              className="flex items-center gap-2 bg-[#800020] hover:bg-[#600018] text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm shadow-red-900/20 active:scale-95 whitespace-nowrap"
+            >
+              + Start New Exam
+            </button>
+          </div>
 
           {progressData?.hasCourseAccess === false && (
             <div className="mb-8 flex items-center gap-4 p-5 bg-amber-50 border border-amber-100 rounded-2xl">

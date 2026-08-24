@@ -454,7 +454,7 @@ export default function StudentDashboard() {
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 </div>
                 <h4 className="text-2xl font-black text-slate-800 tracking-tighter group-hover:text-blue-600 transition-colors">
-                  {metadata?.rank?.name || 'No Level'}
+                  {metadata?.rank ? (language === 'ar' ? metadata.rank.name_ar : metadata.rank.name_en) : 'No Level'}
                 </h4>
                 <div className="flex items-center gap-2 text-slate-400">
                   <BookOpen size={16} className="text-blue-400" />
@@ -525,8 +525,8 @@ export default function StudentDashboard() {
         <SubmitAssignmentModal
           isOpen={isSubmitModalOpen}
           onClose={() => setIsSubmitModalOpen(false)}
-          assignmentId={selectedAssignment.id}
-          assignmentTitle={selectedAssignment.title}
+          assignmentId={selectedAssignment.id || ""}
+          assignmentTitle={selectedAssignment.title || ""}
         />
       )}
     </>

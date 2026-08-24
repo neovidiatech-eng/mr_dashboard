@@ -108,10 +108,7 @@ export default function EditStudentModal({
     { value: 'female', label: language === 'ar' ? 'أنثى' : 'Female' },
   ];
 
-  const typeOptions = [
-    { value: 'online', label: t('online') },
-    { value: 'onsite', label: t('onsite') },
-  ];
+
 
   const countryOptions = [
     { value: 'egypt', label: language === 'ar' ? 'مصر' : 'Egypt' },
@@ -128,7 +125,7 @@ export default function EditStudentModal({
   const ranks = ranksResponse?.data.items || [];
   const rankOptions = ranks.map((r: any) => ({
     value: r.id,
-    label: r.name,
+    label: r.name || (language === 'ar' ? r.name_ar : r.name_en),
   }));
 
   const statusOptions = [
@@ -340,7 +337,25 @@ export default function EditStudentModal({
               />
             </div>
             
-         
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <Controller
+                name="parentNumber"
+                control={control}
+                render={({ field }) => (
+                  <div className="text-start">
+                    <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">{t('parentPhone')}</label>
+                    <input
+                      type="tel"
+                      {...field}
+                      value={field.value || ''}
+                      placeholder="ex :- 01091536978"
+                      className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all placeholder:text-gray-300"
+                      dir="ltr"
+                    />
+                  </div>
+                )}
+              />
+            </div>
 
             {/* Footer Actions */}
             <div className="flex items-center gap-4 mt-8 pt-4 border-t border-gray-100 bg-white/80 backdrop-blur-md">
