@@ -470,6 +470,10 @@ export default function Students() {
             if (studentData.password) {
               payload.password = studentData.password;
             }
+
+            if (studentData.image) {
+              payload.image = studentData.image;
+            }
             await createStudent(payload);
             setCurrentPage(1);
             return true;
@@ -535,6 +539,10 @@ export default function Students() {
               payload.rankId = updatedData.rankId;
             } else {
               payload.rankId = null;
+            }
+
+            if (updatedData.image) {
+              payload.image = updatedData.image;
             }
 
             await updateStudent({ id: updatedData.id, data: payload });

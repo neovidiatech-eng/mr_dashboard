@@ -3,6 +3,15 @@ export interface AgeRange {
   minAge: number;
 }
 
+export interface Stage {
+  id: string;
+  slug: string;
+  rankId: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface RankItem {
   id: string;
   name_ar?: string;
@@ -14,6 +23,7 @@ export interface RankItem {
   stageName_ar?: string | null;
   stageName_en?: string | null;
   stageName?: string | null;
+  stages?: Stage[];
   createdAt: string;
   updatedAt: string;
 }
@@ -45,18 +55,14 @@ export interface SingleRankResponse {
 
 export interface CreateRankBody {
   name_ar: string;
-  name_en: string;
+  name_en?: string;
   color: string;
-  ageRange: AgeRange;
-  stageName_ar?: string;
-  stageName_en?: string;
+  icon?: File;
 }
 
 export interface UpdateRankBody {
   name_ar?: string;
   name_en?: string;
   color?: string;
-  ageRange?: AgeRange;
-  stageName_ar?: string;
-  stageName_en?: string;
+  icon?: File;
 }

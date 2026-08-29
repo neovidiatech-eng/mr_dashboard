@@ -12,7 +12,7 @@ export const RankCard = ({ rank }: { rank: RankItem }) => {
       }}
     >
       <h3 style={{ color: rank.color }}>{rank.name}</h3>
-      <p>Age Range: {rank.ageRange.minAge} - {rank.ageRange.maxAge}</p>
+      {rank.ageRange && <p>Age Range: {rank.ageRange.minAge} - {rank.ageRange.maxAge}</p>}
       <small>Created At: {new Date(rank.createdAt).toLocaleDateString()}</small>
     </div>
   );

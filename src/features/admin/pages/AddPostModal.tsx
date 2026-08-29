@@ -42,7 +42,7 @@ export default function AddPostModal({
       excerpt_en: '',
       content_ar: '',
       content_en: '',
-      coverImage: '',
+      coverImage: undefined,
       published: true,
     },
   });
@@ -58,7 +58,7 @@ export default function AddPostModal({
           excerpt_en: editingPost.excerpt_en || '',
           content_ar: editingPost.content_ar || '',
           content_en: editingPost.content_en || '',
-          coverImage: editingPost.coverImage || '',
+          coverImage: undefined,
           published: editingPost.published ?? true,
         });
       } else {
@@ -70,7 +70,7 @@ export default function AddPostModal({
           excerpt_en: '',
           content_ar: '',
           content_en: '',
-          coverImage: '',
+          coverImage: undefined,
           published: true,
         });
       }
@@ -78,7 +78,13 @@ export default function AddPostModal({
   }, [visible, editingPost, reset]);
 
   const onSubmit = async (values: PostFormData) => {
-    await onSave(values);
+    const payload: any = { ...values };
+    if (values.coverImage && values.coverImage.length > 0) {
+      payload.coverImage = values.coverImage[0];
+    } else {
+      delete payload.coverImage;
+    }
+    await onSave(payload);
   };
 
   return (
@@ -131,15 +137,16 @@ export default function AddPostModal({
 
           <div>
             <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-2">
-              <ImageIcon size={14} className="text-primary" /> Cover Image URL
+              <ImageIcon size={14} className="text-primary" /> Cover Image
             </label>
             <input
+              type="file"
+              accept="image/*"
               {...register('coverImage')}
-              placeholder="https://example.com/image.jpg"
-              className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
+              className="w-full h-11 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
             />
             {errors.coverImage && (
-              <p className="text-red-500 text-xs mt-1 font-bold">{errors.coverImage.message}</p>
+              <p className="text-red-500 text-xs mt-1 font-bold">{errors.coverImage.message as string}</p>
             )}
           </div>
         </div>

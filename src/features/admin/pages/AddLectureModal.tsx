@@ -31,9 +31,6 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
             title_en: '',
             content_ar: '',
             content_en: '',
-            videoUrl: '',
-            pdfUrl: '',
-            slidesUrl: '',
             order: 1,
             courseId: courseId,
         }
@@ -47,9 +44,6 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
                     title_en: lecture.title_en || lecture.title || '',
                     content_ar: lecture.content_ar || lecture.content || '',
                     content_en: lecture.content_en || lecture.content || '',
-                    videoUrl: lecture.videoUrl || '',
-                    pdfUrl: lecture.pdfUrl || '',
-                    slidesUrl: lecture.slidesUrl || '',
                     order: lecture.order || 1,
                     courseId: courseId,
                 });
@@ -59,9 +53,6 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
                     title_en: '',
                     content_ar: '',
                     content_en: '',
-                    videoUrl: '',
-                    pdfUrl: '',
-                    slidesUrl: '',
                     order: 1,
                     courseId: courseId,
                 });
@@ -79,9 +70,9 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
             order: values.order,
         };
 
-        if (values.videoUrl) payload.videoUrl = values.videoUrl;
-        if (values.pdfUrl) payload.pdfUrl = values.pdfUrl;
-        if (values.slidesUrl) payload.slidesUrl = values.slidesUrl;
+        if (values.video && values.video.length > 0) payload.video = values.video[0];
+        if (values.pdf && values.pdf.length > 0) payload.pdf = values.pdf[0];
+        if (values.slides && values.slides.length > 0) payload.slides = values.slides[0];
 
         if (isEditMode && lecture) {
             updateLecture({ id: lecture.id, data: payload }, {
@@ -190,14 +181,15 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="md:col-span-2">
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <Video size={14} className="text-indigo-500" /> {t('videoUrl')}
+                            <Video size={14} className="text-indigo-500" /> {t('video')}
                         </label>
                         <input
-                            {...register('videoUrl')}
-                            placeholder="https://youtube.com/watch?v=xxxx"
-                            className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
+                            type="file"
+                            accept="video/*"
+                            {...register('video')}
+                            className="w-full h-11 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
                         />
-                        {errors.videoUrl && <p className="text-red-500 text-xs mt-1 font-bold">{errors.videoUrl.message}</p>}
+                        {errors.video && <p className="text-red-500 text-xs mt-1 font-bold">{errors.video.message as string}</p>}
                     </div>
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
@@ -222,25 +214,27 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <Type size={14} className="text-indigo-500" /> {t('pdfUrl')}
+                            <Type size={14} className="text-indigo-500" /> {t('pdf')}
                         </label>
                         <input
-                            {...register('pdfUrl')}
-                            placeholder="https://example.com/lesson1.pdf"
-                            className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
+                            type="file"
+                            accept="application/pdf"
+                            {...register('pdf')}
+                            className="w-full h-11 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
                         />
-                        {errors.pdfUrl && <p className="text-red-500 text-xs mt-1 font-bold">{errors.pdfUrl.message}</p>}
+                        {errors.pdf && <p className="text-red-500 text-xs mt-1 font-bold">{errors.pdf.message as string}</p>}
                     </div>
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <Presentation size={14} className="text-indigo-500" /> {t('slidesUrl')}
+                            <Presentation size={14} className="text-indigo-500" /> {t('slides')}
                         </label>
                         <input
-                            {...register('slidesUrl')}
-                            placeholder="https://example.com/lesson1.pptx"
-                            className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
+                            type="file"
+                            accept=".ppt,.pptx,application/pdf"
+                            {...register('slides')}
+                            className="w-full h-11 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
                         />
-                        {errors.slidesUrl && <p className="text-red-500 text-xs mt-1 font-bold">{errors.slidesUrl.message}</p>}
+                        {errors.slides && <p className="text-red-500 text-xs mt-1 font-bold">{errors.slides.message as string}</p>}
                     </div>
                 </div>
 

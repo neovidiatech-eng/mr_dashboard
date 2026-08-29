@@ -1,5 +1,5 @@
-import { X, GraduationCap } from 'lucide-react';
-import { useEffect } from 'react';
+import { X, GraduationCap, Image as ImageIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import CustomSelect from '../ui/CustomSelect';
 import DatePickerField from '../ui/DatePickerField';
@@ -13,7 +13,7 @@ import { useGetRanks } from '../../features/admin/hooks/useRank';
 interface EditStudentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (studentData: StudentFormData & { id: string }) => boolean | Promise<boolean>;
+  onSubmit: (studentData: StudentFormData & { id: string, image?: File | null }) => boolean | Promise<boolean>;
   studentData: StudentFormData & { id: string } | null;
 }
 
@@ -26,6 +26,7 @@ export default function EditStudentModal({
   const { language, t } = useLanguage();
   const { data: plansData } = usePlans();
   const { data: ranksResponse } = useGetRanks();
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const { control, handleSubmit, register, reset, watch, setValue, formState: { errors } } = useForm<StudentFormData>({
     resolver: zodResolver(getStudentSchema(t)) as Resolver<StudentFormData>,
@@ -81,8 +82,9 @@ export default function EditStudentModal({
       delete (cleanedData as Partial<StudentFormData>).password;
     }
 
-    const isSuccess = await onSubmit({ ...cleanedData, id: studentData!.id });
+    const isSuccess = await onSubmit({ ...cleanedData, id: studentData!.id, image: imageFile });
     if (isSuccess) {
+      setImageFile(null);
       onClose();
     }
   };
@@ -355,6 +357,23 @@ export default function EditStudentModal({
                   </div>
                 )}
               />
+            </div>
+
+            {/* Profile Image Upload */}
+            <div className="space-y-2 md:col-span-2 mt-4">
+              <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                <ImageIcon className="w-4 h-4" />
+                {t('profileImage') || 'Profile Image'}
+              </label>
+              <input
+                type="file"
+                accept="image/png,image/jpg,image/jpeg,image/webp"
+                onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                className="w-full px-5 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-sm"
+              />
+              {imageFile && (
+                <p className="text-xs text-indigo-600 font-bold px-2">{imageFile.name}</p>
+              )}
             </div>
 
             {/* Footer Actions */}

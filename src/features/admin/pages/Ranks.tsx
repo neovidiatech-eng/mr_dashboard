@@ -229,15 +229,17 @@ function EnhancedRankCard({ rank }: { rank: RankItem }) {
                             </span>
                         </div>
                     )}
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-gray-500 flex items-center gap-2">
-                            <Users className="w-3.5 h-3.5" />
-                            {t("ageGroup")}
-                        </span>
-                        <span className="text-xs font-bold text-gray-900 bg-gray-50 px-2 py-1 rounded-lg">
-                            {rank.ageRange.minAge} - {rank.ageRange.maxAge} {t('yrs')}
-                        </span>
-                    </div>
+                    {rank.ageRange && (
+                        <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-gray-500 flex items-center gap-2">
+                                <Users className="w-3.5 h-3.5" />
+                                {t("ageGroup")}
+                            </span>
+                            <span className="text-xs font-bold text-gray-900 bg-gray-50 px-2 py-1 rounded-lg">
+                                {rank.ageRange.minAge} - {rank.ageRange.maxAge} {t('yrs')}
+                            </span>
+                        </div>
+                    )}
                     <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-gray-500 flex items-center gap-2">
                             <Calendar className="w-3.5 h-3.5" />

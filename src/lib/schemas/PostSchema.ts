@@ -10,7 +10,7 @@ export const getPostSchema = (t: TFunc) => z.object({
   excerpt_en: z.string().optional(),
   content_ar: z.string().min(1, t("validation.required")),
   content_en: z.string().min(1, t("validation.required")),
-  coverImage: z.string().optional(),
+  coverImage: z.any().optional(),
   published: z.boolean(),
 });
 

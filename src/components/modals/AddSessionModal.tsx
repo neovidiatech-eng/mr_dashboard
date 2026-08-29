@@ -125,7 +125,6 @@ export default function AddSessionModal({
       notes: '',
       platform: 'zoom',
       link: '',
-      videoUrl: '',
       sessionDate: new Date().toISOString().split('T')[0],
       startTime: '14:00',
       endTime: '15:00',
@@ -314,12 +313,22 @@ export default function AddSessionModal({
   };
 
   const onSubmit = async (data: any) => {
+    const processedData = { ...data };
+    if (processedData.video && processedData.video.length > 0) processedData.video = processedData.video[0];
+    else delete processedData.video;
+    
+    if (processedData.pdf && processedData.pdf.length > 0) processedData.pdf = processedData.pdf[0];
+    else delete processedData.pdf;
+    
+    if (processedData.slides && processedData.slides.length > 0) processedData.slides = processedData.slides[0];
+    else delete processedData.slides;
+
     let isSuccess: boolean;
     if (schedulingMode === 'single') {
-      isSuccess = await onAdd(data as SessionFormData);
+      isSuccess = await onAdd(processedData as SessionFormData);
     } else {
       const batchData: MultipleSessionsPayload = {
-        formData: data as MultipleSessionsFormData,
+        formData: processedData as MultipleSessionsFormData,
         selectedDays: watchSelectedDays,
         sessions: previewSessions.map((session) => ({
           date: session.date,
@@ -704,51 +713,70 @@ export default function AddSessionModal({
                 )}
               </div>
 
-              {schedulingMode === 'single' && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  {/* Video URL */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5">
+                  {/* Video */}
                   <div>
                     <label className="label">
                       <Video className="w-3.5 h-3.5" />
-                      {t('videoUrl')}
+                      {t('video')}
                     </label>
 
                     <input
-                      type="url"
-                      {...register('videoUrl')}
-                      placeholder={t('recordingUrl')}
-                      className="input"
+                      type="file"
+                      accept="video/*"
+                      {...register('video')}
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-500/20 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all"
                     />
 
-                    {errors.videoUrl && (
+                    {errors.video && (
                       <p className="error-text">
-                        {errors.videoUrl.message as string}
+                        {errors.video.message as string}
                       </p>
                     )}
                   </div>
 
-                  {/* Slides URL */}
+                  {/* Slides */}
                   <div>
                     <label className="label">
                       <Layers className="w-3.5 h-3.5" />
-                      {t('slidesUrl')}
+                      {t('slides')}
                     </label>
 
                     <input
-                      type="url"
-                      // {...register('slidesUrl')}
-                      placeholder={t('presentationUrl')}
-                      className="input"
+                      type="file"
+                      accept=".ppt,.pptx,application/pdf"
+                      {...register('slides')}
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-500/20 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all"
                     />
 
-                    {/* {errors.slidesUrl && (
+                    {errors.slides && (
                       <p className="error-text">
-                        {errors.slidesUrl.message as string}
+                        {errors.slides.message as string}
                       </p>
-                    )} */}
+                    )}
+                  </div>
+                  
+                  {/* PDF */}
+                  <div>
+                    <label className="label">
+                      <BookOpen className="w-3.5 h-3.5" />
+                      {t('pdf')}
+                    </label>
+
+                    <input
+                      type="file"
+                      accept="application/pdf"
+                      {...register('pdf')}
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-500/20 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all"
+                    />
+
+                    {errors.pdf && (
+                      <p className="error-text">
+                        {errors.pdf.message as string}
+                      </p>
+                    )}
                   </div>
                 </div>
-              )}
             </div>
 
             {/* Notes */}
