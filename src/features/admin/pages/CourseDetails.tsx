@@ -25,6 +25,9 @@ import UniversalVideoPlayer from '../../../components/ui/UniversalVideoPlayer';
 import { useLanguage } from '../../../contexts/LanguageContext';
 import ErrorService from '../../../utils/ErrorService';
 
+import { useCreateQuiz } from '../../../hooks/useQuizzes';
+import { convertExamDataToQuizPayload } from '../../../services/QuizServices';
+
 export default function CourseDetails() {
   const { t, language } = useLanguage();
   const isAr = language === 'ar';
@@ -38,6 +41,7 @@ export default function CourseDetails() {
   const queryClient = useQueryClient();
   const { data: selectedCourse, isLoading } = useCourseById(courseId || '');
   const { mutate: deleteLecture } = useDeleteLecture();
+  const { mutateAsync: createQuiz } = useCreateQuiz();
 
   const lectures = selectedCourse?.lectures || [];
   const activeLecture = lectures.find((l: Lecture) => l.id === selectedLessonId) || lectures[0];
@@ -55,11 +59,15 @@ export default function CourseDetails() {
 
   const handleSaveExam = async (examData: ExamData) => {
     try {
-      console.log('Created exam for course:', courseId, examData);
-      ErrorService.success(isAr ? 'تم حفظ الامتحان بنجاح!' : 'Exam saved successfully!');
-    } catch (error) {
+      const payload = convertExamDataToQuizPayload(examData);
+      await createQuiz(payload);
+      ErrorService.success(isAr ? 'تم حفظ كويز الامتحان بنجاح!' : 'Quiz saved successfully!');
+      setIsAddExamModalVisible(false);
+    } catch (error: any) {
       console.error('Failed to save exam:', error);
-      ErrorService.error(isAr ? 'حدث خطأ أثناء حفظ الامتحان' : 'Failed to save exam');
+      ErrorService.error(
+        error?.response?.data?.message || (isAr ? 'حدث خطأ أثناء حفظ الامتحان' : 'Failed to save exam')
+      );
     }
   };
 
