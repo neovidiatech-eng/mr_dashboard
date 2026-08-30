@@ -59,7 +59,7 @@ export default function CourseDetails() {
 
   const handleSaveExam = async (examData: ExamData) => {
     try {
-      const payload = convertExamDataToQuizPayload(examData);
+      const payload = convertExamDataToQuizPayload(examData, courseId);
       await createQuiz(payload);
       ErrorService.success(isAr ? 'تم حفظ كويز الامتحان بنجاح!' : 'Quiz saved successfully!');
       setIsAddExamModalVisible(false);

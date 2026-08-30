@@ -23,6 +23,7 @@ export interface QuizPayload {
   title_en?: string;
   description_ar?: string;
   description_en?: string;
+  courseId?: string;
   total_points: number;
   pass_points: number;
   duration_min: number;
@@ -95,7 +96,7 @@ export const getQuizHistory = async (params?: { page?: number; limit?: number; q
   return response.data.data;
 };
 
-export function convertExamDataToQuizPayload(examData: ExamData): QuizPayload {
+export function convertExamDataToQuizPayload(examData: ExamData, courseId?: string): QuizPayload {
   const mcqMapped: QuizQuestionPayload[] = (examData.mcqQuestions || []).map((q, idx) => ({
     question_ar: q.text,
     question_en: q.text,
@@ -136,6 +137,7 @@ export function convertExamDataToQuizPayload(examData: ExamData): QuizPayload {
   return {
     title_ar: examData.title,
     title_en: examData.title,
+    courseId: courseId || undefined,
     duration_min: Number(examData.duration) || 30,
     total_points: totalPoints || 1,
     pass_points: passPoints,
