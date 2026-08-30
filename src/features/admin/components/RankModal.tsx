@@ -1,4 +1,4 @@
-import { X, Trophy, Palette, Users, Image as ImageIcon } from 'lucide-react';
+import { X, Trophy, Palette, Image as ImageIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { RankItem } from '../../../types/rank';
@@ -40,7 +40,7 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
       if (rank) {
         reset({
           name_ar: rank.name_ar || rank.name || '',
-          name_en: rank.name_en || rank.name || '',
+          name_en: rank.name_en || rank.slug||'',
           color: rank.color || '#C0C0C0',
         });
       } else {

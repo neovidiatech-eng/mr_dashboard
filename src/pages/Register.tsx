@@ -62,7 +62,7 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
       phone: "",
       email: "",
       codeCountry: "+20",
-      parentPhone: "",
+      parentNumber: "",
       rankId: "",
       stageId: "",
       birth_date: "",
@@ -328,7 +328,7 @@ return (
                 {language === "ar" ? "رقم هاتف ولي الأمر" : "Parent Phone Number"} *
               </label>
               <Controller
-                name="parentPhone"
+                name="parentNumber"
                 control={control}
                 render={({ field }) => (
                   <Input
@@ -336,15 +336,15 @@ return (
                     type="tel"
                     prefix={<Phone className="w-4 h-4 text-gray-400" />}
                     placeholder="01069441989"
-                    status={errors.parentPhone ? "error" : ""}
+                    status={errors.parentNumber ? "error" : ""}
                     className="shadow-sm"
                   />
                 )}
               />
-              {errors.parentPhone && (
+              {errors.parentNumber && (
                 <p className="text-red-500 text-xs mt-1 font-medium mx-1 flex items-center gap-1">
                   <span className="w-1 h-1 bg-red-500 rounded-full" />
-                  {errors.parentPhone.message}
+                  {errors.parentNumber.message}
                 </p>
               )}
             </div>

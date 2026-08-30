@@ -9,7 +9,7 @@ export const getRegisterSchema = (t: (key: string, options?: any) => string) =>
       .string()
       .min(7, t("validation.min", { count: 7 }))
       .max(15, t("validation.max", { count: 15 })),
-    parentPhone: z
+    parentNumber: z
       .string()
       .min(7, t("validation.min", { count: 7 }))
       .max(15, t("validation.max", { count: 15 })),

@@ -1,6 +1,7 @@
 import { useGetRanks, useDeleteRank } from '../hooks/useRank';
 import { RankCard } from '../components/RankCard';
 import RankModal from '../components/RankModal';
+import RankDetailsModal from '../components/RankDetailsModal';
 import { RankItem } from '../../../types/rank';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
@@ -15,6 +16,8 @@ export default function Ranks() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [selectedRank, setSelectedRank] = useState<RankItem | null>(null);
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+    const [selectedRankDetailsId, setSelectedRankDetailsId] = useState<string | null>(null);
     const [rankToDelete, setRankToDelete] = useState<string | null>(null);
     const { data, isLoading } = useGetRanks();
     const deleteRank = useDeleteRank();
@@ -129,20 +132,22 @@ export default function Ranks() {
                             <div className="absolute top-4 right-4 z-30 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <div className="flex gap-2">
                                     <button
-                                        onClick={() => handleEdit(rank)}
+                                        onClick={(e) => { e.stopPropagation(); handleEdit(rank); }}
                                         className="p-2 bg-white/90 backdrop-blur rounded-xl shadow-sm text-gray-600 hover:text-indigo-600 hover:bg-white transition-all"
                                     >
                                         <Edit2 className="w-4 h-4" />
                                     </button>
                                     <button
-                                        onClick={() => handleDelete(rank.id)}
+                                        onClick={(e) => { e.stopPropagation(); handleDelete(rank.id); }}
                                         className="p-2 bg-white/90 backdrop-blur rounded-xl shadow-sm text-gray-600 hover:text-red-600 hover:bg-white transition-all"
                                     >
                                         <Trash2 className="w-4 h-4" />
                                     </button>
                                 </div>
                             </div>
-                            <EnhancedRankCard rank={rank} />
+                            <div onClick={() => { setSelectedRankDetailsId(rank.id); setIsDetailsModalOpen(true); }} className="cursor-pointer">
+                                <EnhancedRankCard rank={rank} />
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -161,6 +166,13 @@ export default function Ranks() {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 rank={selectedRank}
+            />
+
+            {/* Rank Details Modal */}
+            <RankDetailsModal
+                isOpen={isDetailsModalOpen}
+                onClose={() => setIsDetailsModalOpen(false)}
+                rank={ranks.find((r: RankItem) => r.id === selectedRankDetailsId) || null}
             />
 
             {/* Confirmation Modal */}
