@@ -91,8 +91,8 @@ export default function TakeExam() {
         examId: examId!,
         data: {
           answers: questions.map((q) => ({
-            questionId: q.id,
-            selectedOptionId: answers[q.id] || null,
+            questionId: q.id!,
+            selectedOptionId: q.id ? answers[q.id] || null : null,
           })),
         },
       });
@@ -169,18 +169,18 @@ export default function TakeExam() {
                     </span>
                   </p>
                   <div className="space-y-2">
-                    {q.options.map((o) => (
+                    {q.options?.map((o) => (
                       <label
                         key={o.id}
                         className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
-                          answers[q.id] === o.id ? 'border-primary bg-primary-light' : 'border-slate-200 hover:bg-slate-50'
+                          q.id && answers[q.id] === o.id ? 'border-primary bg-primary-light' : 'border-slate-200 hover:bg-slate-50'
                         }`}
                       >
                         <input
                           type="radio"
                           name={`question-${q.id}`}
-                          checked={answers[q.id] === o.id}
-                          onChange={() => setAnswers((a) => ({ ...a, [q.id]: o.id }))}
+                          checked={!!(q.id && answers[q.id] === o.id)}
+                          onChange={() => q.id && o.id && setAnswers((a) => ({ ...a, [q.id!]: o.id! }))}
                           className="w-4 h-4 accent-primary"
                         />
                         <span className="text-sm text-slate-700">{o.text}</span>
@@ -212,7 +212,7 @@ export default function TakeExam() {
             <div className="text-center py-6 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl">
               <p className="text-sm font-bold text-slate-500 mb-1">{text.resultTitle[language]}</p>
               <p className="text-4xl font-black text-indigo-700">
-                {exam.grade.toFixed(1)} <span className="text-lg text-slate-400">{text.outOf[language]} {exam.totalMarks}</span>
+                {exam.grade != null ? exam.grade.toFixed(1) : '—'} <span className="text-lg text-slate-400">{text.outOf[language]} {exam.totalMarks ?? '—'}</span>
               </p>
             </div>
 
@@ -220,8 +220,8 @@ export default function TakeExam() {
 
             {questions?.map((q, idx) => {
               const myAnswer = q.answers?.[0];
-              const selectedOption = q.options.find((o) => o.id === myAnswer?.selectedOptionId);
-              const correctOption = q.options.find((o) => o.isCorrect);
+              const selectedOption = q.options?.find((o) => o.id === myAnswer?.selectedOptionId);
+              const correctOption = q.options?.find((o) => o.isCorrect);
               return (
                 <div key={q.id} className="border border-slate-100 rounded-2xl p-5">
                   <div className="flex items-start gap-2 mb-3">

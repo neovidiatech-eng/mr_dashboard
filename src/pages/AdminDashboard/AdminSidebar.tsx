@@ -9,7 +9,6 @@ import {
   Settings,
   HelpCircle,
   User,
-  Clock,
   Trophy,
   Layers,
   ShieldCheck,

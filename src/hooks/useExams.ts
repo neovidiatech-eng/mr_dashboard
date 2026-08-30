@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as ExamServices from "../services/ExamServices";
-import { CreateExamPayload, CreateQuestionPayload, SubmitExamPayload } from "../types/exam";
+import type { CreateExamPayload, CreateQuestionPayload, SubmitExamPayload } from "../types/exam";
 
 export const useExams = (params?: { studentId?: string; teacherId?: string; status?: string }) => {
   return useQuery({

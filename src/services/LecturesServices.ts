@@ -22,7 +22,14 @@ export const updateLecture = async (id: string, data: Partial<Lecture>): Promise
 };
 
 export const deleteLecture = async (id: string): Promise<void> => {
-  await api.delete(`/materials/lectures/${id}`);
+  try {
+    await api.delete(`/materials/lectures/${id}`);
+  } catch (err: any) {
+    if (err?.response?.status === 404) {
+      return;
+    }
+    throw err;
+  }
 };
 
 export const completeLecture = async (id: string): Promise<void> => {

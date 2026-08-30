@@ -1,49 +1,126 @@
-import { useState } from 'react';
-import { X, Plus, Trash2, CheckCircle2, ListChecks, HelpCircle, Save } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Plus, Trash2, CheckCircle2, ListChecks, HelpCircle, Save, Loader2 } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import ErrorService from '../../utils/ErrorService';
-import { ExamData, MCQQuestion, TrueFalseQuestion } from '../../types/courseExam';
+import { MCQQuestion, TrueFalseQuestion } from '../../types/courseExam';
+import { useCreateQuiz, useUpdateQuiz } from '../../hooks/useQuiz';
+import { useAddItemsToSection } from '../../hooks/useSections';
+import { createSection } from '../../services/SectionServices';
+import { useQueryClient } from '@tanstack/react-query';
+import { CreateQuizPayload, CreateQuizQuestionPayload } from '../../types/quiz';
+import { Section } from '../../types/courses';
 
-export interface AddExamProps {
+export interface AddQuizProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (examData: ExamData) => void | Promise<void>;
+  onSave?: (quizData: CreateQuizPayload) => void | Promise<void>;
+  sections?: Section[];
+  defaultSectionId?: string;
+  courseId?: string;
+  quiz?: any;
 }
 
-export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
+export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaultSectionId, courseId, quiz }: AddQuizProps) {
   const { language } = useLanguage();
   const isAr = language === 'ar';
+  const queryClient = useQueryClient();
+
+  const { mutateAsync: createQuiz, isPending: isCreating } = useCreateQuiz();
+  const { mutateAsync: updateQuiz, isPending: isUpdating } = useUpdateQuiz();
+  const { mutateAsync: addItemsToSection } = useAddItemsToSection();
+  const isPending = isCreating || isUpdating;
+  const isEditMode = !!quiz;
 
   const [activeTab, setActiveTab] = useState<'mcq' | 'true_false'>('mcq');
 
-  // Exam general info
-  const [examTitle, setExamTitle] = useState('');
-  const [examDuration, setExamDuration] = useState(30);
+  // Quiz general info
+  const [quizTitle, setQuizTitle] = useState('');
+  const [titleEn, setTitleEn] = useState('');
+  const [descriptionAr, setDescriptionAr] = useState('');
+  const [descriptionEn, setDescriptionEn] = useState('');
+  const [quizDuration, setQuizDuration] = useState(30);
   const [passPoints, setPassPoints] = useState(50);
-  const [examOrder, setExamOrder] = useState(1);
+  const [selectedSectionId, setSelectedSectionId] = useState<string>(defaultSectionId || sections?.[0]?.id || '');
+
+  useEffect(() => {
+    if (defaultSectionId) {
+      setSelectedSectionId(defaultSectionId);
+    } else if (sections && sections.length > 0 && !selectedSectionId) {
+      setSelectedSectionId(sections[0].id);
+    }
+  }, [defaultSectionId, sections]);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (quiz) {
+        setQuizTitle(quiz.title_ar || quiz.title || '');
+        setTitleEn(quiz.title_en || quiz.title || '');
+        setDescriptionAr(quiz.description_ar || quiz.description || '');
+        setDescriptionEn(quiz.description_en || quiz.description || '');
+        setQuizDuration(quiz.duration_min || quiz.duration || 30);
+        setPassPoints(quiz.pass_points || 0);
+
+        if (quiz.questions && Array.isArray(quiz.questions)) {
+          const mcqs = quiz.questions
+            .filter((q: any) => (q.type || '').toUpperCase() === 'MCQ')
+            .map((q: any) => ({
+              text: q.question_ar || q.text_ar || q.text || '',
+              points: q.points || 1,
+              options: (q.options || []).map((o: any) => ({
+                text: o.option_text_ar || o.text_ar || o.text || '',
+                isCorrect: !!(o.is_correct || o.isCorrect),
+              })),
+            }));
+
+          const tfs = quiz.questions
+            .filter((q: any) => (q.type || '').toUpperCase() === 'TRUE_FALSE')
+            .map((q: any) => ({
+              text: q.question_ar || q.text_ar || q.text || '',
+              points: q.points || 1,
+              correctAnswer: (q.options || []).some(
+                (o: any) => (o.is_correct || o.isCorrect) && (o.option_text_en === 'True' || o.option_text_ar === 'صح')
+              ),
+            }));
+
+          if (mcqs.length > 0) setMcqQuestions(mcqs);
+          if (tfs.length > 0) setTrueFalseQuestions(tfs);
+        }
+      } else {
+        setQuizTitle('');
+        setTitleEn('');
+        setDescriptionAr('');
+        setDescriptionEn('');
+        setQuizDuration(30);
+        setPassPoints(50);
+        setMcqQuestions([
+          {
+            text: '',
+            points: 1,
+            options: [
+              { text: '', isCorrect: true },
+              { text: '', isCorrect: false },
+            ],
+          },
+        ]);
+        setTrueFalseQuestions([]);
+      }
+    }
+  }, [isOpen, quiz]);
 
   // MCQ Questions State
   const [mcqQuestions, setMcqQuestions] = useState<MCQQuestion[]>([
     {
-      id: crypto.randomUUID(),
       text: '',
       points: 1,
       options: [
-        { id: crypto.randomUUID(), text: '', isCorrect: true },
-        { id: crypto.randomUUID(), text: '', isCorrect: false },
+        { text: '', isCorrect: true },
+        { text: '', isCorrect: false },
       ],
     },
   ]);
 
   // True / False Questions State
-  const [trueFalseQuestions, setTrueFalseQuestions] = useState<TrueFalseQuestion[]>([
-    {
-      id: crypto.randomUUID(),
-      text: '',
-      points: 1,
-      correctAnswer: true,
-    },
-  ]);
+  const [trueFalseQuestions, setTrueFalseQuestions] = useState<TrueFalseQuestion[]>([]);
 
   if (!isOpen) return null;
 
@@ -52,20 +129,19 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
     setMcqQuestions((prev) => [
       ...prev,
       {
-        id: crypto.randomUUID(),
         text: '',
         points: 1,
         options: [
-          { id: crypto.randomUUID(), text: '', isCorrect: true },
-          { id: crypto.randomUUID(), text: '', isCorrect: false },
+          { text: '', isCorrect: true },
+          { text: '', isCorrect: false },
         ],
       },
     ]);
   };
 
   const handleRemoveMCQQuestion = (qIndex: number) => {
-    if (mcqQuestions.length === 1) {
-      ErrorService.warning(isAr ? 'يجب أن يحتوي الامتحان على سؤال واحد على الأقل' : 'Must have at least one question');
+    if (mcqQuestions.length + trueFalseQuestions.length <= 1) {
+      ErrorService.warning(isAr ? 'يجب أن يحتوي الكويز على سؤال واحد على الأقل' : 'Must have at least one question');
       return;
     }
     setMcqQuestions((prev) => prev.filter((_, i) => i !== qIndex));
@@ -95,7 +171,7 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
           ...q,
           options: [
             ...q.options,
-            { id: crypto.randomUUID(), text: '', isCorrect: false },
+            { text: '', isCorrect: false },
           ],
         };
       })
@@ -112,7 +188,6 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
         }
         const wasCorrect = q.options[optIndex].isCorrect;
         const newOptions = q.options.filter((_, idx) => idx !== optIndex);
-        // If the removed option was the correct one, make the first one correct by default
         if (wasCorrect && newOptions.length > 0) {
           newOptions[0].isCorrect = true;
         }
@@ -155,7 +230,6 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
     setTrueFalseQuestions((prev) => [
       ...prev,
       {
-        id: crypto.randomUUID(),
         text: '',
         points: 1,
         correctAnswer: true,
@@ -164,8 +238,8 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
   };
 
   const handleRemoveTFQuestion = (qIndex: number) => {
-    if (trueFalseQuestions.length === 1) {
-      ErrorService.warning(isAr ? 'يجب أن يحتوي على سؤال واحد على الأقل' : 'Must have at least one question');
+    if (mcqQuestions.length + trueFalseQuestions.length <= 1) {
+      ErrorService.warning(isAr ? 'يجب أن يحتوي الكويز على سؤال واحد على الأقل' : 'Must have at least one question');
       return;
     }
     setTrueFalseQuestions((prev) => prev.filter((_, i) => i !== qIndex));
@@ -191,8 +265,13 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
 
   // --- Validation & Submit ---
   const handleSubmit = async () => {
-    if (!examTitle.trim()) {
-      ErrorService.error(isAr ? 'يرجى كتابة عنوان الامتحان' : 'Please enter exam title');
+    if (!quizTitle.trim()) {
+      ErrorService.error(isAr ? 'يرجى كتابة عنوان الكويز' : 'Please enter quiz title');
+      return;
+    }
+
+    if (mcqQuestions.length + trueFalseQuestions.length === 0) {
+      ErrorService.error(isAr ? 'يجب إضافة سؤال واحد على الأقل في الكويز' : 'Must add at least one question to the quiz');
       return;
     }
 
@@ -229,17 +308,101 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
       }
     }
 
-    const payload: ExamData = {
-      title: examTitle,
-      duration: Number(examDuration) || 30,
-      passPoints: Number(passPoints) || 0,
-      order: Number(examOrder) || 1,
-      mcqQuestions,
-      trueFalseQuestions,
+    const formattedMcq: CreateQuizQuestionPayload[] = mcqQuestions.map((q, idx) => ({
+      question_ar: q.text,
+      question_en: q.text,
+      type: 'MCQ',
+      points: Number(q.points) || 1,
+      order: idx + 1,
+      options: q.options.map((opt) => ({
+        option_text_ar: opt.text,
+        option_text_en: opt.text,
+        is_correct: opt.isCorrect,
+      })),
+    }));
+
+    const formattedTF: CreateQuizQuestionPayload[] = trueFalseQuestions.map((q, idx) => ({
+      question_ar: q.text,
+      question_en: q.text,
+      type: 'TRUE_FALSE',
+      points: Number(q.points) || 1,
+      order: mcqQuestions.length + idx + 1,
+      options: [
+        { option_text_ar: 'صح', option_text_en: 'True', is_correct: q.correctAnswer === true },
+        { option_text_ar: 'خطأ', option_text_en: 'False', is_correct: q.correctAnswer === false },
+      ],
+    }));
+
+    const quizPayload: CreateQuizPayload = {
+      title_ar: quizTitle,
+      title_en: titleEn.trim() || quizTitle,
+      description_ar: descriptionAr,
+      description_en: descriptionEn.trim() || descriptionAr,
+      duration_min: Number(quizDuration) || 30,
+      pass_points: Number(passPoints) || 0,
+      total_points: totalScore,
+      questions: [...formattedMcq, ...formattedTF],
     };
 
-    await onSave(payload);
-    onClose();
+    try {
+      let createdQuizId = quiz?.id;
+      if (onSave) {
+        const result: any = await onSave(quizPayload);
+        if (result?.id || result?.data?.id) {
+          createdQuizId = result.id || result.data.id;
+        }
+      } else if (isEditMode && createdQuizId) {
+        await updateQuiz({ id: createdQuizId, data: quizPayload });
+        ErrorService.success(isAr ? 'تم تحديث الكويز بنجاح!' : 'Quiz updated successfully!');
+      } else {
+        const res: any = await createQuiz(quizPayload);
+        createdQuizId = res?.id || res?.data?.id;
+        ErrorService.success(isAr ? 'تم إنشاء الكويز بنجاح!' : 'Quiz created successfully!');
+      }
+
+      const isValidUUID = (id?: string) =>
+        !!id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
+      let targetSecId = selectedSectionId;
+      if ((!targetSecId || !isValidUUID(targetSecId)) && courseId) {
+        try {
+          const newSec = await createSection({
+            course_id: courseId,
+            name_ar: 'محتوى الكورس',
+            name_en: 'Course Content',
+            items: createdQuizId ? [{ item_id: createdQuizId, item_type: 'QUIZ', order: 1 }] : [],
+          });
+          targetSecId = newSec.id;
+        } catch (secErr) {
+          console.error('Failed to auto-create section for quiz:', secErr);
+        }
+      }
+
+      if (createdQuizId && targetSecId && isValidUUID(targetSecId)) {
+        try {
+          await addItemsToSection({
+            sectionId: targetSecId,
+            items: [{ item_id: createdQuizId, item_type: 'QUIZ', order: 1 }],
+            courseId,
+          });
+        } catch (err) {
+          console.error('Failed to link quiz to section:', err);
+        }
+      }
+
+      if (courseId) {
+        queryClient.invalidateQueries({ queryKey: ['sections', courseId] });
+        queryClient.invalidateQueries({ queryKey: ['courses', courseId] });
+      }
+      queryClient.invalidateQueries({ queryKey: ['sections'] });
+      queryClient.invalidateQueries({ queryKey: ['courses'] });
+      queryClient.invalidateQueries({ queryKey: ['quizzes'] });
+      onClose();
+    } catch (error: any) {
+      ErrorService.error(
+        error?.response?.data?.message || error?.message || (isAr ? 'حدث خطأ أثناء حفظ الكويز' : 'Failed to save quiz')
+      );
+    }
   };
 
   // Calculate totals
@@ -261,10 +424,10 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
             </div>
             <div>
               <h2 className="text-xl font-bold">
-                {isAr ? 'إنشاء وتصميم امتحان جديد' : 'Create New Exam'}
+                {isAr ? 'إنشاء وتصميم كويز جديد (/quiz)' : 'Create New Quiz (/quiz)'}
               </h2>
               <p className="text-xs text-white/80">
-                {isAr ? 'إضافة أسئلة اختيار من متعدد وصح أو خطأ مع التصحيح التلقائي' : 'Add MCQ and True/False questions with auto-grading'}
+                {isAr ? 'إضافة أسئلة اختيار من متعدد وصح أو خطأ للكويز' : 'Add MCQ and True/False questions for Quiz'}
               </p>
             </div>
           </div>
@@ -276,21 +439,82 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
           </button>
         </div>
 
-        {/* Exam Title & Duration Bar */}
-        <div className="p-6 bg-slate-50 border-b border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
-          <div className="md:col-span-3">
+        {/* Quiz Title & Duration Bar */}
+        <div className="p-6 bg-slate-50 border-b border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-4 shrink-0">
+          {sections && sections.length > 0 && (
+            <div className="md:col-span-2">
+              <label className="block text-xs font-bold text-primary mb-1">
+                {isAr ? 'اختر السكشن المراد إضافة الكويز له *' : 'Select Target Section *'}
+              </label>
+              <select
+                value={selectedSectionId}
+                onChange={(e) => setSelectedSectionId(e.target.value)}
+                className="w-full px-4 py-2.5 bg-white border border-primary/30 rounded-xl text-sm font-bold text-gray-800 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start shadow-sm cursor-pointer"
+              >
+                {sections.map((sec) => (
+                  <option key={sec.id} value={sec.id}>
+                    {isAr ? sec.name_ar || sec.name : sec.name_en || sec.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+          <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">
-              {isAr ? 'عنوان الامتحان *' : 'Exam Title *'}
+              {isAr ? 'عنوان الكويز (بالعربي) *' : 'Quiz Title (Arabic) *'}
             </label>
             <input
               type="text"
-              dir={isAr ? 'rtl' : 'ltr'}
-              value={examTitle}
-              onChange={(e) => setExamTitle(e.target.value)}
-              placeholder={isAr ? 'مثال: اختبار الشهر الأول في الرياضيات' : 'e.g. Monthly Math Quiz'}
+              dir="rtl"
+              value={quizTitle}
+              onChange={(e) => setQuizTitle(e.target.value)}
+              placeholder={isAr ? 'مثال: كويز المحاضرة الأولى' : 'e.g. Lecture 1 Quiz'}
               className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
             />
           </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 mb-1">
+              {isAr ? 'عنوان الكويز (بالإنجليزي)' : 'Quiz Title (English)'}
+            </label>
+            <input
+              type="text"
+              dir="ltr"
+              value={titleEn}
+              onChange={(e) => setTitleEn(e.target.value)}
+              placeholder="e.g. Lecture 1 Quiz"
+              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 mb-1">
+              {isAr ? 'وصف الكويز (بالعربي)' : 'Quiz Description (Arabic)'}
+            </label>
+            <textarea
+              rows={2}
+              dir="rtl"
+              value={descriptionAr}
+              onChange={(e) => setDescriptionAr(e.target.value)}
+              placeholder={isAr ? 'اكتب وصفاً للكويز...' : 'Type quiz description...'}
+              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start resize-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 mb-1">
+              {isAr ? 'وصف الكويز (بالإنجليزي)' : 'Quiz Description (English)'}
+            </label>
+            <textarea
+              rows={2}
+              dir="ltr"
+              value={descriptionEn}
+              onChange={(e) => setDescriptionEn(e.target.value)}
+              placeholder="Type English quiz description..."
+              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start resize-none"
+            />
+          </div>
+
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">
               {isAr ? 'المدة (بالدقائق)' : 'Duration (Minutes)'}
@@ -299,8 +523,8 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
               type="number"
               min="5"
               dir={isAr ? 'rtl' : 'ltr'}
-              value={examDuration}
-              onChange={(e) => setExamDuration(Number(e.target.value))}
+              value={quizDuration}
+              onChange={(e) => setQuizDuration(Number(e.target.value))}
               className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
             />
           </div>
@@ -317,19 +541,6 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
               className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
             />
           </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">
-              {isAr ? 'الترتيب' : ' Order'}
-            </label>
-            <input
-              type="number"
-              min="1"
-              dir={isAr ? 'rtl' : 'ltr'}
-              value={examOrder}
-              onChange={(e) => setExamOrder(Number(e.target.value))}
-              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
-            />
-          </div>
         </div>
 
         {/* Tabs Switcher */}
@@ -337,11 +548,10 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
           <button
             type="button"
             onClick={() => setActiveTab('mcq')}
-            className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-all ${
-              activeTab === 'mcq'
+            className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-all ${activeTab === 'mcq'
                 ? 'border-primary text-primary font-bold'
                 : 'border-transparent text-slate-500 hover:text-slate-700'
-            }`}
+              }`}
           >
             <ListChecks className="w-4 h-4" />
             <span>{isAr ? 'اختيار من متعدد (MCQ)' : 'Multiple Choice (MCQ)'}</span>
@@ -353,11 +563,10 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
           <button
             type="button"
             onClick={() => setActiveTab('true_false')}
-            className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-all ${
-              activeTab === 'true_false'
+            className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-all ${activeTab === 'true_false'
                 ? 'border-primary text-primary font-bold'
                 : 'border-transparent text-slate-500 hover:text-slate-700'
-            }`}
+              }`}
           >
             <HelpCircle className="w-4 h-4" />
             <span>{isAr ? 'صح / خطأ (True & False)' : 'True / False'}</span>
@@ -374,7 +583,7 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
             <div className="space-y-6">
               {mcqQuestions.map((q, qIndex) => (
                 <div
-                  key={q.id}
+                  key={qIndex}
                   className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4 transition-all hover:border-slate-300"
                 >
                   {/* Question Header & Points */}
@@ -434,22 +643,20 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
                     <div className="space-y-2">
                       {q.options.map((opt, optIndex) => (
                         <div
-                          key={opt.id}
-                          className={`flex items-center gap-3 p-2 rounded-xl border transition-all ${
-                            opt.isCorrect
+                          key={optIndex}
+                          className={`flex items-center gap-3 p-2 rounded-xl border transition-all ${opt.isCorrect
                               ? 'border-emerald-400 bg-emerald-50/50'
                               : 'border-slate-200 bg-white hover:border-slate-300'
-                          }`}
+                            }`}
                         >
                           {/* Radio Button to mark Correct */}
                           <button
                             type="button"
                             onClick={() => handleSetCorrectOption(qIndex, optIndex)}
-                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-all shrink-0 ${
-                              opt.isCorrect
+                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-all shrink-0 ${opt.isCorrect
                                 ? 'bg-emerald-500 text-white ring-2 ring-emerald-200'
                                 : 'border-2 border-slate-300 text-transparent hover:border-emerald-400'
-                            }`}
+                              }`}
                             title={isAr ? 'تحديد كإجابة صحيحة' : 'Mark as correct answer'}
                           >
                             <CheckCircle2 className="w-4 h-4" />
@@ -484,7 +691,7 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
                       ))}
                     </div>
 
-                    {/* Add Option Button (Plus inside question) */}
+                    {/* Add Option Button */}
                     <button
                       type="button"
                       onClick={() => handleAddOption(qIndex)}
@@ -514,7 +721,7 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
             <div className="space-y-6">
               {trueFalseQuestions.map((q, qIndex) => (
                 <div
-                  key={q.id}
+                  key={qIndex}
                   className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4 transition-all hover:border-slate-300"
                 >
                   {/* Question Header & Points */}
@@ -575,11 +782,10 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
                       <button
                         type="button"
                         onClick={() => handleSetTFAnswer(qIndex, true)}
-                        className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 font-bold text-sm transition-all ${
-                          q.correctAnswer === true
+                        className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 font-bold text-sm transition-all ${q.correctAnswer === true
                             ? 'bg-emerald-50 border-emerald-500 text-emerald-700 shadow-sm ring-2 ring-emerald-200'
                             : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                        }`}
+                          }`}
                       >
                         <CheckCircle2 className={`w-4 h-4 ${q.correctAnswer === true ? 'text-emerald-600' : 'text-slate-400'}`} />
                         <span>{isAr ? 'صح (True)' : 'True'}</span>
@@ -589,11 +795,10 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
                       <button
                         type="button"
                         onClick={() => handleSetTFAnswer(qIndex, false)}
-                        className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 font-bold text-sm transition-all ${
-                          q.correctAnswer === false
+                        className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 font-bold text-sm transition-all ${q.correctAnswer === false
                             ? 'bg-red-50 border-red-500 text-red-700 shadow-sm ring-2 ring-red-200'
                             : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                        }`}
+                          }`}
                       >
                         <X className={`w-4 h-4 ${q.correctAnswer === false ? 'text-red-600' : 'text-slate-400'}`} />
                         <span>{isAr ? 'خطأ (False)' : 'False'}</span>
@@ -641,10 +846,11 @@ export default function AddExam({ isOpen, onClose, onSave }: AddExamProps) {
             <button
               type="button"
               onClick={handleSubmit}
-              className="flex-1 sm:flex-none px-6 py-2.5 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-md transition"
+              disabled={isPending}
+              className="flex-1 sm:flex-none px-6 py-2.5 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-md transition"
             >
-              <Save className="w-4 h-4" />
-              <span>{isAr ? 'حفظ الامتحان والأسئلة' : 'Save Exam & Questions'}</span>
+              {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+              <span>{isAr ? 'حفظ الكويز والأسئلة' : 'Save Quiz & Questions'}</span>
             </button>
           </div>
         </div>

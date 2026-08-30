@@ -1,9 +1,12 @@
 import { Modal, Button, InputNumber } from 'antd';
 import { useCreateLecture, useUpdateLecture } from '../../../hooks/useLectures';
+import { useAddItemsToSection } from '../../../hooks/useSections';
+import { createSection } from '../../../services/SectionServices';
 import { useQueryClient } from '@tanstack/react-query';
-import { Video, AlignLeft, Type, Hash, Presentation, Globe, Upload, FileText, X } from 'lucide-react';
-import { useEffect } from 'react';
+import { Video, AlignLeft, Type, Hash, Presentation, Globe, Upload, FileText, X, Layers } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Lecture } from '../../../types/lectures';
+import { Section } from '../../../types/courses';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { getLectureSchema, LectureFormData } from '../../../lib/schemas/LectureSchema';
@@ -14,15 +17,20 @@ interface AddLectureModalProps {
     onClose: () => void;
     courseId: string;
     lecture?: Lecture;
+    sections?: Section[];
+    defaultSectionId?: string;
 }
 
-export default function AddLectureModal({ visible, onClose, courseId, lecture }: AddLectureModalProps) {
-    const { t } = useLanguage();
+export default function AddLectureModal({ visible, onClose, courseId, lecture, sections, defaultSectionId }: AddLectureModalProps) {
+    const { t, language } = useLanguage();
+    const isAr = language === 'ar';
     const queryClient = useQueryClient();
-    const { mutate: createLecture, isPending: isCreating } = useCreateLecture();
+    const { mutateAsync: createLectureAsync, mutate: createLecture, isPending: isCreating } = useCreateLecture();
     const { mutate: updateLecture, isPending: isUpdating } = useUpdateLecture();
+    const { mutateAsync: addItemsToSection } = useAddItemsToSection();
 
     const isEditMode = !!lecture;
+    const [selectedSectionId, setSelectedSectionId] = useState<string>(defaultSectionId || sections?.[0]?.id || '');
 
     const { register, handleSubmit, reset, control, setValue, watch, formState: { errors } } = useForm<LectureFormData>({
         resolver: zodResolver(getLectureSchema(t)) as any,
@@ -44,6 +52,12 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
 
     useEffect(() => {
         if (visible) {
+            if (defaultSectionId) {
+                setSelectedSectionId(defaultSectionId);
+            } else if (sections && sections.length > 0) {
+                setSelectedSectionId(sections[0].id);
+            }
+
             if (lecture) {
                 reset({
                     title_ar: lecture.title_ar || lecture.title || '',
@@ -70,9 +84,9 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
                 });
             }
         }
-    }, [visible, lecture, courseId, reset]);
+    }, [visible, lecture, courseId, defaultSectionId, sections, reset]);
 
-    const onSubmit = (values: LectureFormData) => {
+    const onSubmit = async (values: LectureFormData) => {
         const payload: any = {
             courseId,
             title_ar: values.title_ar,
@@ -86,23 +100,69 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
         if (values.pdfFile) payload.pdfFile = values.pdfFile;
         if (values.slizesFile) payload.slizesFile = values.slizesFile;
 
+        const isValidUUID = (id?: string) =>
+            !!id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
+        let targetSecId = selectedSectionId;
+        if ((!targetSecId || !isValidUUID(targetSecId)) && courseId) {
+            try {
+                const newSec = await createSection({
+                    course_id: courseId,
+                    name_ar: 'محتوى الكورس',
+                    name_en: 'Course Content',
+                });
+                targetSecId = newSec.id;
+            } catch (secErr) {
+                console.error('Failed auto-creating section for lecture', secErr);
+            }
+        }
+
         if (isEditMode && lecture) {
             updateLecture({ id: lecture.id, data: payload }, {
-                onSuccess: () => {
+                onSuccess: async () => {
+                    if (targetSecId && isValidUUID(targetSecId)) {
+                        try {
+                            await addItemsToSection({
+                                sectionId: targetSecId,
+                                items: [{ item_id: lecture.id, item_type: 'LECTURE', order: values.order }],
+                                courseId,
+                            });
+                        } catch (err) {
+                            console.error('Failed linking lecture to section', err);
+                        }
+                    }
+                    queryClient.invalidateQueries({ queryKey: ['sections', courseId] });
+                    queryClient.invalidateQueries({ queryKey: ['sections'] });
                     queryClient.invalidateQueries({ queryKey: ['courses', courseId] });
                     queryClient.invalidateQueries({ queryKey: ['courses'] });
                     onClose();
                 }
             });
         } else {
-            createLecture(payload, {
-                onSuccess: () => {
-                    queryClient.invalidateQueries({ queryKey: ['courses', courseId] });
-                    queryClient.invalidateQueries({ queryKey: ['courses'] });
-                    onClose();
-                    reset();
+            try {
+                const res: any = await createLectureAsync(payload);
+                const createdLectureId = res?.id || res?.data?.id;
+
+                if (createdLectureId && targetSecId && isValidUUID(targetSecId)) {
+                    try {
+                        await addItemsToSection({
+                            sectionId: targetSecId,
+                            items: [{ item_id: createdLectureId, item_type: 'LECTURE', order: values.order }],
+                            courseId,
+                        });
+                    } catch (err) {
+                        console.error('Failed linking lecture to section', err);
+                    }
                 }
-            });
+                queryClient.invalidateQueries({ queryKey: ['sections', courseId] });
+                queryClient.invalidateQueries({ queryKey: ['sections'] });
+                queryClient.invalidateQueries({ queryKey: ['courses', courseId] });
+                queryClient.invalidateQueries({ queryKey: ['courses'] });
+                onClose();
+                reset();
+            } catch (error) {
+                console.error('Failed to create lecture:', error);
+            }
         }
     };
 
@@ -129,6 +189,26 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture }:
             className="premium-modal"
         >
             <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-4 text-start">
+                {/* Section Selector */}
+                {sections && sections.length > 0 && (
+                    <div>
+                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
+                            <Layers size={14} className="text-indigo-500" />
+                            {isAr ? 'اختر السكشن التابع له المحاضرة *' : 'Target Section *'}
+                        </label>
+                        <select
+                            value={selectedSectionId}
+                            onChange={(e) => setSelectedSectionId(e.target.value)}
+                            className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm font-bold bg-gray-50/50"
+                        >
+                            {sections.map((sec) => (
+                                <option key={sec.id} value={sec.id}>
+                                    {isAr ? sec.name_ar || sec.name : sec.name_en || sec.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                )}
                 {/* Titles Section */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>

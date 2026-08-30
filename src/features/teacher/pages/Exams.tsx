@@ -54,7 +54,7 @@ export default function Exams() {
     const term = searchTerm.toLowerCase();
     return (
       !term ||
-      exam.title.toLowerCase().includes(term) ||
+      (exam.title || "").toLowerCase().includes(term) ||
       (exam.subject || "").toLowerCase().includes(term) ||
       exam.student?.user?.name?.toLowerCase().includes(term)
     );
@@ -68,10 +68,10 @@ export default function Exams() {
     status === "graded"
       ? "bg-green-100 text-green-800"
       : status === "in_progress"
-      ? "bg-blue-100 text-blue-800"
-      : status === "submitted"
-      ? "bg-purple-100 text-purple-800"
-      : "bg-yellow-100 text-yellow-800";
+        ? "bg-blue-100 text-blue-800"
+        : status === "submitted"
+          ? "bg-purple-100 text-purple-800"
+          : "bg-yellow-100 text-yellow-800";
 
   const handleSaveExam = async (formData: ExamFormData) => {
     try {
@@ -120,7 +120,7 @@ export default function Exams() {
           isOpen={!!questionsExam}
           onClose={() => setQuestionsExam(null)}
           examId={questionsExam.id}
-          examTitle={questionsExam.title}
+          examTitle={questionsExam.title || ''}
         />
       )}
 
@@ -192,11 +192,13 @@ export default function Exams() {
                     <td className="px-6 py-4 text-start text-gray-900">{exam.student?.user?.name || '—'}</td>
                     <td className="px-6 py-4 text-start text-gray-600">{exam.dueDate?.substring(0, 10)}</td>
                     <td className="px-6 py-4 text-start text-gray-900 font-medium">
-                      {['graded', 'submitted'].includes(exam.status) ? `${exam.grade.toFixed(1)} / ${exam.totalMarks}` : '—'}
+                      {['graded', 'submitted'].includes(exam.status ?? '') && exam.grade != null
+                        ? `${exam.grade.toFixed(1)} / ${exam.totalMarks ?? '—'}`
+                        : '—'}
                     </td>
                     <td className="px-6 py-4 text-start">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusStyle(exam.status)}`}>
-                        {text[exam.status]?.[language] || exam.status}
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusStyle(exam.status ?? '')}`}>
+                        {exam.status && text[exam.status]?.[language] ? text[exam.status][language] : (exam.status || '—')}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-start">

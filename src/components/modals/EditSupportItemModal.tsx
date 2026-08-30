@@ -43,7 +43,7 @@ export default function EditSupportItemModal({ isOpen, onClose, onSubmit, catego
 
         return {
             value: cat.id,
-            label: catTitle && catTitle.trim() ? catTitle : `${t('category', 'Category')} (${cat.id.slice(0, 8)})`
+            label: catTitle && catTitle.trim() ? catTitle : `${t('category')} (${cat.id.slice(0, 8)})`
         };
     });
 
