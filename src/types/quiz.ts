@@ -83,22 +83,17 @@ export interface CreateQuizQuestionPayload {
 
 export interface CreateQuizPayload {
   title_ar: string;
-  title_en?: string;
-  title?: string;
-  description?: string;
+  title_en: string;
   description_ar?: string;
   description_en?: string;
-  subject?: string;
-  studentId?: string;
-  teacherId?: string;
   courseId?: string;
+  course_id?: string;
   sectionId?: string;
   section_id?: string;
-  dueDate?: string;
   duration?: number;
+  duration_min?: number;
   totalMarks?: number;
   total_points?: number;
   pass_points?: number;
-  duration_min?: number;
   questions?: CreateQuizQuestionPayload[];
 }

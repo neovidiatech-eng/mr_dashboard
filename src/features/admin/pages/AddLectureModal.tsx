@@ -25,7 +25,7 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
     const { t, language } = useLanguage();
     const isAr = language === 'ar';
     const queryClient = useQueryClient();
-    const { mutateAsync: createLectureAsync, mutate: createLecture, isPending: isCreating } = useCreateLecture();
+    const { mutateAsync: createLectureAsync, isPending: isCreating } = useCreateLecture();
     const { mutate: updateLecture, isPending: isUpdating } = useUpdateLecture();
     const { mutateAsync: addItemsToSection } = useAddItemsToSection();
 
@@ -59,16 +59,17 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
             }
 
             if (lecture) {
+                const lec = lecture as any;
                 reset({
-                    title_ar: lecture.title_ar || lecture.title || '',
-                    title_en: lecture.title_en || lecture.title || '',
-                    content_ar: lecture.content_ar || lecture.content || '',
-                    content_en: lecture.content_en || lecture.content || '',
-                    videoUrl: lecture.videoUrl || '',
-                    pdfFile: lecture.pdfUrl || null,
-                    slizesFile: lecture.slidesUrl || null,
-                    order: lecture.order || 1,
-                    courseId: courseId,
+                    title_ar: lec.title_ar || lec.name_ar || lec.title || '',
+                    title_en: lec.title_en || lec.name_en || lec.title || '',
+                    content_ar: lec.content_ar || lec.description_ar || lec.content || '',
+                    content_en: lec.content_en || lec.description_en || lec.content || '',
+                    videoUrl: lec.videoUrl || lec.video_url || lec.url || lec.video || lec.video_path || lec.videoPath || lec.youtube_url || lec.youtubeUrl || lec.link || '',
+                    pdfFile: lec.pdfUrl || lec.pdf_url || lec.pdfFile || lec.pdf_file || null,
+                    slizesFile: lec.slidesUrl || lec.slides_url || lec.slizesFile || lec.slidesFile || lec.slides || null,
+                    order: lec.order ?? 1,
+                    courseId: courseId || lec.courseId || lec.course_id || '',
                 });
             } else {
                 reset({
@@ -96,7 +97,11 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
             order: values.order,
         };
 
-        if (values.videoUrl) payload.videoUrl = values.videoUrl;
+        if (values.videoUrl) {
+            payload.videoUrl = values.videoUrl;
+            payload.video_url = values.videoUrl;
+            payload.url = values.videoUrl;
+        }
         if (values.pdfFile) payload.pdfFile = values.pdfFile;
         if (values.slizesFile) payload.slizesFile = values.slizesFile;
 
@@ -120,21 +125,13 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
         if (isEditMode && lecture) {
             updateLecture({ id: lecture.id, data: payload }, {
                 onSuccess: async () => {
-                    if (targetSecId && isValidUUID(targetSecId)) {
-                        try {
-                            await addItemsToSection({
-                                sectionId: targetSecId,
-                                items: [{ item_id: lecture.id, item_type: 'LECTURE', order: values.order }],
-                                courseId,
-                            });
-                        } catch (err) {
-                            console.error('Failed linking lecture to section', err);
-                        }
+                    if (courseId) {
+                        queryClient.invalidateQueries({ queryKey: ['sections', courseId] });
+                        queryClient.invalidateQueries({ queryKey: ['courses', courseId] });
                     }
-                    queryClient.invalidateQueries({ queryKey: ['sections', courseId] });
                     queryClient.invalidateQueries({ queryKey: ['sections'] });
-                    queryClient.invalidateQueries({ queryKey: ['courses', courseId] });
                     queryClient.invalidateQueries({ queryKey: ['courses'] });
+                    queryClient.invalidateQueries({ queryKey: ['lectures'] });
                     onClose();
                 }
             });

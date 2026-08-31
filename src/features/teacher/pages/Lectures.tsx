@@ -12,7 +12,7 @@ import {
 import { Button, Empty } from 'antd';
 import { useCourseById } from '../../../hooks/useCourses';
 import { Lecture } from '../../../types/lectures';
-import ReactPlayer from 'react-player';
+import UniversalVideoPlayer from '../../../components/ui/UniversalVideoPlayer';
 import { useLanguage } from '../../../contexts/LanguageContext';
 
 export default function TeacherLectures() {
@@ -94,7 +94,7 @@ export default function TeacherLectures() {
                       </div>
                       <div className="flex flex-col">
                         <span className={`text-sm font-bold ${selectedLessonId === lecture.id ? 'text-indigo-600' : 'text-gray-700'}`}>
-                          {language === 'ar' ? lecture.title_ar || lecture.title : lecture.title_en || lecture.title}
+                          {language === 'ar' ? lecture.title_ar : lecture.title_en}
                         </span>
                         <div className="flex items-center gap-2 mt-1">
                           <Video size={10} className={selectedLessonId === lecture.id ? 'text-indigo-400' : 'text-gray-300'} />
@@ -121,7 +121,7 @@ export default function TeacherLectures() {
               <div>
                 <span className="inline-block px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-bold uppercase tracking-widest mb-2">Current Lecture</span>
                 <h2 className="text-xl font-bold text-gray-900">
-                  {(language === 'ar' ? activeLecture?.title_ar || activeLecture?.title : activeLecture?.title_en || activeLecture?.title) || 'No Lecture Selected'}
+                  {(language === 'ar' ? activeLecture?.title_ar : activeLecture?.title_en) || 'No Lecture Selected'}
                 </h2>
                 <p className="text-[11px] font-bold text-gray-400">Last Update: {activeLecture ? new Date(activeLecture.updatedAt).toLocaleDateString() : '-'}</p>
               </div>
@@ -137,34 +137,7 @@ export default function TeacherLectures() {
                         <span className="text-sm font-bold">Video Content</span>
                       </div>
                     </div>
-                    {activeLecture.videoUrl ? (
-                      <div className="relative aspect-video rounded-2xl bg-gray-900 overflow-hidden shadow-lg group">
-                        {activeLecture.videoUrl.includes('drive.google.com') ? (
-                          <iframe
-                            src={activeLecture.videoUrl.replace('/view', '/preview')}
-                            width="100%"
-                            height="100%"
-                            className="w-full h-full border-0 absolute top-0 left-0"
-                            allowFullScreen
-                            title="Google Drive Video"
-                          />
-                        ) : (
-                          /* @ts-ignore */
-                          <ReactPlayer
-                            url={activeLecture.videoUrl}
-                            width="100%"
-                            height="100%"
-                            className="absolute top-0 left-0"
-                            controls
-                          />
-                        )}
-                      </div>
-                    ) : (
-                      <div className="aspect-video rounded-2xl bg-gray-100 flex flex-col items-center justify-center border-2 border-dashed border-gray-200">
-                        <Video size={48} className="text-gray-300 mb-4" />
-                        <p className="text-gray-400 font-medium">No video uploaded for this lecture</p>
-                      </div>
-                    )}
+                    <UniversalVideoPlayer url={activeLecture.videoUrl} />
                   </div>
 
                   <div className="space-y-4">
@@ -173,7 +146,7 @@ export default function TeacherLectures() {
                       <span className="text-sm font-bold">Lecture Description</span>
                     </div>
                     <div className="p-6 rounded-2xl bg-white border border-gray-100 text-gray-600 leading-relaxed">
-                      {(language === 'ar' ? activeLecture.content_ar || activeLecture.content : activeLecture.content_en || activeLecture.content) || 'No content provided for this lecture.'}
+                      {(language === 'ar' ? activeLecture.content_ar : activeLecture.content_en) || 'No content provided for this lecture.'}
                     </div>
                   </div>
 

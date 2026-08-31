@@ -18,6 +18,7 @@ export const useQuizById = (id: string | null) => {
     queryKey: ["quizzes", id],
     queryFn: () => QuizServices.getQuizById(id!),
     enabled: !!id,
+    staleTime: 1000 * 60 * 5,
   });
 };
 
@@ -26,6 +27,7 @@ export const useQuizQuestions = (quizId: string | null) => {
     queryKey: ["quiz-questions", quizId],
     queryFn: () => QuizServices.getQuizQuestions(quizId!),
     enabled: !!quizId,
+    staleTime: 1000 * 60 * 5,
   });
 };
 
@@ -35,7 +37,6 @@ export const useUpdateQuiz = () => {
     mutationFn: ({ id, data }: { id: string; data: Partial<CreateQuizPayload> }) =>
       QuizServices.updateQuiz(id, data),
     onSuccess: (_data, { id }) => {
-      queryClient.invalidateQueries({ queryKey: ["quizzes"] });
       queryClient.invalidateQueries({ queryKey: ["quizzes", id] });
     },
   });

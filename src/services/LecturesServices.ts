@@ -2,7 +2,7 @@ import api from "../lib/axios";
 import { LecturesData, Lecture } from "../types/lectures";
 
 export const getAllLectures = async ( ): Promise<LecturesData> => {
-  const response = await api.get<LecturesData>(`materials/lectures`);
+  const response = await api.get<LecturesData>(`/materials/lectures`);
   return response.data;
 };
 

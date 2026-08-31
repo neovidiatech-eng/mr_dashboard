@@ -3,7 +3,7 @@ import { X, Plus, Trash2, CheckCircle2, ListChecks, HelpCircle, Save, Loader2 } 
 import { useLanguage } from '../../contexts/LanguageContext';
 import ErrorService from '../../utils/ErrorService';
 import { MCQQuestion, TrueFalseQuestion } from '../../types/courseExam';
-import { useCreateQuiz, useUpdateQuiz } from '../../hooks/useQuiz';
+import { useCreateQuiz, useUpdateQuiz, useQuizById } from '../../hooks/useQuiz';
 import { useAddItemsToSection } from '../../hooks/useSections';
 import { createSection } from '../../services/SectionServices';
 import { useQueryClient } from '@tanstack/react-query';
@@ -24,6 +24,10 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
   const { language } = useLanguage();
   const isAr = language === 'ar';
   const queryClient = useQueryClient();
+
+  const editingQuizId = isOpen && quiz ? (quiz.id || quiz.item_id || quiz.details?.id) : null;
+  const { data: fetchedQuizData } = useQuizById(editingQuizId);
+  const activeQuiz = fetchedQuizData || quiz?.details || quiz;
 
   const { mutateAsync: createQuiz, isPending: isCreating } = useCreateQuiz();
   const { mutateAsync: updateQuiz, isPending: isUpdating } = useUpdateQuiz();
@@ -52,38 +56,102 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
 
   useEffect(() => {
     if (isOpen) {
-      if (quiz) {
-        setQuizTitle(quiz.title_ar || quiz.title || '');
-        setTitleEn(quiz.title_en || quiz.title || '');
-        setDescriptionAr(quiz.description_ar || quiz.description || '');
-        setDescriptionEn(quiz.description_en || quiz.description || '');
-        setQuizDuration(quiz.duration_min || quiz.duration || 30);
-        setPassPoints(quiz.pass_points || 0);
+      if (activeQuiz) {
+        setQuizTitle(activeQuiz.title_ar || activeQuiz.title || '');
+        setTitleEn(activeQuiz.title_en || activeQuiz.title || '');
+        setDescriptionAr(activeQuiz.description_ar || activeQuiz.description || '');
+        setDescriptionEn(activeQuiz.description_en || activeQuiz.description || '');
+        setQuizDuration(activeQuiz.duration_min || activeQuiz.duration || 30);
+        setPassPoints(activeQuiz.pass_points || 0);
 
-        if (quiz.questions && Array.isArray(quiz.questions)) {
-          const mcqs = quiz.questions
-            .filter((q: any) => (q.type || '').toUpperCase() === 'MCQ')
-            .map((q: any) => ({
-              text: q.question_ar || q.text_ar || q.text || '',
-              points: q.points || 1,
-              options: (q.options || []).map((o: any) => ({
-                text: o.option_text_ar || o.text_ar || o.text || '',
-                isCorrect: !!(o.is_correct || o.isCorrect),
-              })),
-            }));
+        const questionsList =
+          activeQuiz.questions ||
+          (activeQuiz as any).quiz_questions ||
+          (activeQuiz as any).QuizQuestions ||
+          (activeQuiz as any).items ||
+          (activeQuiz as any).data?.questions ||
+          [];
 
-          const tfs = quiz.questions
-            .filter((q: any) => (q.type || '').toUpperCase() === 'TRUE_FALSE')
-            .map((q: any) => ({
-              text: q.question_ar || q.text_ar || q.text || '',
-              points: q.points || 1,
-              correctAnswer: (q.options || []).some(
-                (o: any) => (o.is_correct || o.isCorrect) && (o.option_text_en === 'True' || o.option_text_ar === 'صح')
-              ),
-            }));
+        if (Array.isArray(questionsList) && questionsList.length > 0) {
+          const mcqs: MCQQuestion[] = [];
+          const tfs: TrueFalseQuestion[] = [];
+
+          questionsList.forEach((q: any) => {
+            const qType = (q.type || '').toUpperCase();
+            const text =
+              typeof q === 'string'
+                ? q
+                : q.question_ar ||
+                  q.question_en ||
+                  q.question ||
+                  q.text_ar ||
+                  q.text_en ||
+                  q.text ||
+                  q.title_ar ||
+                  q.title_en ||
+                  q.title ||
+                  '';
+            const points = q.points || q.marks || 1;
+            const optionsList = q.options || q.quiz_options || q.QuizOptions || q.choices || q.answers || [];
+
+            const isTrueFalse =
+              qType === 'TRUE_FALSE' ||
+              qType === 'BOOLEAN' ||
+              (optionsList.length === 2 &&
+                optionsList.some((o: any) => {
+                  const oTxt = (typeof o === 'string' ? o : o.option_text_ar || o.option_text_en || o.option_text || o.text || '').toLowerCase();
+                  return oTxt === 'true' || oTxt === 'صح' || oTxt === 'false' || oTxt === 'خطأ';
+                }));
+
+            if (isTrueFalse) {
+              const isCorrectTrue = optionsList.some((o: any) => {
+                const isCorr = typeof o === 'object' && o !== null ? !!(o.is_correct || o.isCorrect || o.correct || o.is_answer) : false;
+                const oTxt = (typeof o === 'string' ? o : o.option_text_ar || o.option_text_en || o.option_text || o.text || '').toLowerCase();
+                return isCorr && (oTxt === 'true' || oTxt === 'صح');
+              });
+              tfs.push({
+                text,
+                points,
+                correctAnswer: isCorrectTrue,
+              });
+            } else {
+              const parsedOptions = optionsList.map((o: any, idx: number) => {
+                const oTxt =
+                  typeof o === 'string'
+                    ? o
+                    : o.option_text_ar ||
+                      o.option_text_en ||
+                      o.option_text ||
+                      o.optionText ||
+                      o.text_ar ||
+                      o.text_en ||
+                      o.text ||
+                      o.title_ar ||
+                      o.title_en ||
+                      o.title ||
+                      o.option ||
+                      o.label ||
+                      o.value ||
+                      o.name ||
+                      '';
+                const isCorr = typeof o === 'object' && o !== null ? !!(o.is_correct || o.isCorrect || o.correct || o.is_answer) : idx === 0;
+                return {
+                  text: oTxt,
+                  isCorrect: isCorr,
+                };
+              });
+              mcqs.push({
+                text,
+                points,
+                options: parsedOptions.length > 0 ? parsedOptions : [{ text: '', isCorrect: true }, { text: '', isCorrect: false }],
+              });
+            }
+          });
 
           if (mcqs.length > 0) setMcqQuestions(mcqs);
           if (tfs.length > 0) setTrueFalseQuestions(tfs);
+          if (mcqs.length > 0 && tfs.length === 0) setTrueFalseQuestions([]);
+          if (tfs.length > 0 && mcqs.length === 0) setMcqQuestions([]);
         }
       } else {
         setQuizTitle('');
@@ -105,7 +173,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
         setTrueFalseQuestions([]);
       }
     }
-  }, [isOpen, quiz]);
+  }, [isOpen, activeQuiz]);
 
   // MCQ Questions State
   const [mcqQuestions, setMcqQuestions] = useState<MCQQuestion[]>([
@@ -270,14 +338,17 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
       return;
     }
 
-    if (mcqQuestions.length + trueFalseQuestions.length === 0) {
-      ErrorService.error(isAr ? 'يجب إضافة سؤال واحد على الأقل في الكويز' : 'Must add at least one question to the quiz');
+    const activeMcqs = mcqQuestions.filter((q) => q.text.trim() || q.options.some((o) => o.text.trim()));
+    const activeTfs = trueFalseQuestions.filter((q) => q.text.trim());
+
+    if (activeMcqs.length + activeTfs.length === 0) {
+      ErrorService.error(isAr ? 'يجب إضافة سؤال واحد على الأقل في الكويز وتعبئة بياناته' : 'Must add and fill at least one question');
       return;
     }
 
-    // Validate MCQ
-    for (let i = 0; i < mcqQuestions.length; i++) {
-      const q = mcqQuestions[i];
+    // Validate active MCQ
+    for (let i = 0; i < activeMcqs.length; i++) {
+      const q = activeMcqs[i];
       if (!q.text.trim()) {
         ErrorService.error(isAr ? `يرجى إدخال نص السؤال رقم ${i + 1} في أسئلة الاختيار من متعدد` : `Please enter question text for MCQ #${i + 1}`);
         setActiveTab('mcq');
@@ -298,9 +369,9 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
       }
     }
 
-    // Validate True / False
-    for (let i = 0; i < trueFalseQuestions.length; i++) {
-      const q = trueFalseQuestions[i];
+    // Validate active True / False
+    for (let i = 0; i < activeTfs.length; i++) {
+      const q = activeTfs[i];
       if (!q.text.trim()) {
         ErrorService.error(isAr ? `يرجى إدخال نص السؤال رقم ${i + 1} في أسئلة صح وخطأ` : `Please enter question text for True/False #${i + 1}`);
         setActiveTab('true_false');
@@ -308,7 +379,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
       }
     }
 
-    const formattedMcq: CreateQuizQuestionPayload[] = mcqQuestions.map((q, idx) => ({
+    const formattedMcq: CreateQuizQuestionPayload[] = activeMcqs.map((q, idx) => ({
       question_ar: q.text,
       question_en: q.text,
       type: 'MCQ',
@@ -321,12 +392,12 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
       })),
     }));
 
-    const formattedTF: CreateQuizQuestionPayload[] = trueFalseQuestions.map((q, idx) => ({
+    const formattedTF: CreateQuizQuestionPayload[] = activeTfs.map((q, idx) => ({
       question_ar: q.text,
       question_en: q.text,
       type: 'TRUE_FALSE',
       points: Number(q.points) || 1,
-      order: mcqQuestions.length + idx + 1,
+      order: activeMcqs.length + idx + 1,
       options: [
         { option_text_ar: 'صح', option_text_en: 'True', is_correct: q.correctAnswer === true },
         { option_text_ar: 'خطأ', option_text_en: 'False', is_correct: q.correctAnswer === false },
@@ -343,6 +414,15 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
       total_points: totalScore,
       questions: [...formattedMcq, ...formattedTF],
     };
+
+    if (courseId) {
+      quizPayload.courseId = courseId;
+    }
+    const isValidUUIDForSec = (id?: string) =>
+      !!id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    if (selectedSectionId && isValidUUIDForSec(selectedSectionId)) {
+      quizPayload.sectionId = selectedSectionId;
+    }
 
     try {
       let createdQuizId = quiz?.id;
@@ -378,7 +458,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
         }
       }
 
-      if (createdQuizId && targetSecId && isValidUUID(targetSecId)) {
+      if (!isEditMode && createdQuizId && targetSecId && isValidUUID(targetSecId)) {
         try {
           await addItemsToSection({
             sectionId: targetSecId,

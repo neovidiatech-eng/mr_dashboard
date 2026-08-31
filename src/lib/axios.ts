@@ -19,8 +19,10 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    const currentLang = i18n.language || localStorage.getItem("i18nextLng") || "en";
+    const currentLang = i18n.language?.split('-')[0] || localStorage.getItem("i18nextLng")?.split('-')[0] || "ar";
     config.headers["Accept-Language"] = currentLang;
+    config.headers["lang"] = currentLang;
+    config.headers["x-lang"] = currentLang;
 
     return config;
   },

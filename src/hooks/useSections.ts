@@ -13,11 +13,15 @@ import {
 } from '../services/SectionServices';
 import ErrorService from '../utils/ErrorService';
 
+import { useLanguage } from '../contexts/LanguageContext';
+
 export const useSectionsByCourse = (courseId: string) => {
+  const { language } = useLanguage();
   return useQuery({
-    queryKey: ['sections', courseId],
+    queryKey: ['sections', courseId, language],
     queryFn: () => getSectionsByCourse(courseId),
     enabled: !!courseId,
+    staleTime: 1000 * 60 * 5,
   });
 };
 
@@ -51,7 +55,7 @@ export const useCreateSection = () => {
 export const useUpdateSection = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data, courseId }: { id: string; data: UpdateSectionPayload; courseId?: string }) =>
+    mutationFn: ({ id, data }: { id: string; data: UpdateSectionPayload; courseId?: string }) =>
       updateSection(id, data),
     onSuccess: (_, variables) => {
       ErrorService.success('Section updated successfully');
@@ -73,7 +77,7 @@ export const useUpdateSection = () => {
 export const useDeleteSection = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, courseId }: { id: string; courseId?: string }) => deleteSection(id),
+    mutationFn: ({ id }: { id: string; courseId?: string }) => deleteSection(id),
     onSuccess: (_, variables) => {
       ErrorService.success('Section deleted successfully');
       if (variables.courseId) {
@@ -82,6 +86,8 @@ export const useDeleteSection = () => {
       }
       queryClient.invalidateQueries({ queryKey: ['sections'] });
       queryClient.invalidateQueries({ queryKey: ['courses'] });
+      queryClient.invalidateQueries({ queryKey: ['lectures'] });
+      queryClient.invalidateQueries({ queryKey: ['quiz'] });
     },
     onError: (error: any) => {
       ErrorService.error(
@@ -95,7 +101,7 @@ export const useAddItemsToSection = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ sectionId, items, courseId }: { sectionId: string; items: SectionItemPayload[]; courseId?: string }) =>
-      addItemsToSection(sectionId, items),
+      addItemsToSection(sectionId, items, courseId),
     onSuccess: (_, variables) => {
       if (variables.courseId) {
         queryClient.invalidateQueries({ queryKey: ['sections', variables.courseId] });
@@ -115,7 +121,7 @@ export const useAddItemsToSection = () => {
 export const useRemoveItemFromSection = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ sectionId, itemId, courseId }: { sectionId: string; itemId: string; courseId?: string }) =>
+    mutationFn: ({ sectionId, itemId }: { sectionId: string; itemId: string; courseId?: string }) =>
       removeItemFromSection(sectionId, itemId),
     onSuccess: (_, variables) => {
       ErrorService.success('Item removed from section');

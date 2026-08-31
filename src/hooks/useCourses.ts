@@ -3,18 +3,23 @@ import { createCourse, deleteCourse, getAllCourses, getCourseById, updateCourse 
 import ErrorService from "../utils/ErrorService";
 import { Course } from "../types/courses";
 
+import { useLanguage } from "../contexts/LanguageContext";
+
 export const useCourses = (page: number = 1, limit: number = 10, rankId?: string, search?: string) => {
+    const { language } = useLanguage();
     return useQuery({
-        queryKey: ["courses", page, limit, rankId, search],
+        queryKey: ["courses", page, limit, rankId, search, language],
         queryFn: () => getAllCourses(page, limit, rankId, search),
     });
 }
 
 export const useCourseById = (id: string) => {
+    const { language } = useLanguage();
     return useQuery({
-        queryKey: ["courses", id],
+        queryKey: ["courses", id, language],
         queryFn: () => getCourseById(id),
         enabled: !!id,
+        staleTime: 1000 * 60 * 5,
     });
 }
 

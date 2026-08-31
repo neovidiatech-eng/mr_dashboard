@@ -1,6 +1,6 @@
 import { X, HelpCircle, CheckCircle2, Clock, Award, ListChecks} from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { useQuizById, useQuizQuestions } from '../../hooks/useQuiz';
+import { useQuizById } from '../../hooks/useQuiz';
 import { Spin } from 'antd';
 
 interface ViewQuizModalProps {
@@ -13,12 +13,9 @@ export default function ViewQuizModal({ isOpen, onClose, quizId }: ViewQuizModal
   const { language } = useLanguage();
   const isAr = language === 'ar';
 
-  const { data: quiz, isLoading: isLoadingQuiz } = useQuizById(quizId);
-  const { data: questions, isLoading: isLoadingQuestions } = useQuizQuestions(quizId);
+  const { data: quiz, isLoading } = useQuizById(isOpen && quizId ? quizId : null);
 
   if (!isOpen || !quizId) return null;
-
-  const isLoading = isLoadingQuiz || isLoadingQuestions;
 
   const quizTitle = isAr ? quiz?.title_ar || quiz?.title : quiz?.title_en || quiz?.title;
   const quizDesc = isAr ? quiz?.description_ar : quiz?.description_en || quiz?.description_ar;
@@ -26,8 +23,8 @@ export default function ViewQuizModal({ isOpen, onClose, quizId }: ViewQuizModal
   const passPoints = quiz?.pass_points || 0;
   const totalPoints = quiz?.total_points || quiz?.totalMarks || 0;
 
-  // Use quiz.questions if available, fallback to fetched quizQuestions
-  const allQuestions = quiz?.questions || questions || [];
+  // Use quiz.questions or quiz_questions
+  const allQuestions = quiz?.questions || (quiz as any)?.quiz_questions || [];
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
@@ -55,7 +52,6 @@ export default function ViewQuizModal({ isOpen, onClose, quizId }: ViewQuizModal
           </button>
         </div>
 
-        {/* Info / Stats Cards (Styled like Lecture Resources) */}
         <div className="p-6 bg-gray-50/50 border-b border-gray-100 grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
           <div className="flex items-center gap-4 p-4 rounded-2xl bg-primary-light/60 border border-primary/20">
             <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm shrink-0">

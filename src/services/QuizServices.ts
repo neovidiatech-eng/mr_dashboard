@@ -1,15 +1,39 @@
 import api from "../lib/axios";
 import { CreateQuizPayload, Quiz, QuizQuestion } from "../types/quiz";
 
+export const getAllQuizzes = async (): Promise<Quiz[]> => {
+  const response = await api.get("/quiz");
+  return response.data.data;
+};
+
 export const createQuiz = async (data: CreateQuizPayload): Promise<Quiz> => {
   const response = await api.post("/quiz", data);
+  return response.data.data;
+};
+
+export const submitQuiz = async (data: any): Promise<any> => {
+  const response = await api.post("/quiz/submit", data);
+  return response.data.data;
+};
+
+export const getQuizHistory = async (): Promise<any[]> => {
+  const response = await api.get("/quiz/history");
+  return response.data.data;
+};
+
+export const getQuizHistoryById = async (id: string): Promise<any> => {
+  const response = await api.get(`/quiz/history/${id}`);
   return response.data.data;
 };
 
 export const getQuizById = async (id: string): Promise<Quiz | null> => {
   try {
     const response = await api.get(`/quiz/${id}`);
-    return response.data.data;
+    const resData = response.data;
+    if (resData && typeof resData === 'object') {
+      return resData.data || resData;
+    }
+    return resData;
   } catch (err: any) {
     if (err?.response?.status === 404) {
       return null;
@@ -20,16 +44,10 @@ export const getQuizById = async (id: string): Promise<Quiz | null> => {
 
 export const getQuizQuestions = async (quizId: string): Promise<QuizQuestion[]> => {
   try {
-    const response = await api.get(`/quiz/${quizId}/questions`);
-    return response.data?.data || [];
+    const quiz = await getQuizById(quizId);
+    return quiz?.questions || (quiz as any)?.quiz_questions || [];
   } catch (err: any) {
-    // If GET /quiz/:id/questions doesn't exist on backend (404 Cannot GET), fallback to GET /quiz/:id
-    try {
-      const quiz = await getQuizById(quizId);
-      return quiz?.questions || (quiz as any)?.quiz_questions || [];
-    } catch (fallbackErr) {
-      return [];
-    }
+    return [];
   }
 };
 
