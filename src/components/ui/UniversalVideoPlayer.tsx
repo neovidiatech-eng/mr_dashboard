@@ -1,5 +1,6 @@
 import { Video } from 'lucide-react';
 import ReactPlayer from 'react-player';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { baseURL } from '../../consts';
 
 const Player = ReactPlayer as any;
@@ -10,11 +11,16 @@ interface UniversalVideoPlayerProps {
 }
 
 export default function UniversalVideoPlayer({ url: rawUrl, className = '' }: UniversalVideoPlayerProps) {
+  const { language } = useLanguage();
+  const isAr = language === 'ar';
+
   if (!rawUrl || typeof rawUrl !== 'string' || !rawUrl.trim()) {
     return (
       <div className={`aspect-video rounded-2xl bg-gray-100 flex flex-col items-center justify-center border-2 border-dashed border-gray-200 ${className}`}>
         <Video size={48} className="text-gray-300 mb-4" />
-        <p className="text-gray-400 font-medium">No video uploaded for this lecture</p>
+        <p className="text-gray-400 font-medium">
+          {isAr ? 'لا يوجد فيديو مرفوع لهذه المحاضرة' : 'No video uploaded for this lecture'}
+        </p>
       </div>
     );
   }

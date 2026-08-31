@@ -1,5 +1,6 @@
 import api from "../lib/axios";
 import { CoursesData, Course, CoursesResponse, CourseResponse } from "../types/courses";
+import type { CreateQuizPayload, Quiz } from "../types/quiz";
 
 export const getAllCourses = async (page: number = 1, limit: number = 10, rankId?: string, search?: string): Promise<CoursesData> => {
     const params: any = { page, limit };
@@ -36,5 +37,10 @@ export const deleteCourse = async (id: string): Promise<void> => {
 
 export const getStudentProgress = async (courseId: string) => {
     const response = await api.get(`/materials/courses/${courseId}/student-progress`);
+    return response.data.data;
+}
+
+export const createQuiz = async (data: CreateQuizPayload): Promise<Quiz> => {
+    const response = await api.post("/quiz", data);
     return response.data.data;
 }

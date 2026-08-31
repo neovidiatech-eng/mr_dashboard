@@ -1,26 +1,19 @@
 export interface MCQOption {
-  id: string;
+  id?: string;
   text: string;
   isCorrect: boolean;
 }
 
 export interface MCQQuestion {
-  id: string;
+  id?: string;
   text: string;
   points: number;
   options: MCQOption[];
 }
 
 export interface TrueFalseQuestion {
-  id: string;
+  id?: string;
   text: string;
   points: number;
   correctAnswer: boolean; 
-}
-
-export interface ExamData {
-  title: string;
-  duration: number;
-  mcqQuestions: MCQQuestion[];
-  trueFalseQuestions: TrueFalseQuestion[];
 }

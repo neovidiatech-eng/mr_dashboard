@@ -2,7 +2,7 @@ import api from "../lib/axios";
 import { LecturesData, Lecture, CreateLecture } from "../types/lectures";
 
 export const getAllLectures = async ( ): Promise<LecturesData> => {
-  const response = await api.get<LecturesData>(`materials/lectures`);
+  const response = await api.get<LecturesData>(`/materials/lectures`);
   return response.data;
 };
 
@@ -48,7 +48,14 @@ export const updateLecture = async (id: string, data: CreateLecture): Promise<Le
 };
 
 export const deleteLecture = async (id: string): Promise<void> => {
-  await api.delete(`/materials/lectures/${id}`);
+  try {
+    await api.delete(`/materials/lectures/${id}`);
+  } catch (err: any) {
+    if (err?.response?.status === 404) {
+      return;
+    }
+    throw err;
+  }
 };
 
 export const completeLecture = async (id: string): Promise<void> => {

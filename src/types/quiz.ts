@@ -1,4 +1,4 @@
-export interface ExamOption {
+export interface QuizOption {
   id?: string;
   questionId?: string;
   option_text_ar?: string;
@@ -11,36 +11,34 @@ export interface ExamOption {
   order?: number;
 }
 
-export type ExamQuestionType = 'MCQ' | 'TRUE_FALSE' | 'mcq' | 'true_false';
-export type QuestionType = ExamQuestionType;
+export type QuizQuestionType = 'MCQ' | 'TRUE_FALSE' | 'mcq' | 'true_false';
 
-export interface ExamQuestion {
+export interface QuizQuestion {
   id?: string;
-  examId?: string;
+  quizId?: string;
   question_ar?: string;
   question_en?: string;
   text?: string;
   text_ar?: string;
   text_en?: string;
-  type: ExamQuestionType;
+  type: QuizQuestionType;
   points: number;
   order: number;
-  options?: ExamOption[];
-  answers?: ExamAnswer[];
+  options?: QuizOption[];
+  answers?: QuizAnswer[];
 }
 
-export interface ExamAnswer {
+export interface QuizAnswer {
   id: string;
-  examId: string;
+  quizId: string;
   questionId: string;
   selectedOptionId: string | null;
   isCorrect: boolean;
 }
 
-export type ExamStatus = 'pending' | 'in_progress' | 'submitted' | 'graded';
-export type QuizStatus = ExamStatus;
+export type QuizStatus = 'pending' | 'in_progress' | 'submitted' | 'graded';
 
-export interface Exam {
+export interface Quiz {
   id: string;
   title?: string;
   title_ar?: string;
@@ -58,8 +56,8 @@ export interface Exam {
   pass_points?: number;
   duration?: number;
   duration_min?: number;
-  status?: ExamStatus;
-  questions?: ExamQuestion[];
+  status?: QuizStatus;
+  questions?: QuizQuestion[];
   startedAt?: string | null;
   submittedAt?: string | null;
   createdAt?: string;
@@ -68,43 +66,34 @@ export interface Exam {
   teacher?: { id: string; user: { name: string; email: string } };
 }
 
-export interface CrExamOptionPayload {
+export interface CrQuizOptionPayload {
   option_text_ar: string;
   option_text_en: string;
   is_correct: boolean;
 }
 
-export interface CreateQuestionPayload {
+export interface CreateQuizQuestionPayload {
   question_ar: string;
   question_en: string;
   type: 'MCQ' | 'TRUE_FALSE';
   points: number;
   order: number;
-  options?: CrExamOptionPayload[];
+  options?: CrQuizOptionPayload[];
 }
 
-export interface CreateExamPayload {
+export interface CreateQuizPayload {
   title_ar: string;
-  title_en?: string;
-  title?: string;
-  description?: string;
+  title_en: string;
   description_ar?: string;
   description_en?: string;
-  subject?: string;
-  studentId?: string;
-  teacherId?: string;
-  dueDate?: string;
+  courseId?: string;
+  course_id?: string;
+  sectionId?: string;
+  section_id?: string;
   duration?: number;
+  duration_min?: number;
   totalMarks?: number;
   total_points?: number;
   pass_points?: number;
-  duration_min?: number;
-  questions?: CreateQuestionPayload[];
+  questions?: CreateQuizQuestionPayload[];
 }
-
-export interface SubmitExamPayload {
-  answers: { questionId: string; selectedOptionId: string | null }[];
-}
-
-// Aliases for backward compatibility
-export type QuizQuiz = Exam;

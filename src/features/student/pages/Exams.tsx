@@ -43,7 +43,7 @@ export default function Exams() {
     const term = searchTerm.toLowerCase();
     const matchesSearch =
       !term ||
-      exam.title.toLowerCase().includes(term) ||
+      (exam.title || '').toLowerCase().includes(term) ||
       (exam.subject || '').toLowerCase().includes(term);
     const matchesStatus = !filters.status || exam.status === filters.status;
     return matchesSearch && matchesStatus;
@@ -62,7 +62,7 @@ export default function Exams() {
       ? 'bg-purple-100 text-purple-800'
       : 'bg-yellow-100 text-yellow-800';
 
-  const actionLabel = (status: string) => {
+  const actionLabel = (status?: string) => {
     if (status === 'pending') return text.start[language];
     if (status === 'in_progress') return text.continueExam[language];
     return text.viewResult[language];
@@ -146,11 +146,13 @@ export default function Exams() {
                     <td className="px-6 py-4 text-start text-gray-600">{exam.dueDate?.substring(0, 10)}</td>
                     <td className="px-6 py-4 text-start text-gray-600">{exam.duration}</td>
                     <td className="px-6 py-4 text-start text-gray-900 font-medium">
-                      {['graded', 'submitted'].includes(exam.status) ? `${exam.grade.toFixed(1)} / ${exam.totalMarks}` : '—'}
+                      {['graded', 'submitted'].includes(exam.status ?? '') && exam.grade != null
+                        ? `${exam.grade.toFixed(1)} / ${exam.totalMarks ?? '—'}`
+                        : '—'}
                     </td>
                     <td className="px-6 py-4 text-start">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusStyle(exam.status)}`}>
-                        {text[exam.status]?.[language] || exam.status}
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusStyle(exam.status ?? '')}`}>
+                        {exam.status && text[exam.status]?.[language] ? text[exam.status][language] : (exam.status || '—')}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-start">

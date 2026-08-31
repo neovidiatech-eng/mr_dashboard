@@ -36,3 +36,4 @@ export const deleteSubject = async (id: string) => {
     const response = await api.delete(`/teachers/subjects/delete/${id}`);
     return response.data;
 };
+

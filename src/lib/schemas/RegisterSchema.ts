@@ -41,7 +41,7 @@ export const getRegisterSchema = (t: (key: string, options?: any) => string) =>
       }, t("validation.imageFormat")),
   })
   .superRefine((data, ctx) => {
-    const { codeCountry, phone } = data;
+    const { codeCountry, phone, parentPhone } = data;
     
     // Check if phone only contains digits
     if (!/^[0-9]+$/.test(phone)) {
@@ -51,6 +51,49 @@ export const getRegisterSchema = (t: (key: string, options?: any) => string) =>
         path: ["phone"],
       });
       return;
+    }
+
+    if (parentPhone) {
+      if (!/^[0-9]+$/.test(parentPhone)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t("validation.invalidPhone"),
+          path: ["parentPhone"],
+        });
+      } else if (codeCountry === "+20") {
+        const reg = /^(01)[0125][0-9]{8}$|^(1)[0125][0-9]{8}$/;
+        if (!reg.test(parentPhone)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t("validation.invalidPhone"),
+            path: ["parentPhone"],
+          });
+        }
+      } else if (codeCountry === "+966" || codeCountry === "+971") {
+        const reg = /^(05|5)[0-9]{8}$/;
+        if (!reg.test(parentPhone)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t("validation.invalidPhone"),
+            path: ["parentPhone"],
+          });
+        }
+      } else if (codeCountry === "+965") {
+        const reg = /^[569][0-9]{7}$/;
+        if (!reg.test(parentPhone)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t("validation.invalidPhone"),
+            path: ["parentPhone"],
+          });
+        }
+      } else if (parentPhone.length < 7 || parentPhone.length > 15) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t("validation.invalidPhone"),
+          path: ["parentPhone"],
+        });
+      }
     }
 
     if (codeCountry === "+20") {

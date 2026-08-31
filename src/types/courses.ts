@@ -28,6 +28,29 @@ export interface CourseCategory {
   color: string;
 }
 
+export interface SectionItem {
+  id: string;
+  order: number;
+  section_id: string;
+  item_id: string;
+  item_type: 'LECTURE' | 'QUIZ' | string;
+  createdAt?: string;
+  updatedAt?: string;
+  details?: any;
+}
+
+export interface Section {
+  id: string;
+  name: string;
+  name_ar?: string;
+  name_en?: string;
+  course_id?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  section_items?: SectionItem[];
+  sectionItems?: SectionItem[];
+}
+
 export interface Course {
   id: string;
   title: string;
@@ -46,6 +69,7 @@ export interface Course {
   updatedAt: string;
   rank: Rank;
   lectures: Lecture[];
+  sections?: Section[];
 }
 
 export interface Pagination {

@@ -18,15 +18,11 @@ export const useLectureById = (id: string) => {
 };
 
 export const useCreateLecture = () => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createLecture,
     onSuccess: () => {
       ErrorService.success("Lecture created successfully");
-      queryClient.invalidateQueries({ queryKey: ["lectures"] });
-      queryClient.invalidateQueries({ queryKey: ["courses"] });
     },
-      
   });
 };
 
@@ -34,12 +30,10 @@ export const useUpdateLecture = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Lecture> }) => updateLecture(id, data),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       ErrorService.success("Lecture updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["lectures"] });
-      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      queryClient.invalidateQueries({ queryKey: ["lectures", variables.id] });
     },
-
   });
 };
 

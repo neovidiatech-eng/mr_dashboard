@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 type TFunc = (key: string, options?: any) => string;
-
+const MAX_FILE_SIZE = 25 * 1024 * 1024;
 export const getLectureSchema = (t: TFunc) => z.object({
   title_ar: z.string().min(2, t("validation.min", { count: 2 })),
   title_en: z.string().min(2, t("validation.min", { count: 2 })),

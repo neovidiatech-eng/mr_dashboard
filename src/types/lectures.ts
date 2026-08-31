@@ -2,6 +2,7 @@ import { Pagination } from "./courses";
 
 export interface Lecture {
   id: string;
+
   title: string;
   title_ar?: string;
   title_en?: string;

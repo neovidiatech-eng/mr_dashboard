@@ -716,8 +716,7 @@ export default function Sessions() {
       />
 
       {/* Bottom Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6 mt-8 pb-20">
-        {/* Instructor Availability Card */}
+      {/* <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6 mt-8 pb-20">
         <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 p-6 flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-bold text-gray-900 text-base">
@@ -735,7 +734,6 @@ export default function Sessions() {
             {(instructors?.teachers || [])
               .slice(0, 5)
               .map((instructor: any) => {
-                // Find matching instructor in availability data
                 const availability = availabilityData?.find(
                   (a: any) => a.id === instructor.id,
                 );
@@ -800,9 +798,7 @@ export default function Sessions() {
           </div>
         </div>
 
-        {/* Admin Notification Card */}
         <div className="bg-[#800020] rounded-[24px] shadow-sm p-7 text-white relative overflow-hidden flex flex-col justify-between min-h-[220px]">
-          {/* Subtle decoration */}
           <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none translate-x-[20%] translate-y-[20%]">
             <div className="w-64 h-64 border-[24px] border-white rounded-full"></div>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 border-[24px] border-white rounded-full"></div>
@@ -823,7 +819,7 @@ export default function Sessions() {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <AddSessionModal
         isOpen={showAddModal}

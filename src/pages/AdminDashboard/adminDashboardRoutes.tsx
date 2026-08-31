@@ -288,7 +288,7 @@ export const adminDashboardRoutes: RouteConfig[] = [
   },
   {
     id: 'ranks',
-    label: 'Academic Levels',
+    label: 'sidebar_levels',
     icon: Trophy,
     path: 'ranks',
     element: <RanksPage />
