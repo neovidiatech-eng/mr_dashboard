@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, GraduationCap, Eye, EyeOff } from 'lucide-react';
+import { X, GraduationCap, Eye, EyeOff, Image as ImageIcon } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import CustomSelect from '../ui/CustomSelect';
 import DatePickerField from '../ui/DatePickerField';
@@ -16,12 +16,13 @@ import { FaBuilding, FaComputer, FaPerson, FaPersonDress } from "react-icons/fa6
 interface AddStudentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (studentData: StudentFormData) => boolean | Promise<boolean>;
+  onSubmit: (studentData: StudentFormData & { image: File | null }) => boolean | Promise<boolean>;
 }
 
 export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStudentModalProps) {
   const { t } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const { data: plansData } = usePlans();
   const { data: ranksResponse } = useGetRanks();
   const { register, handleSubmit, control, reset, setValue, watch, formState: { errors } } = useForm<StudentFormData>({
@@ -41,9 +42,10 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
   const startingCourseIdValue = watch('startingCourseId');
 
   const onFormSubmit = async (data: StudentFormData) => {
-    const isSuccess = await onSubmit(data);
+    const isSuccess = await onSubmit({ ...data, image: imageFile });
     if (isSuccess) {
       reset();
+      setImageFile(null);
       onClose();
     }
   };
@@ -58,7 +60,6 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
   }, [ranks.length, setValue]);
 
   const nameValue = watch('name');
-  const birthDateValue = watch('birthDate');
 
   useEffect(() => {
     if (nameValue) {
@@ -69,26 +70,7 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
     }
   }, [nameValue, setValue]);
 
-  // Auto-calculate rank based on age
-  useEffect(() => {
-    if (birthDateValue && ranks.length > 0) {
-      const birth = new Date(birthDateValue);
-      const today = new Date();
-      let age = today.getFullYear() - birth.getFullYear();
-      const m = today.getMonth() - birth.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-        age--;
-      }
 
-      const matchingRank = ranks.find((r: any) =>
-        age >= (r.ageRange?.minAge ?? 0) && age <= (r.ageRange?.maxAge ?? 100)
-      );
-
-      if (matchingRank) {
-        setValue('rankId', matchingRank.id, { shouldValidate: true });
-      }
-    }
-  }, [birthDateValue, ranks, setValue]);
 
   if (!isOpen) return null;
 
@@ -111,6 +93,13 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
   const rankOptions = ranks.map((r: any) => ({
     value: r.id,
     label: r.name,
+  }));
+
+  const selectedRank = ranks.find((r: any) => r.id === rankIdValue);
+  const stages = selectedRank?.stages || [];
+  const stageOptions = stages.map((s: any) => ({
+    value: s.id,
+    label: s.name_ar || s.name_en || s.slug,
   }));
 
   const courses = coursesData?.items || [];
@@ -462,27 +451,51 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
               />
             </div>
 
-            <Controller
-              name="rankId"
-              control={control}
-              render={({ field }) => (
-                <div className="text-start">
-                  <label className="flex items-center justify-between text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
-                    <span>{t('rank')}</span>
-                    {birthDateValue && <span className="text-indigo-600 normal-case font-bold">{t('autoSelectedByAge')}</span>}
-                  </label>
-                  <CustomSelect
-                    value={field.value}
-                    options={rankOptions}
-                    placeholder={t('selectRank')}
-                    onChange={field.onChange}
-                    disabled={true}
-                    className="rounded-2xl border-none bg-gray-100 cursor-not-allowed opacity-80"
-                  />
-                  {errors.rankId && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.rankId.message}</p>}
-                </div>
-              )}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <Controller
+                name="rankId"
+                control={control}
+                render={({ field }) => (
+                  <div className="text-start">
+                    <label className="flex items-center justify-between text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                      <span>{t('rank')}</span>
+                    </label>
+                    <CustomSelect
+                      value={field.value}
+                      options={rankOptions}
+                      placeholder={t('selectRank')}
+                      onChange={(val) => {
+                        field.onChange(val);
+                        setValue('stageId', '', { shouldValidate: true });
+                      }}
+                      className="rounded-2xl border-none bg-gray-50"
+                    />
+                    {errors.rankId && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.rankId.message}</p>}
+                  </div>
+                )}
+              />
+
+              <Controller
+                name="stageId"
+                control={control}
+                render={({ field }) => (
+                  <div className="text-start">
+                    <label className="flex items-center justify-between text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                      <span>{t('stage') || 'Stage'}</span>
+                    </label>
+                    <CustomSelect
+                      value={field.value || ''}
+                      options={[{ value: '', label: t('selectStage') || 'Select Stage' }, ...stageOptions]}
+                      placeholder={t('selectStage') || 'Select Stage'}
+                      onChange={field.onChange}
+                      className="rounded-2xl border-none bg-gray-50"
+                      disabled={stages.length === 0}
+                    />
+                    {errors.stageId && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.stageId.message}</p>}
+                  </div>
+                )}
+              />
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <Controller
@@ -557,6 +570,23 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
                   </div>
                 )}
               />
+            </div>
+
+            {/* Profile Image Upload */}
+            <div className="space-y-2 md:col-span-2 mt-4">
+              <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                <ImageIcon className="w-4 h-4" />
+                {t('profileImage') || 'Profile Image'}
+              </label>
+              <input
+                type="file"
+                accept="image/png,image/jpg,image/jpeg,image/webp"
+                onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                className="w-full px-5 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-sm"
+              />
+              {imageFile && (
+                <p className="text-xs text-indigo-600 font-bold px-2">{imageFile.name}</p>
+              )}
             </div>
 
             {/* Footer Actions */}

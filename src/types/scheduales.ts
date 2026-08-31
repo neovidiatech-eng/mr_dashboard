@@ -20,6 +20,9 @@ export interface CreateSchedulePayload {
     language: string;
     videoUrl?: string;
     slidesUrl?: string;
+    video?: File;
+    slides?: File;
+    pdf?: File;
 }
 
 export interface UpdateSchedulePayload {
@@ -31,6 +34,9 @@ export interface UpdateSchedulePayload {
     start_time: string;
     type: ScheduleType;
     notification_Time: string;
+    video?: File;
+    slides?: File;
+    pdf?: File;
 }
 export type DayOfWeek =
     | 'Saturday'
@@ -57,6 +63,9 @@ export interface CreateRecurringSchedulePayload {
     endDate: string;
     notification_Time: string;
     language: string;
+    video?: File;
+    slides?: File;
+    pdf?: File;
 }
 
 // Aliases for Services

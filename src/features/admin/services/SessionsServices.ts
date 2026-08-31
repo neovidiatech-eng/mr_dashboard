@@ -32,17 +32,40 @@ export const getSchedulesForStudent = async (
 export const createSchedule = async (
     scheduleData: CreateSessionBody
 ) => {
-    const response = await api.post("/schedules/create-one/", scheduleData);
+    const formData = new FormData();
+    Object.keys(scheduleData).forEach((key) => {
+        const value = scheduleData[key as keyof CreateSessionBody];
+        if (value !== undefined) {
+            if (Array.isArray(value)) {
+                value.forEach((v) => formData.append(key, String(v)));
+            } else {
+                formData.append(key, value as Blob | string);
+            }
+        }
+    });
+    const response = await api.post("/schedules/create-one/", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+    });
     return response.data;
 };
 
 export const createRecurringSchedule = async (
     scheduleData: CreateRecurringSessionBody
 ) => {
-    const response = await api.post(
-        "/schedules/create-recurring/",
-        scheduleData
-    );
+    const formData = new FormData();
+    Object.keys(scheduleData).forEach((key) => {
+        const value = scheduleData[key as keyof CreateRecurringSessionBody];
+        if (value !== undefined) {
+            if (Array.isArray(value)) {
+                value.forEach((v) => formData.append(key, String(v)));
+            } else {
+                formData.append(key, value as Blob | string);
+            }
+        }
+    });
+    const response = await api.post("/schedules/create-recurring/", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+    });
     return response.data;
 };
 
@@ -55,10 +78,20 @@ export const updateSchedule = async (
     scheduleId: string,
     scheduleData: UpdateSessionBody
 ) => {
-    const response = await api.patch(
-        `/schedules/${scheduleId}`,
-        scheduleData
-    );
+    const formData = new FormData();
+    Object.keys(scheduleData).forEach((key) => {
+        const value = scheduleData[key as keyof UpdateSessionBody];
+        if (value !== undefined) {
+            if (Array.isArray(value)) {
+                value.forEach((v) => formData.append(key, String(v)));
+            } else {
+                formData.append(key, value as Blob | string);
+            }
+        }
+    });
+    const response = await api.patch(`/schedules/${scheduleId}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+    });
     return response.data;
 };
 

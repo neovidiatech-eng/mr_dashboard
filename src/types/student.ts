@@ -17,7 +17,7 @@ export interface UserDetails {
   updatedAt: string;
   roleId: string;
   provider: string;
-  ParentNumber:string;
+  parentNumber:string;
   password?: string;
   googleId?: string | null;
   image?: string | null;
@@ -46,7 +46,9 @@ export interface Student {
   avgRating?: number;
   totalReviews?: number;
   rankId?: string | null;
+  stageId?: string | null;
   rank?: any;
+  stage?: any;
   user: UserDetails;
   plan: Plan | null;
 }
@@ -63,6 +65,7 @@ export type EditStudentForm = {
   country: string;
   status: StudentStatus;
   rankId: string ;
+  stageId?: string;
   password?: string;
 };
 

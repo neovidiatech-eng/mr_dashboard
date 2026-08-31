@@ -16,14 +16,15 @@ const getBaseSession = (t: TFunc) => z.object({
   link: z.string().url("Invalid Url"),
   notes: z.string().optional(),
   language: z.string().min(1, t("validation.required")),
+  video: z.any().optional(),
+  slides: z.any().optional(),
+  pdf: z.any().optional(),
 });
 
 /** Single session schema — includes platform, type, videoUrl, slidesUrl */
 export const getSessionSchema = (t: TFunc) => getBaseSession(t).extend({
   type: z.enum(['full', 'half']),
   platform: z.enum(['zoom', 'google']),
-  videoUrl: z.string().url("Invalid Url"),
-  slidesUrl: z.string().optional(),
   title: z.string().min(3, t("validation.min", { count: 3 })),
   sessionDate: z.string().min(1, t("validation.required")),
   duration: z.string().min(1, t("validation.required")),

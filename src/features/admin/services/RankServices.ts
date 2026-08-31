@@ -12,12 +12,26 @@ export const getRank = async (id: string): Promise<SingleRankResponse> => {
 };
 
 export const createRank = async (rankData: CreateRankBody): Promise<{ message: string; status: number; lang: string; data: RankItem }> => {
-    const response = await api.post('/materials/ranks/create', rankData);
+    const formData = new FormData();
+    formData.append('name_ar', rankData.name_ar);
+    if (rankData.name_en) formData.append('name_en', rankData.name_en);
+    formData.append('color', rankData.color);
+    if (rankData.icon) formData.append('icon', rankData.icon);
+    const response = await api.post('/materials/ranks/create', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return response.data;
 };
 
 export const updateRank = async (id: string, rankData: UpdateRankBody): Promise<{ message: string; status: number; lang: string; data: RankItem }> => {
-    const response = await api.patch(`/materials/ranks/${id}`, rankData);
+    const formData = new FormData();
+    if (rankData.name_ar !== undefined) formData.append('name_ar', rankData.name_ar);
+    if (rankData.name_en !== undefined) formData.append('name_en', rankData.name_en);
+    if (rankData.color !== undefined) formData.append('color', rankData.color);
+    if (rankData.icon) formData.append('icon', rankData.icon);
+    const response = await api.patch(`/materials/ranks/${id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return response.data;
 };
 

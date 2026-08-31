@@ -61,15 +61,13 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
             if (lecture) {
                 const lec = lecture as any;
                 reset({
-                    title_ar: lec.title_ar || lec.name_ar || lec.title || '',
-                    title_en: lec.title_en || lec.name_en || lec.title || '',
-                    content_ar: lec.content_ar || lec.description_ar || lec.content || '',
-                    content_en: lec.content_en || lec.description_en || lec.content || '',
-                    videoUrl: lec.videoUrl || lec.video_url || lec.url || lec.video || lec.video_path || lec.videoPath || lec.youtube_url || lec.youtubeUrl || lec.link || '',
-                    pdfFile: lec.pdfUrl || lec.pdf_url || lec.pdfFile || lec.pdf_file || null,
-                    slizesFile: lec.slidesUrl || lec.slides_url || lec.slizesFile || lec.slidesFile || lec.slides || null,
-                    order: lec.order ?? 1,
-                    courseId: courseId || lec.courseId || lec.course_id || '',
+
+                    title_ar: lecture.title_ar || lecture.title || '',
+                    title_en: lecture.title_en || lecture.title || '',
+                    content_ar: lecture.content_ar || lecture.content || '',
+                    content_en: lecture.content_en || lecture.content || '',
+                    order: lecture.order || 1,
+                    courseId: courseId,
                 });
             } else {
                 reset({
@@ -121,6 +119,9 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                 console.error('Failed auto-creating section for lecture', secErr);
             }
         }
+        if (values.video && values.video.length > 0) payload.video = values.video[0];
+        if (values.pdf && values.pdf.length > 0) payload.pdf = values.pdf[0];
+        if (values.slides && values.slides.length > 0) payload.slides = values.slides[0];
 
         if (isEditMode && lecture) {
             updateLecture({ id: lecture.id, data: payload }, {
@@ -270,14 +271,15 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="md:col-span-2">
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <Video size={14} className="text-indigo-500" /> {t('videoUrl')}
+                            <Video size={14} className="text-indigo-500" /> {t('video')}
                         </label>
                         <input
-                            {...register('videoUrl')}
-                            placeholder="https://youtube.com/watch?v=xxxx"
-                            className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
+                            type="file"
+                            accept="video/*"
+                            {...register('video')}
+                            className="w-full h-11 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
                         />
-                        {errors.videoUrl && <p className="text-red-500 text-xs mt-1 font-bold">{errors.videoUrl.message}</p>}
+                        {errors.video && <p className="text-red-500 text-xs mt-1 font-bold">{errors.video.message as string}</p>}
                     </div>
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
@@ -351,12 +353,21 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                             </div>
                         )}
                         {errors.pdfFile && <p className="text-red-500 text-xs mt-1 font-bold">{errors.pdfFile.message}</p>}
+                            <Type size={14} className="text-indigo-500" /> {t('pdf')}
+                        </label>
+                        <input
+                            type="file"
+                            accept="application/pdf"
+                            {...register('pdf')}
+                            className="w-full h-11 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
+                        />
+                        {errors.pdf && <p className="text-red-500 text-xs mt-1 font-bold">{errors.pdf.message as string}</p>}
                     </div>
 
                     {/* Slides File */}
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <Presentation size={14} className="text-indigo-500" /> {t('slidesUrl')}
+                            <Presentation size={14} className="text-indigo-500" /> {t('slides')}
                         </label>
                         {!slizesFile ? (
                             <label className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-200 hover:border-indigo-500 rounded-2xl cursor-pointer bg-gray-50/50 hover:bg-indigo-50/20 transition-all group">
@@ -404,6 +415,13 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                             </div>
                         )}
                         {errors.slizesFile && <p className="text-red-500 text-xs mt-1 font-bold">{errors.slizesFile.message}</p>}
+                        <input
+                            type="file"
+                            accept=".ppt,.pptx,application/pdf"
+                            {...register('slides')}
+                            className="w-full h-11 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
+                        />
+                        {errors.slides && <p className="text-red-500 text-xs mt-1 font-bold">{errors.slides.message as string}</p>}
                     </div>
                 </div>
 

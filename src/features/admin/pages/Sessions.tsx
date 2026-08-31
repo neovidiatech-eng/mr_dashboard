@@ -127,7 +127,9 @@ export default function Sessions() {
           notification_Time: data.notification_Time || "10",
           platform: data.platform,
           language: data.language,
-          videoUrl: data.videoUrl,
+          video: data.video,
+          slides: data.slides,
+          pdf: data.pdf,
         };
 
         if (isGroup) {
@@ -166,6 +168,9 @@ export default function Sessions() {
           endDate: formData.batchEndDate,
           notification_Time: formData.notification_Time || "10",
           language: formData.language,
+          video: formData.video,
+          slides: formData.slides,
+          pdf: formData.pdf,
         };
 
         if (isGroup) {

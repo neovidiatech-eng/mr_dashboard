@@ -69,7 +69,16 @@ export const getStudentById = async (id: string): Promise<StudentResponse> => {
     return response.data;
 }
 export const updateStudent = async (id: string, data: StudentFormData | Partial<Student>) => {
-    const response = await api.patch(`/students/update/${id}`, data);
+    const formData = new FormData();
+    Object.keys(data).forEach((key) => {
+        const val = (data as any)[key];
+        if (val !== undefined && val !== null) {
+            formData.append(key, val instanceof File ? val : String(val));
+        }
+    });
+    const response = await api.patch(`/students/update/${id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return response.data;
 }
 export const deleteStudent = async (id: string) => {
@@ -77,6 +86,15 @@ export const deleteStudent = async (id: string) => {
     return response.data;
 }
 export const createStudent = async (data: StudentFormData | Partial<Student>) => {
-    const response = await api.post(`/students/create`, data);
+    const formData = new FormData();
+    Object.keys(data).forEach((key) => {
+        const val = (data as any)[key];
+        if (val !== undefined && val !== null) {
+            formData.append(key, val instanceof File ? val : String(val));
+        }
+    });
+    const response = await api.post(`/students/create`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
     return response.data;
 }

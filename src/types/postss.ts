@@ -22,7 +22,7 @@ export interface CreatePostInput {
   excerpt_en?: string;
   content_ar: string;
   content_en: string;
-  coverImage?: string;
+  coverImage?: File | string;
   published?: boolean;
 }
 

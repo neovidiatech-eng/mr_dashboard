@@ -89,13 +89,18 @@ export default function UniversalVideoPlayer({ url: rawUrl, className = '' }: Un
   // 4. Direct video files or uploads
   const isDirectFile = /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url) || url.includes('/uploads/');
   if (isDirectFile) {
-    const fullVideoUrl = url.startsWith('http://') || url.startsWith('https://')
-      ? url
-      : `${baseURL}/${url.replace(/^\//, '')}`;
+    let encodedUrl = url;
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      encodedUrl = encodeURI(url).replace(/#/g, '%23');
+    } else {
+      const pathEncoded = url.replace(/^\//, '').split('/').map(segment => encodeURIComponent(segment)).join('/');
+      encodedUrl = `${baseURL}/${pathEncoded}`;
+    }
+    
     return (
       <div className={`relative aspect-video rounded-2xl bg-gray-900 overflow-hidden shadow-lg group ${className}`}>
         <video
-          src={fullVideoUrl}
+          src={encodedUrl}
           controls
           controlsList="nodownload"
           className="w-full h-full object-contain absolute top-0 left-0"

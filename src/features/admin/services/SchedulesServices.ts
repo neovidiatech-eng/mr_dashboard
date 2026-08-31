@@ -12,12 +12,38 @@ export const getSchedulesForStudent = async (studentId: string) => {
 }
 
 export const createSchedule = async (scheduleData: CreateSchedulePayload) => {
-    const response = await api.post("/schedules/create-one/", scheduleData);
+    const formData = new FormData();
+    Object.keys(scheduleData).forEach((key) => {
+        const value = scheduleData[key as keyof CreateSchedulePayload];
+        if (value !== undefined) {
+            if (Array.isArray(value)) {
+                value.forEach((v) => formData.append(key, String(v)));
+            } else {
+                formData.append(key, value as Blob | string);
+            }
+        }
+    });
+    const response = await api.post("/schedules/create-one/", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+    });
     return response.data;
 }
 
 export const createRecurringSchedule = async (scheduleData: CreateRecurringSchedulePayload) => {
-    const response = await api.post("/schedules/create-recurring/", scheduleData);
+    const formData = new FormData();
+    Object.keys(scheduleData).forEach((key) => {
+        const value = scheduleData[key as keyof CreateRecurringSchedulePayload];
+        if (value !== undefined) {
+            if (Array.isArray(value)) {
+                value.forEach((v) => formData.append(key, String(v)));
+            } else {
+                formData.append(key, value as Blob | string);
+            }
+        }
+    });
+    const response = await api.post("/schedules/create-recurring/", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+    });
     return response.data;
 }
 
@@ -32,6 +58,19 @@ export const deleteRecurringScheduale = async (groupId: string) => {
 }
 
 export const updateSchedule = async (scheduleId: string, scheduleData: UpdateSchedulePayload) => {
-    const response = await api.patch(`/schedules/${scheduleId}`, scheduleData);
+    const formData = new FormData();
+    Object.keys(scheduleData).forEach((key) => {
+        const value = scheduleData[key as keyof UpdateSchedulePayload];
+        if (value !== undefined) {
+            if (Array.isArray(value)) {
+                value.forEach((v) => formData.append(key, String(v)));
+            } else {
+                formData.append(key, value as Blob | string);
+            }
+        }
+    });
+    const response = await api.patch(`/schedules/${scheduleId}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+    });
     return response.data;
 }
