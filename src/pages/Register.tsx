@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Eye,
   EyeOff,
@@ -24,6 +24,7 @@ import localeEn from 'antd/es/locale/en_US';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ar';
 import { usePlans } from "../features/admin/hooks/usePlans";
+import { useGetRanks } from "../features/admin/hooks/useRank";
 import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,6 +41,7 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
   const { t, language } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   const { data: plansData } = usePlans();
+  const { data: ranksResponse } = useGetRanks();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
@@ -60,6 +62,9 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
       phone: "",
       email: "",
       codeCountry: "+20",
+      parentNumber: "",
+      rankId: "",
+      stageId: "",
       birth_date: "",
       gender: "",
       country: "",
@@ -71,6 +76,11 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
 
 
   const selectedPackage = watch("plan_id");
+  const rankIdValue = watch("rankId");
+
+  useEffect(() => {
+    setValue('stageId', '');
+  }, [rankIdValue, setValue]);
 
   const countries = [
     { value: "egypt", label: t("egypt") },
@@ -83,6 +93,19 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
     { value: "male", label: t("male") },
     { value: "female", label: t("female") },
   ];
+
+  const ranks = ranksResponse?.data.items || [];
+  const rankOptions = ranks.map((r: any) => ({
+    value: r.id,
+    label: r.name || (language === 'ar' ? r.name_ar : r.name_en),
+  }));
+
+  const selectedRank = ranks.find((r: any) => r.id === rankIdValue);
+  const stages = selectedRank?.stages || [];
+  const stageOptions = stages.map((s: any) => ({
+    value: s.id,
+    label: s.name,
+  }));
 
   const countryCodes = [
     { value: "+20", label: "+20", country: language === "ar" ? "مصر" : "Egypt", countryEn: "Egypt" },
@@ -127,6 +150,7 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
       if (result.status === 201 || result.status === 200) {
         ErrorService.success(t("registeredSuccess"));
         sessionStorage.setItem("verify_email", data.email);
+        onRegisterSuccess();
         navigate("/verify-account");
       }
     } catch (error: any) {
@@ -297,6 +321,89 @@ return (
                 </p>
               )}
             </div>
+
+            {/* Parent Phone */}
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-gray-700 mx-1">
+                {language === "ar" ? "رقم هاتف ولي الأمر" : "Parent Phone Number"} *
+              </label>
+              <Controller
+                name="parentNumber"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="tel"
+                    prefix={<Phone className="w-4 h-4 text-gray-400" />}
+                    placeholder="01069441989"
+                    status={errors.parentNumber ? "error" : ""}
+                    className="shadow-sm"
+                  />
+                )}
+              />
+              {errors.parentNumber && (
+                <p className="text-red-500 text-xs mt-1 font-medium mx-1 flex items-center gap-1">
+                  <span className="w-1 h-1 bg-red-500 rounded-full" />
+                  {errors.parentNumber.message}
+                </p>
+              )}
+            </div>
+
+            {/* Rank */}
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-gray-700 mx-1">
+                {language === "ar" ? "المرحلة الدراسية" : "Academic Level"} *
+              </label>
+              <Controller
+                name="rankId"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    placeholder={language === "ar" ? "اختر المرحلة الدراسية" : "Select Academic Level"}
+                    options={rankOptions}
+                    className="w-full shadow-sm"
+                    status={errors.rankId ? "error" : ""}
+                    placement={language === "ar" ? "bottomRight" : "bottomLeft"}
+                  />
+                )}
+              />
+              {errors.rankId && (
+                <p className="text-red-500 text-xs mt-1 font-medium mx-1 flex items-center gap-1">
+                  <span className="w-1 h-1 bg-red-500 rounded-full" />
+                  {errors.rankId.message}
+                </p>
+              )}
+            </div>
+
+            {/* Stage */}
+            {stages.length > 0 && (
+              <div className="space-y-2">
+                <label className="block text-sm font-bold text-gray-700 mx-1">
+                  {language === "ar" ? "السنة الدراسية" : "Academic Year"} *
+                </label>
+                <Controller
+                  name="stageId"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      placeholder={language === "ar" ? "اختر السنة الدراسية" : "Select Academic Year"}
+                      options={stageOptions}
+                      className="w-full shadow-sm"
+                      status={errors.stageId ? "error" : ""}
+                      placement={language === "ar" ? "bottomRight" : "bottomLeft"}
+                    />
+                  )}
+                />
+                {errors.stageId && (
+                  <p className="text-red-500 text-xs mt-1 font-medium mx-1 flex items-center gap-1">
+                    <span className="w-1 h-1 bg-red-500 rounded-full" />
+                    {errors.stageId.message}
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Gender */}
             <div className="space-y-2">

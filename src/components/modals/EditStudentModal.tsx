@@ -1,5 +1,5 @@
-import { X, GraduationCap } from 'lucide-react';
-import { useEffect } from 'react';
+import { X, GraduationCap, Image as ImageIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import CustomSelect from '../ui/CustomSelect';
 import DatePickerField from '../ui/DatePickerField';
@@ -13,7 +13,7 @@ import { useGetRanks } from '../../features/admin/hooks/useRank';
 interface EditStudentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (studentData: StudentFormData & { id: string }) => boolean | Promise<boolean>;
+  onSubmit: (studentData: StudentFormData & { id: string, image?: File | null }) => boolean | Promise<boolean>;
   studentData: StudentFormData & { id: string } | null;
 }
 
@@ -26,6 +26,7 @@ export default function EditStudentModal({
   const { language, t } = useLanguage();
   const { data: plansData } = usePlans();
   const { data: ranksResponse } = useGetRanks();
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const { control, handleSubmit, register, reset, watch, setValue, formState: { errors } } = useForm<StudentFormData>({
     resolver: zodResolver(getStudentSchema(t)) as Resolver<StudentFormData>,
@@ -33,7 +34,7 @@ export default function EditStudentModal({
   });
 
   const nameValue = watch('name');
-  const birthDateValue = watch('birthDate');
+  const rankIdValue = watch('rankId');
 
   useEffect(() => {
     if (nameValue) {
@@ -50,27 +51,7 @@ export default function EditStudentModal({
     }
   }, [isOpen, studentData, reset]);
 
-  // Auto-calculate rank based on age
-  useEffect(() => {
-    const ranks = ranksResponse?.data.items || [];
-    if (birthDateValue && ranks.length > 0) {
-      const birth = new Date(birthDateValue);
-      const today = new Date();
-      let age = today.getFullYear() - birth.getFullYear();
-      const m = today.getMonth() - birth.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-        age--;
-      }
 
-      const matchingRank = ranks.find((r: any) => 
-        age >= (r.ageRange?.minAge ?? 0) && age <= (r.ageRange?.maxAge ?? 100)
-      );
-
-      if (matchingRank) {
-        setValue('rankId', matchingRank.id, { shouldValidate: true });
-      }
-    }
-  }, [birthDateValue, ranksResponse, setValue]);
 
   if (!isOpen || !studentData) return null;
 
@@ -81,8 +62,9 @@ export default function EditStudentModal({
       delete (cleanedData as Partial<StudentFormData>).password;
     }
 
-    const isSuccess = await onSubmit({ ...cleanedData, id: studentData!.id });
+    const isSuccess = await onSubmit({ ...cleanedData, id: studentData!.id, image: imageFile });
     if (isSuccess) {
+      setImageFile(null);
       onClose();
     }
   };
@@ -108,10 +90,7 @@ export default function EditStudentModal({
     { value: 'female', label: language === 'ar' ? 'أنثى' : 'Female' },
   ];
 
-  const typeOptions = [
-    { value: 'online', label: t('online') },
-    { value: 'onsite', label: t('onsite') },
-  ];
+
 
   const countryOptions = [
     { value: 'egypt', label: language === 'ar' ? 'مصر' : 'Egypt' },
@@ -128,7 +107,14 @@ export default function EditStudentModal({
   const ranks = ranksResponse?.data.items || [];
   const rankOptions = ranks.map((r: any) => ({
     value: r.id,
-    label: r.name,
+    label: r.name || (language === 'ar' ? r.name_ar : r.name_en),
+  }));
+
+  const selectedRank = ranks.find((r: any) => r.id === rankIdValue);
+  const stages = selectedRank?.stages || [];
+  const stageOptions = stages.map((s: any) => ({
+    value: s.id,
+    label: s.name_ar || s.name_en || s.slug,
   }));
 
   const statusOptions = [
@@ -273,20 +259,44 @@ export default function EditStudentModal({
                   <div className="text-start">
                     <label className="flex items-center justify-between text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
                       <span>{t('level')}</span>
-                      {birthDateValue && <span className="text-indigo-600 normal-case font-bold">{t('autoSelectedByAge')}</span>}
                     </label>
                     <CustomSelect
                       value={field.value}
                       options={rankOptions}
                       placeholder={t('selectRank')}
-                      onChange={field.onChange}
-                      disabled={true}
-                      className="rounded-2xl border-none bg-gray-100 cursor-not-allowed opacity-80"
+                      onChange={(val) => {
+                        field.onChange(val);
+                        setValue('stageId', '', { shouldValidate: true });
+                      }}
+                      className="rounded-2xl border-none bg-gray-50"
                     />
                     {errors.rankId && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.rankId.message}</p>}
                   </div>
                 )}
               />
+              <Controller
+                name="stageId"
+                control={control}
+                render={({ field }) => (
+                  <div className="text-start">
+                    <label className="flex items-center justify-between text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                      <span>{t('stage') || 'Stage'}</span>
+                    </label>
+                    <CustomSelect
+                      value={field.value || ''}
+                      options={[{ value: '', label: t('selectStage') || 'Select Stage' }, ...stageOptions]}
+                      placeholder={t('selectStage') || 'Select Stage'}
+                      onChange={field.onChange}
+                      className="rounded-2xl border-none bg-gray-50"
+                      disabled={stages.length === 0}
+                    />
+                    {errors.stageId && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.stageId.message}</p>}
+                  </div>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <Controller
                 name="status"
                 control={control}
@@ -303,9 +313,7 @@ export default function EditStudentModal({
                   </div>
                 )}
               />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              
               <Controller
                 name="birthDate"
                 control={control}
@@ -321,7 +329,9 @@ export default function EditStudentModal({
                   </div>
                 )}
               />
+            </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <Controller
                 name="gender"
                 control={control}
@@ -338,9 +348,42 @@ export default function EditStudentModal({
                   </div>
                 )}
               />
+              
+              <Controller
+                name="parentNumber"
+                control={control}
+                render={({ field }) => (
+                  <div className="text-start">
+                    <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">{t('parentPhone')}</label>
+                    <input
+                      type="tel"
+                      {...field}
+                      value={field.value || ''}
+                      placeholder="ex :- 01091536978"
+                      className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-indigo-500/10 transition-all placeholder:text-gray-300"
+                      dir="ltr"
+                    />
+                  </div>
+                )}
+              />
             </div>
-            
-         
+
+            {/* Profile Image Upload */}
+            <div className="space-y-2 md:col-span-2 mt-4">
+              <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                <ImageIcon className="w-4 h-4" />
+                {t('profileImage') || 'Profile Image'}
+              </label>
+              <input
+                type="file"
+                accept="image/png,image/jpg,image/jpeg,image/webp"
+                onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                className="w-full px-5 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-sm"
+              />
+              {imageFile && (
+                <p className="text-xs text-indigo-600 font-bold px-2">{imageFile.name}</p>
+              )}
+            </div>
 
             {/* Footer Actions */}
             <div className="flex items-center gap-4 mt-8 pt-4 border-t border-gray-100 bg-white/80 backdrop-blur-md">

@@ -15,7 +15,20 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
   const { t, i18n } = useTranslation();
   const language = i18n.language.split('-')[0];
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string;
+    description: string;
+    link: string;
+    notes: string;
+    status: string;
+    start_time: string;
+    end_time: string;
+    type: 'full' | 'half';
+    notification_Time: string;
+    video?: File | null;
+    slides?: File | null;
+    pdf?: File | null;
+  }>({
     title: '',
     description: '',
     link: '',
@@ -23,8 +36,11 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
     status: '',
     start_time: '',
     end_time: '',
-    type: 'full' as 'full' | 'half',
+    type: 'full',
     notification_Time: '10',
+    video: null,
+    slides: null,
+    pdf: null,
   });
 
   const toLocalDatetimeString = (date: Date) => {
@@ -50,6 +66,9 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
         end_time: endDate ? toLocalDatetimeString(endDate) : '',
         type: (session.type as 'full' | 'half') || 'full',
         notification_Time: '10',
+        video: null,
+        slides: null,
+        pdf: null,
       });
     }
   }, [session, isOpen]);
@@ -67,13 +86,16 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
       start_time: formData.start_time ? new Date(formData.start_time).toISOString() : session.start_time,
       type: formData.type,
       notification_Time: formData.notification_Time,
+      video: formData.video || undefined,
+      slides: formData.slides || undefined,
+      pdf: formData.pdf || undefined,
     });
     if (isSuccess) {
       onClose();
     }
   };
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | File | null) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -225,6 +247,43 @@ export default function EditSessionModal({ isOpen, onClose, session, onSave }: E
                   className="w-full px-4 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-primary/20 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-primary/10 transition-all placeholder:text-gray-300"
                   dir="ltr"
                   placeholder="https://zoom.us/..."
+                />
+              </div>
+            </div>
+
+            {/* Video, Slides, PDF Uploads */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
+              <div>
+                <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                  <Video className="w-3.5 h-3.5" /> {t('video')}
+                </label>
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={(e) => handleChange('video', e.target.files?.[0] || null)}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-transparent focus:bg-white focus:border-primary/20 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-primary/10 transition-all"
+                />
+              </div>
+              <div>
+                <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                  {t('slides')}
+                </label>
+                <input
+                  type="file"
+                  accept=".ppt,.pptx,application/pdf"
+                  onChange={(e) => handleChange('slides', e.target.files?.[0] || null)}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-transparent focus:bg-white focus:border-primary/20 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-primary/10 transition-all"
+                />
+              </div>
+              <div>
+                <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                  {t('pdf')}
+                </label>
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={(e) => handleChange('pdf', e.target.files?.[0] || null)}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-transparent focus:bg-white focus:border-primary/20 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ring-transparent focus:ring-primary/10 transition-all"
                 />
               </div>
             </div>

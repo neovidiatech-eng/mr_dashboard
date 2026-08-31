@@ -3,24 +3,22 @@ import {
   Check,
   Play,
   Lock,
-  Calendar,
   ChevronDown,
   ChevronUp,
   Award,
   BookOpen,
-  HelpCircle,
   RotateCcw,
 } from "lucide-react";
 
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useState } from "react";
+
 import VideoModal from "../../../../components/modals/VideoModal";
 import TakeQuizModal from "../../../../components/modals/TakeQuizModal";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getStudentProgress } from "../../../../services/CoursesServices";
 import { useCompleteLecture, useUpdateLectureProgress } from "../../../../hooks/useLectures";
-import { SiOpen3D } from "react-icons/si";
 import { useLanguage } from "../../../../contexts/LanguageContext";
 
 export default function CurriculumDetails() {
@@ -127,13 +125,23 @@ export default function CurriculumDetails() {
       ) : (
         <>
           {/* Header */}
-          <div className="space-y-2 mb-6">
-            <h1 className="text-3xl font-black text-slate-800">{courseTitle}</h1>
-            <p className="text-slate-500 font-medium text-sm">
-              {sections.length > 0
-                ? (isAr ? `${sections.length} سكاشن تعليمية مقسمة بالتسلسل` : `${sections.length} Ordered Learning Sections`)
-                : (isAr ? `${lecturesFallback.length} محاضرة متاحة` : `${lecturesFallback.length} lectures available`)}
-            </p>
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-8">
+            <div className="space-y-2">
+              <h1 className="text-3xl font-black text-slate-800">{courseTitle}</h1>
+              <p className="text-slate-500 font-medium text-sm">
+                {sections.length > 0
+                  ? (isAr ? `${sections.length} سكاشن تعليمية مقسمة بالتسلسل` : `${sections.length} Ordered Learning Sections`)
+                  : (isAr ? `${lecturesFallback.length} محاضرة متاحة` : `${lecturesFallback.length} lectures available`)}
+              </p>
+            </div>
+            
+            {/* Mock Exam Button */}
+            {/* <button
+              onClick={() => navigate("mock-exam")}
+              className="flex items-center gap-2 bg-[#800020] hover:bg-[#600018] text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm shadow-red-900/20 active:scale-95 whitespace-nowrap"
+            >
+              + Start New Exam
+            </button> */}
           </div>
 
           {/* Access Warning Banner */}
@@ -254,7 +262,6 @@ export default function CurriculumDetails() {
                             if (type === "LECTURE") {
                               const isCompleted = item.status === "Completed";
                               const isPending = item.status === "Pending";
-                              const isItemLocked = item.status === "Locked";
                               const lectTitle = isAr ? details.title_ar || details.title : details.title_en || details.title;
 
                               return (
@@ -400,7 +407,7 @@ export default function CurriculumDetails() {
                                           </span>
                                         </div>
                                         <button
-                                          onClick={() => handleStartQuiz(item.item_id)}
+                                          onClick={() => handleStartQuiz(item.id)}
                                           className="p-2.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold rounded-xl text-xs transition flex items-center gap-1"
                                         >
                                           <RotateCcw size={14} />
@@ -418,7 +425,7 @@ export default function CurriculumDetails() {
                                           </span>
                                         </div>
                                         <button
-                                          onClick={() => handleStartQuiz(item.item_id)}
+                                          onClick={() => handleStartQuiz(item.id)}
                                           className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5"
                                         >
                                           <RotateCcw size={14} />
@@ -427,7 +434,7 @@ export default function CurriculumDetails() {
                                       </div>
                                     ) : (
                                       <button
-                                        onClick={() => handleStartQuiz(item.item_id)}
+                                        onClick={() => handleStartQuiz(item.id)}
                                         className="bg-primary hover:bg-primary/90 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition shadow-md flex items-center gap-2"
                                       >
                                         <Award size={16} />
@@ -459,7 +466,6 @@ export default function CurriculumDetails() {
                 lecturesFallback.map((lecture: any, index: number) => {
                   const isCompleted = lecture.status === "Completed";
                   const isPending = lecture.status === "Pending" || !lecture.status;
-                  const isLocked = lecture.status === "Locked";
                   const lectureOrder = lecture.order || index + 1;
 
                   return (

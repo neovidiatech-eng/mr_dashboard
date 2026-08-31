@@ -6,6 +6,7 @@ import AddPostModal from './AddPostModal';
 import ViewPostModal from './ViewPostModal';
 import { Post } from '../../../types/postss';
 import { PostFormData } from '../../../lib/schemas/PostSchema';
+import { baseURL } from '../../../consts';
 
 const { Title, Text } = Typography;
 
@@ -71,7 +72,7 @@ export default function Posts() {
         <div className="flex items-center gap-3">
           {record.coverImage ? (
             <Image
-              src={record.coverImage}
+              src={`${baseURL}/${record.coverImage}`}
               alt={record.title_en || record.title_ar}
               width={48}
               height={48}

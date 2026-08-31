@@ -1,6 +1,6 @@
-import { X, Trophy, Palette, Users } from 'lucide-react';
+import { X, Trophy, Palette, Image as ImageIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { RankItem } from '../../../types/rank';
 import { useCreateRank, useUpdateRank } from '../hooks/useRank';
 import { useForm } from 'react-hook-form';
@@ -19,7 +19,9 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
   const isUpdate = !!rank;
 
   const createRank = useCreateRank();
-  const updateRank = useUpdateRank(rank?.id || '');
+  const updateRank = useUpdateRank(rank?.id || ''); 
+
+  const [iconFile, setIconFile] = useState<File | null>(null);
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<RankSchema>({
     resolver: zodResolver(rankSchema),
@@ -27,9 +29,7 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
       name_ar: '',
       name_en: '',
       color: '#C0C0C0',
-      ageRange: { minAge: 5, maxAge: 10 },
-      stageName_ar: '',
-      stageName_en: '',
+   
     }
   });
 
@@ -40,24 +40,16 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
       if (rank) {
         reset({
           name_ar: rank.name_ar || rank.name || '',
-          name_en: rank.name_en || rank.name || '',
+          name_en: rank.name_en || rank.slug||'',
           color: rank.color || '#C0C0C0',
-          ageRange: {
-            minAge: rank.ageRange?.minAge ?? 5,
-            maxAge: rank.ageRange?.maxAge ?? 10,
-          },
-          stageName_ar: rank.stageName_ar || rank.stageName || '',
-          stageName_en: rank.stageName_en || rank.stageName || '',
         });
       } else {
         reset({
           name_ar: '',
           name_en: '',
           color: '#C0C0C0',
-          ageRange: { minAge: 5, maxAge: 10 },
-          stageName_ar: '',
-          stageName_en: '',
         });
+        setIconFile(null);
       }
     }
   }, [rank, isOpen, reset]);
@@ -70,14 +62,8 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
         name_ar: data.name_ar,
         name_en: data.name_en,
         color: data.color,
-        ageRange: {
-          minAge: Number(data.ageRange.minAge),
-          maxAge: Number(data.ageRange.maxAge),
-        },
       };
-
-      if (data.stageName_ar) payload.stageName_ar = data.stageName_ar;
-      if (data.stageName_en) payload.stageName_en = data.stageName_en;
+      if (iconFile) payload.icon = iconFile;
 
       if (isUpdate && rank) {
         await updateRank.mutateAsync(payload);
@@ -170,63 +156,24 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
               {errors.color && <p className="text-xs text-red-500 font-bold px-2">{errors.color.message}</p>}
             </div>
 
-            {/* Arabic Stage Name Input */}
+
+            {/* Icon Upload */}
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                {language === 'ar' ? 'المرحلة الدراسية (بالعربية)' : 'Study Stage (Arabic)'}
+                <ImageIcon className="w-4 h-4" />
+                {language === 'ar' ? 'أيقونة المستوى (اختياري)' : 'Level Icon (optional)'}
               </label>
               <input
-                type="text"
-                dir="rtl"
-                className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start"
-                placeholder="مثل: ابتدائي"
-                {...register('stageName_ar')}
+                type="file"
+                accept="image/png,image/jpg,image/jpeg,image/webp,image/svg+xml"
+                onChange={(e) => setIconFile(e.target.files?.[0] || null)}
+                className="w-full px-5 py-3 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-sm"
               />
+              {iconFile && (
+                <p className="text-xs text-primary font-bold px-2">{iconFile.name}</p>
+              )}
             </div>
 
-            {/* English Stage Name Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                {language === 'ar' ? 'المرحلة الدراسية (بالإنجليزية)' : 'Study Stage (English)'}
-              </label>
-              <input
-                type="text"
-                dir="ltr"
-                className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start"
-                placeholder="e.g. Primary"
-                {...register('stageName_en')}
-              />
-            </div>
-
-            {/* Age Range Inputs */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                  <Users className="w-4 h-4" />
-                  {language === 'ar' ? 'الحد الأدنى للسن' : 'Min Age'}
-                </label>
-                <input
-                  type="number"
-                  className={`w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium ${errors.ageRange?.minAge ? 'ring-2 ring-red-500' : ''}`}
-                  {...register('ageRange.minAge', { valueAsNumber: true })}
-                />
-                {errors.ageRange?.minAge && <p className="text-xs text-red-500 font-bold px-2">{errors.ageRange.minAge.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                  <Users className="w-4 h-4" />
-                  {language === 'ar' ? 'الحد الأقصى للسن' : 'Max Age'}
-                </label>
-                <input
-                  type="number"
-                  className={`w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium ${errors.ageRange?.maxAge ? 'ring-2 ring-red-500' : ''}`}
-                  {...register('ageRange.maxAge', { valueAsNumber: true })}
-                />
-                {errors.ageRange?.maxAge && <p className="text-xs text-red-500 font-bold px-2">{errors.ageRange.maxAge.message}</p>}
-              </div>
-            </div>
 
             {/* Submit Buttons */}
             <div className="flex items-center gap-4 pt-4">

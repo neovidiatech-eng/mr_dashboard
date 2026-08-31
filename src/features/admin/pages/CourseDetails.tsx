@@ -24,6 +24,13 @@ import { Lecture } from '../../../types/lectures';
 import UniversalVideoPlayer from '../../../components/ui/UniversalVideoPlayer';
 import { useLanguage } from '../../../contexts/LanguageContext';
 import ErrorService from '../../../utils/ErrorService';
+import { baseURL } from '../../../consts';
+
+const encodePath = (path: string | undefined | null) => {
+  if (!path) return '';
+  if (path.startsWith('http://') || path.startsWith('https://')) return encodeURI(path).replace(/#/g, '%23');
+  return `${baseURL}/${path.replace(/^\//, '').split('/').map(s => encodeURIComponent(s)).join('/')}`;
+};
 
 import { useCreateQuiz } from '../../../hooks/useQuizzes';
 import { convertExamDataToQuizPayload } from '../../../services/QuizServices';
@@ -241,10 +248,10 @@ export default function CourseDetails() {
                         <span className="text-sm font-bold">{t('videoContent')}</span>
                       </div>
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                        MP4 - {activeLecture.videoUrl ? t('ready') : t('notSet')}
+                        MP4 - {activeLecture.video_path || activeLecture.videoUrl ? t('ready') : t('notSet')}
                       </span>
                     </div>
-                    <UniversalVideoPlayer url={activeLecture?.videoUrl || (activeLecture as any)?.video_url || (activeLecture as any)?.url} />
+                    <UniversalVideoPlayer url={activeLecture.video_path || activeLecture.videoUrl || ''} />
                   </div>
 
                   <div className="space-y-4">
@@ -257,14 +264,14 @@ export default function CourseDetails() {
                     </div>
                   </div>
 
-                  {activeLecture.pdfUrl && (
+                  {(activeLecture.pdf_path || activeLecture.pdfUrl) && (
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 text-gray-600">
                         <FileText size={16} className="text-primary" />
                         <span className="text-sm font-bold">{t('lectureResources')}</span>
                       </div>
                       <a
-                        href={activeLecture.pdfUrl}
+                        href={encodePath(activeLecture.pdf_path || activeLecture.pdfUrl)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-4 p-4 rounded-2xl bg-primary-light border border-primary/20 group hover:bg-primary-light/80 transition-all cursor-pointer"
@@ -281,14 +288,14 @@ export default function CourseDetails() {
                     </div>
                   )}
 
-                  {activeLecture.slidesUrl && (
+                  {(activeLecture.slides_path || activeLecture.slidesUrl) && (
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 text-gray-600">
                         <Presentation size={16} className="text-purple-500" />
                         <span className="text-sm font-bold">{t('lectureSlides')}</span>
                       </div>
                       <a
-                        href={activeLecture.slidesUrl}
+                        href={encodePath(activeLecture.slides_path || activeLecture.slidesUrl)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-4 p-4 rounded-2xl bg-purple-50 border border-purple-100 group hover:bg-purple-100 transition-all cursor-pointer"

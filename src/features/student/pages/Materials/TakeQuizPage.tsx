@@ -1,8 +1,8 @@
 import { useState, } from "react";
 import { X, CheckCircle2, XCircle , Award, RotateCcw } from "lucide-react";
-import { useLanguage } from "../../contexts/LanguageContext";
-import { useQuizById, useSubmitQuiz } from "../../hooks/useQuizzes";
-import ErrorService from "../../utils/ErrorService";
+import { useLanguage } from "../../../../contexts/LanguageContext";
+import { useQuizById, useSubmitQuiz } from "../../../../hooks/useQuizzes";
+import ErrorService from "../../../../utils/ErrorService";
 
 interface TakeQuizModalProps {
   isOpen: boolean;

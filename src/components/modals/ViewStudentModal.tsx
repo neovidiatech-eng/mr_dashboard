@@ -15,7 +15,7 @@ interface ViewStudentModalProps {
 }
 
 export default function ViewStudentModal({ isOpen, onClose, studentData: initialStudentData }: ViewStudentModalProps) {
-  const { } = useLanguage();
+  const { language } = useLanguage();
   const { t } = useTranslation();
 
   const { data: studentByIdData, isLoading } = useStudentById(initialStudentData?.id || "");
@@ -214,7 +214,7 @@ export default function ViewStudentModal({ isOpen, onClose, studentData: initial
                 </div>
                 <div>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{t('rank')}</p>
-                  <p className="text-sm font-bold text-gray-800">{rank?.name}</p>
+                  <p className="text-sm font-bold text-gray-800">{rank?.name || (language === 'ar' ? rank?.name_ar : rank?.name_en)}</p>
                 </div>
               
               </div>                 

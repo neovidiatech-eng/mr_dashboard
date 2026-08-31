@@ -1,13 +1,15 @@
 import { ArrowLeft, Award } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useLanguage } from "../../../../contexts/LanguageContext";
 import CurriculumCard from "../../components/CurriculumCard";
 
 export default function Levels() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { language } = useLanguage();
   const rank = location.state?.rank;
 
-  const rankName = rank?.name || "Levels";
+  const rankName = (language === 'ar' ? rank?.name_ar : rank?.name_en) || rank?.name || "Levels";
   const courses = rank?.courses || [];
 
   return (
@@ -49,14 +51,14 @@ export default function Levels() {
           <CurriculumCard
             key={course.id || index}
             id={index + 1}
-            title={course.title || "Untitled Course"}
-            description={course.description || "Course details"}
+            title={(language === 'ar' ? course.title_ar : course.title_en) || course.title || "Untitled Course"}
+            description={(language === 'ar' ? course.description_ar : course.description_en) || course.description || "Course details"}
             totalSessions={1}
             completedSessions={0}
             currentSession={1}
             startSessionNumber={1}
             status={"In Progress"}
-            onClick={() => navigate(`/student-dashboard/Materials/Levels/${course.id}`, { state: { courseTitle: course.title } })}
+            onClick={() => navigate(`/student-dashboard/Materials/Levels/${course.id}`, { state: { courseTitle: (language === 'ar' ? course.title_ar : course.title_en) || course.title } })}
           />
         ))}
 
