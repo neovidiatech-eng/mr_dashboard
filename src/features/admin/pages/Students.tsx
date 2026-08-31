@@ -201,11 +201,18 @@ export default function Students() {
       ),
     },
     {
-      title: t('academicRank') || 'Level',
+      title: t('academicRank') || 'Level / Stage',
       render: (_: any, record: Student) => (
-        <span className="inline-flex px-3 py-1 bg-primary-light text-primary rounded-full text-[10px] font-bold border border-indigo-100 uppercase tracking-wider">
-          {record.rank?.name || (language === 'ar' ? record.rank?.name_ar : record.rank?.name_en) || '---'}
-        </span>
+        <div className="flex flex-col gap-1">
+          <span className="inline-flex px-3 py-1 bg-primary-light text-primary rounded-full text-[10px] font-bold border border-indigo-100 uppercase tracking-wider w-max">
+            {record.rank?.name || (language === 'ar' ? record.rank?.name_ar : record.rank?.name_en) || '---'}
+          </span>
+          {record.stage && (
+            <span className="inline-flex px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-[10px] font-bold border border-purple-100 uppercase tracking-wider w-max">
+              {record.stage?.name_ar || record.stage?.name_en || record.stage?.slug}
+            </span>
+          )}
+        </div>
       ),
     },
     {
@@ -459,6 +466,14 @@ export default function Students() {
               payload.planId = studentData.plan;
             }
 
+            if (studentData.rankId && studentData.rankId.trim() !== "") {
+              payload.rankId = studentData.rankId;
+            }
+
+            if (studentData.stageId && studentData.stageId.trim() !== "") {
+              payload.stageId = studentData.stageId;
+            }
+
             if (studentData.startingCourseId && studentData.startingCourseId.trim() !== "") {
               payload.startingCourseId = studentData.startingCourseId;
             }
@@ -508,9 +523,10 @@ export default function Students() {
               type: selectedStudent.type || 'online',
               plan: selectedStudent.planId || '',
               rankId: selectedStudent.rankId || '',
+              stageId: selectedStudent.stageId || '',
               password: selectedStudent.user.password || '',
               birthDate: selectedStudent.birth_date ? selectedStudent.birth_date.split('T')[0] : '',
-              parentNumber: selectedStudent.user.ParentNumber || '',
+              parentNumber: selectedStudent.user.parentNumber || '',
             }
             : null
         }
@@ -526,7 +542,7 @@ export default function Students() {
               gender: updatedData.gender,
               type: updatedData.type,
               active: updatedData.status === 'approved',
-              ...(updatedData.parentNumber ? { ParentNumber: updatedData.parentNumber } : {}),
+              ...(updatedData.parentNumber ? { parentNumber: updatedData.parentNumber } : {}),
             };
 
             if (updatedData.plan && updatedData.plan.trim() !== "") {
@@ -539,6 +555,12 @@ export default function Students() {
               payload.rankId = updatedData.rankId;
             } else {
               payload.rankId = null;
+            }
+
+            if (updatedData.stageId && updatedData.stageId.trim() !== "") {
+              payload.stageId = updatedData.stageId;
+            } else {
+              payload.stageId = null;
             }
 
             if (updatedData.image) {

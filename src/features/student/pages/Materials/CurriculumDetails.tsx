@@ -136,12 +136,12 @@ export default function CurriculumDetails() {
             </div>
             
             {/* Mock Exam Button */}
-            <button
+            {/* <button
               onClick={() => navigate("mock-exam")}
               className="flex items-center gap-2 bg-[#800020] hover:bg-[#600018] text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm shadow-red-900/20 active:scale-95 whitespace-nowrap"
             >
               + Start New Exam
-            </button>
+            </button> */}
           </div>
 
           {/* Access Warning Banner */}
@@ -407,7 +407,7 @@ export default function CurriculumDetails() {
                                           </span>
                                         </div>
                                         <button
-                                          onClick={() => handleStartQuiz(item.item_id)}
+                                          onClick={() => handleStartQuiz(item.id)}
                                           className="p-2.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold rounded-xl text-xs transition flex items-center gap-1"
                                         >
                                           <RotateCcw size={14} />
@@ -425,7 +425,7 @@ export default function CurriculumDetails() {
                                           </span>
                                         </div>
                                         <button
-                                          onClick={() => handleStartQuiz(item.item_id)}
+                                          onClick={() => handleStartQuiz(item.id)}
                                           className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5"
                                         >
                                           <RotateCcw size={14} />
@@ -434,7 +434,7 @@ export default function CurriculumDetails() {
                                       </div>
                                     ) : (
                                       <button
-                                        onClick={() => handleStartQuiz(item.item_id)}
+                                        onClick={() => handleStartQuiz(item.id)}
                                         className="bg-primary hover:bg-primary/90 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition shadow-md flex items-center gap-2"
                                       >
                                         <Award size={16} />
