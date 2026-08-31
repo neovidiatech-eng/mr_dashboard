@@ -8,7 +8,7 @@ export const getCourseSchema = (t: TFunc) => z.object({
   description_ar: z.string().min(5, t("validation.required")),
   description_en: z.string().min(5, t("validation.required")),
   rankId: z.string().min(1, t("validation.required")),
-  categoryId: z.string().optional(),
+  stageId: z.string().optional(),
   price: z.string().optional(),
   keywords: z.array(z.string()).optional().default([]),
   image: z.any().optional(),

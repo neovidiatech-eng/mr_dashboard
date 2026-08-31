@@ -31,10 +31,12 @@ export default function TakeQuizModal({ isOpen, quizId, onClose, onSubmitted }: 
   const handleSubmit = async () => {
     if (!quiz) return;
 
-    const payloadAnswers = (quiz.questions || []).map((q) => ({
-      question_id: q.id,
-      option_id: answers[q.id] || null,
-    }));
+    const payloadAnswers = (quiz.questions || [])
+      .filter((q): q is typeof q & { id: string } => !!q.id)
+      .map((q) => ({
+        question_id: q.id,
+        option_id: answers[q.id] || null,
+      }));
 
     try {
       const res = await submitQuiz({
@@ -85,7 +87,7 @@ export default function TakeQuizModal({ isOpen, quizId, onClose, onSubmitted }: 
             </div>
             <div>
               <h2 className="text-xl font-bold">
-                {quiz ? (isAr ? quiz.title_ar : quiz.title_en || quiz.title_ar) : (isAr ? "جاري تحميل الكويز..." : "Loading Quiz...")}
+                {quiz ? (isAr ? (quiz.title_ar || quiz.title) : (quiz.title_en || quiz.title_ar || quiz.title)) : (isAr ? "جاري تحميل الكويز..." : "Loading Quiz...")}
               </h2>
               {quiz && (
                 <p className="text-xs text-white/80">
@@ -157,14 +159,14 @@ export default function TakeQuizModal({ isOpen, quizId, onClose, onSubmitted }: 
                         )}
                         <div>
                           <p className="font-bold text-sm text-slate-800">
-                            {idx + 1}. {isAr ? q?.question_ar : q?.question_en || q?.question_ar}
+                            {idx + 1}. {isAr ? (q?.question_ar || q?.question) : (q?.question_en || q?.question_ar || q?.question)}
                           </p>
                           <p className={`text-xs font-semibold mt-1 ${ans.is_correct ? "text-emerald-700" : "text-red-600"}`}>
-                            {isAr ? "إجابتك:" : "Your answer:"} {selectedOpt ? (isAr ? selectedOpt.option_text_ar : selectedOpt.option_text_en || selectedOpt.option_text_ar) : (isAr ? "لم تجب" : "No answer")}
+                            {isAr ? "إجابتك:" : "Your answer:"} {selectedOpt ? (isAr ? (selectedOpt.option_text_ar || selectedOpt.option_text) : (selectedOpt.option_text_en || selectedOpt.option_text_ar || selectedOpt.option_text)) : (isAr ? "لم تجب" : "No answer")}
                           </p>
                           {!ans.is_correct && correctOpt && (
                             <p className="text-xs font-semibold text-emerald-700 mt-0.5">
-                              {isAr ? "الإجابة الصحيحة:" : "Correct answer:"} {isAr ? correctOpt.option_text_ar : correctOpt.option_text_en || correctOpt.option_text_ar}
+                              {isAr ? "الإجابة الصحيحة:" : "Correct answer:"} {isAr ? (correctOpt.option_text_ar || correctOpt.option_text) : (correctOpt.option_text_en || correctOpt.option_text_ar || correctOpt.option_text)}
                             </p>
                           )}
                         </div>
@@ -197,7 +199,7 @@ export default function TakeQuizModal({ isOpen, quizId, onClose, onSubmitted }: 
                 <div key={q.id} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
                   <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                     <span className="font-bold text-sm text-slate-800">
-                      {qIndex + 1}. {isAr ? q.question_ar : q.question_en || q.question_ar}
+                      {qIndex + 1}. {isAr ? (q.question_ar || q.question) : (q.question_en || q.question_ar || q.question)}
                     </span>
                     <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
                       {q.points} {isAr ? "درجة" : "pts"}
@@ -206,11 +208,11 @@ export default function TakeQuizModal({ isOpen, quizId, onClose, onSubmitted }: 
 
                   <div className="space-y-2">
                     {(q.options || []).map((opt) => {
-                      const isSelected = answers[q.id] === opt.id;
+                      const isSelected = q.id ? answers[q.id] === opt.id : false;
                       return (
                         <label
                           key={opt.id}
-                          onClick={() => handleOptionSelect(q.id, opt.id)}
+                          onClick={() => q.id && opt.id && handleOptionSelect(q.id, opt.id)}
                           className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
                             isSelected
                               ? "border-primary bg-primary/5 ring-2 ring-primary/20 text-slate-900 font-bold"
@@ -225,7 +227,7 @@ export default function TakeQuizModal({ isOpen, quizId, onClose, onSubmitted }: 
                             className="w-4 h-4 accent-primary"
                           />
                           <span className="text-sm font-medium">
-                            {isAr ? opt.option_text_ar : opt.option_text_en || opt.option_text_ar}
+                            {isAr ? (opt.option_text_ar || opt.option_text) : (opt.option_text_en || opt.option_text_ar || opt.option_text)}
                           </span>
                         </label>
                       );

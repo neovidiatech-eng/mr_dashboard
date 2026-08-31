@@ -3,7 +3,6 @@ import { useCreateCourse, useUpdateCourse } from '../../../hooks/useCourses';
 import { useQueryClient } from '@tanstack/react-query';
 import { BookOpen, AlignLeft, Trophy, Image as ImageIcon, Upload as UploadIcon, Tag, DollarSign, Globe, Hash } from 'lucide-react';
 import { useGetRanks } from '../hooks/useRank';
-import { useCategories } from '../hooks/useCategories';
 import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,17 +16,17 @@ interface AddCourseModalProps {
 }
 
 export default function AddCourseModal({ visible, onClose, course }: AddCourseModalProps) {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
+    const isAr = language === 'ar';
     const [fileList, setFileList] = useState<any[]>([]);
     const queryClient = useQueryClient();
     const { mutate: createCourse, isPending: isCreating } = useCreateCourse();
     const { mutate: updateCourse, isPending: isUpdating } = useUpdateCourse();
     const { data: ranksData, isLoading: ranksLoading } = useGetRanks();
-    const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
 
     const isEditMode = !!course;
 
-    const { register, handleSubmit, reset, control, formState: { errors } } = useForm<CourseFormData>({
+    const { register, handleSubmit, reset, control, setValue, watch, formState: { errors } } = useForm<CourseFormData>({
         resolver: zodResolver(getCourseSchema(t)) as any,
         defaultValues: {
             title_ar: '',
@@ -35,11 +34,25 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
             description_ar: '',
             description_en: '',
             rankId: '',
-            categoryId: '',
+            stageId: '',
             price: '',
             keywords: [],
         }
     });
+
+    const selectedRankId = watch('rankId');
+    const [prevRankId, setPrevRankId] = useState<string>('');
+
+    const ranks = ranksData?.data?.items || [];
+    const selectedRank = ranks.find((r: any) => r.id === selectedRankId);
+    const stages = selectedRank?.stages || [];
+
+    useEffect(() => {
+        if (prevRankId && prevRankId !== selectedRankId) {
+            setValue('stageId', '');
+        }
+        setPrevRankId(selectedRankId);
+    }, [selectedRankId, setValue, prevRankId]);
 
     useEffect(() => {
         if (visible) {
@@ -65,7 +78,7 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                     description_ar: course.description_ar || course.description || '',
                     description_en: course.description_en || course.description || '',
                     rankId: course.rankId || '',
-                    categoryId: course.categoryId || '',
+                    stageId: course.stageId || '',
                     price: course.price !== undefined && course.price !== null ? String(course.price) : '',
                     keywords: parsedKeywords,
                 });
@@ -90,7 +103,7 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                     description_ar: '',
                     description_en: '',
                     rankId: '',
-                    categoryId: '',
+                    stageId: '',
                     price: '',
                     keywords: [],
                 });
@@ -118,7 +131,9 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                 formData.append('description_ar', values.description_ar);
                 formData.append('description_en', values.description_en);
                 formData.append('rankId', values.rankId);
-                if (values.categoryId) formData.append('categoryId', values.categoryId);
+                if (values.stageId) {
+                    formData.append('stageId', values.stageId);
+                }
                 if (values.price !== undefined && values.price !== '') formData.append('price', String(values.price));
                 appendKeywords(formData, values.keywords);
                 formData.append('image', fileList[0].originFileObj);
@@ -138,7 +153,9 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
                     rankId: values.rankId,
                     keywords: Array.isArray(values.keywords) ? values.keywords : [],
                 };
-                if (values.categoryId) updatePayload.categoryId = values.categoryId;
+                if (values.stageId) {
+                    updatePayload.stageId = values.stageId;
+                }
                 if (values.price !== undefined && values.price !== '') updatePayload.price = Number(values.price);
 
                 updateCourse({ id: course.id, data: updatePayload }, {
@@ -156,7 +173,9 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
             formData.append('description_en', values.description_en);
             formData.append('rankId', values.rankId);
 
-            if (values.categoryId) formData.append('categoryId', values.categoryId);
+            if (values.stageId) {
+                formData.append('stageId', values.stageId);
+            }
             if (values.price !== undefined && values.price !== '') formData.append('price', String(values.price));
             appendKeywords(formData, values.keywords);
             if (hasNewImage) formData.append('image', fileList[0].originFileObj);
@@ -291,21 +310,21 @@ export default function AddCourseModal({ visible, onClose, course }: AddCourseMo
 
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <Tag size={14} className="text-indigo-500" /> {t('category')}
+                            <Tag size={14} className="text-indigo-500" /> {isAr ? 'السنة الدراسية' : 'Academic Year'}
                         </label>
                         <Controller
-                            name="categoryId"
+                            name="stageId"
                             control={control}
                             render={({ field }) => (
                                 <Select
                                     {...field}
                                     allowClear
-                                    placeholder={t('selectCategory')}
-                                    loading={categoriesLoading}
+                                    disabled={!selectedRankId}
+                                    placeholder={isAr ? 'اختر السنة الدراسية' : 'Select Academic Year'}
                                     className="w-full h-11 rounded-xl"
-                                    options={categoriesData?.categories?.map((cat: any) => ({
-                                        label: cat.name_ar || cat.name,
-                                        value: cat.id,
+                                    options={stages.map((stage: any) => ({
+                                        label: isAr ? stage.name_ar || stage.name : stage.name_en || stage.name,
+                                        value: stage.id,
                                     }))}
                                 />
                             )}

@@ -24,7 +24,8 @@ import {
   ShoppingCart,
   Star,
   File,
-  Eye
+  Eye,
+  QrCode
 } from 'lucide-react';
 import TransactionRequests from "../../features/admin/pages/TransactionRequests";
 
@@ -71,6 +72,7 @@ const ReportsPage = lazy(() => import("../../features/admin/pages/Reports"));
 const SupportPage = lazy(() => import("../../features/admin/pages/Support"));
 const PostsPage = lazy(() => import("../../features/admin/pages/Posts"));
 const AttendancePage = lazy(() => import("../../features/admin/pages/Attendance"));
+const OfflineGroupsPage = lazy(() => import("../../features/admin/pages/OfflineGroups"));
 
 
 export const adminDashboardRoutes: RouteConfig[] = [
@@ -342,6 +344,13 @@ export const adminDashboardRoutes: RouteConfig[] = [
     icon: ShieldCheck,
     path: "policies",
     element: <PoliciesPage />,
+  },
+  {
+    id: "offline",
+    label: "sidebar_offline",
+    icon: QrCode,
+    path: "offline",
+    element: <OfflineGroupsPage />,
   },
   {
     id: "support",

@@ -1,4 +1,4 @@
-import { X, Trophy, Palette, Image as ImageIcon } from 'lucide-react';
+import { X, Trophy, Palette, Image as ImageIcon, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { RankItem } from '../../../types/rank';
@@ -167,12 +167,11 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
                 dir="rtl"
                 className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start"
                 placeholder="مثل: الصف الأول الثانوي"
-                {...register('stageName_ar')}
+                {...register('name_ar')}
               />
             </div>
 
-
-            {/* Icon Upload */}
+            {/* Academic Year (English) */}
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
                 <Users className="w-4 h-4" />
@@ -183,7 +182,13 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
                 dir="ltr"
                 className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start"
                 placeholder="e.g. Grade 10"
-                {...register('stageName_en')}
+                {...register('name_en')}
+              />
+            </div>
+
+            {/* Icon Upload */}
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
                 <ImageIcon className="w-4 h-4" />
                 {language === 'ar' ? 'أيقونة المستوى (اختياري)' : 'Level Icon (optional)'}
               </label>

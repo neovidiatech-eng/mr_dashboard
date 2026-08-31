@@ -95,5 +95,6 @@ export interface CreateQuizPayload {
   totalMarks?: number;
   total_points?: number;
   pass_points?: number;
+  order?: number;
   questions?: CreateQuizQuestionPayload[];
 }
