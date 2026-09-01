@@ -26,18 +26,26 @@ export interface OfflineGroupStage {
 
 export interface OfflineGroupCourseDetails {
   id: string;
-  title_ar: string;
-  title_en: string;
-  description_ar: string;
-  description_en: string;
-  keywords: string[];
-  rankId: string;
-  stageId: string;
-  categoryId: string | null;
-  price: number;
-  image: string;
-  createdAt: string;
-  updatedAt: string;
+  title_ar?: string;
+  title_en?: string;
+  title?: string;
+  name_ar?: string;
+  name_en?: string;
+  name?: string;
+  description_ar?: string;
+  description_en?: string;
+  description?: string;
+  keywords?: string[] | string | null;
+  rankId?: string;
+  rank?: any;
+  stageId?: string;
+  categoryId?: string | null;
+  price?: number | null;
+  image?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  lectures?: any[];
+  sections?: any[];
 }
 
 export interface OfflineGroupCourse {
@@ -78,3 +86,17 @@ export interface CreateOfflineGroupPayload {
   courseIds: string[];
 }
 
+export interface ScannedOfflineCourseItem {
+  id?: string;
+  courseId?: string;
+  groupId?: string;
+  course: OfflineGroupCourseDetails;
+}
+
+export interface ScanOfflineGroupResponse {
+  message: string;
+  status: number;
+  data: {
+    courses: ScannedOfflineCourseItem[];
+  };
+}

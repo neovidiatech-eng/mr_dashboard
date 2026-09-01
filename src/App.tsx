@@ -40,7 +40,9 @@ const StudentPortalView = lazy(() => import("./pages/StudentPortalView"));
 const TeacherDashboard = lazy(
   () => import("./pages/TeacherDashboard/TeacherDashboard"),
 );
-const OfflinePage = lazy(() => import("./pages/OfflinePage"));
+const OfflineGroup = lazy(
+  () => import("./features/offlineGroup/pages/OfflineGroup"),
+);
 
 // Centralized Loading Fallback UI
 const LoadingFallback = () => (
@@ -147,9 +149,12 @@ function App() {
                         />
                       </Route>
 
-                      {/* Offline & QR Code Scanned Routes */}
-                      <Route path="/offline-page" element={<OfflinePage />} />
-                      <Route path="/qr-scan" element={<OfflinePage />} />
+                      {/* Offline & QR Code Scanned Routes (Public, Unauthenticated) */}
+                      <Route path="/offline-group" element={<OfflineGroup />} />
+                      <Route path="/offline-group/:token" element={<OfflineGroup />} />
+                      <Route path="/offline-groups/scan" element={<OfflineGroup />} />
+                      <Route path="/offline-page" element={<OfflineGroup />} />
+                      <Route path="/qr-scan" element={<OfflineGroup />} />
 
                       <Route
                         path="/"
