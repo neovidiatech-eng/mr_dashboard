@@ -60,6 +60,7 @@ export interface Course {
   description_ar?: string;
   description_en?: string;
   rankId: string;
+  stageId?: string;
   categoryId?: string | null;
   category?: CourseCategory | null;
   price?: number | null;

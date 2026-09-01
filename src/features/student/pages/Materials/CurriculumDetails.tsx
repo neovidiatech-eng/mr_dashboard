@@ -352,7 +352,7 @@ export default function CurriculumDetails() {
                               const attempt = item.attempt;
                               const isPassed = item.status === "Passed";
                               const isFailed = item.status === "Failed";
-                              const quizTitle = isAr ? quizDetails.title_ar : quizDetails.title_en || quizDetails.title_ar;
+                              const quizTitle = isAr ? (quizDetails.title_ar || quizDetails.title) : (quizDetails.title_en || quizDetails.title_ar || quizDetails.title);
 
                               return (
                                 <div
@@ -407,7 +407,7 @@ export default function CurriculumDetails() {
                                           </span>
                                         </div>
                                         <button
-                                          onClick={() => handleStartQuiz(item.id)}
+                                          onClick={() => handleStartQuiz(item.item_id)}
                                           className="p-2.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold rounded-xl text-xs transition flex items-center gap-1"
                                         >
                                           <RotateCcw size={14} />
@@ -425,7 +425,7 @@ export default function CurriculumDetails() {
                                           </span>
                                         </div>
                                         <button
-                                          onClick={() => handleStartQuiz(item.id)}
+                                          onClick={() => handleStartQuiz(item.item_id)}
                                           className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow-sm flex items-center gap-1.5"
                                         >
                                           <RotateCcw size={14} />
@@ -434,7 +434,7 @@ export default function CurriculumDetails() {
                                       </div>
                                     ) : (
                                       <button
-                                        onClick={() => handleStartQuiz(item.id)}
+                                        onClick={() => handleStartQuiz(item.item_id)}
                                         className="bg-primary hover:bg-primary/90 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition shadow-md flex items-center gap-2"
                                       >
                                         <Award size={16} />

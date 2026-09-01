@@ -42,8 +42,7 @@ const encodePath = (path: string | undefined | null) => {
   return `${baseURL}/${path.replace(/^\//, '').split('/').map(s => encodeURIComponent(s)).join('/')}`;
 };
 
-import { useCreateQuiz } from '../../../hooks/useQuizzes';
-import { convertExamDataToQuizPayload } from '../../../services/ExamServices';
+
 
 export default function CourseDetails() {
   const { t, language } = useLanguage();
@@ -113,7 +112,6 @@ export default function CourseDetails() {
     }
     return [];
   }, [rawSections, selectedCourse?.lectures, isAr]);
-  const { mutateAsync: createQuiz } = useCreateQuiz();
 
   const allSectionItems = useMemo(() => {
     return sections.flatMap((s) => s.section_items || s.sectionItems || []);
@@ -164,19 +162,6 @@ export default function CourseDetails() {
   };
 
 
-  const handleSaveExam = async (examData: ExamData) => {
-    try {
-      const payload = convertExamDataToQuizPayload(examData, courseId);
-      await createQuiz(payload);
-      ErrorService.success(isAr ? 'تم حفظ كويز الامتحان بنجاح!' : 'Quiz saved successfully!');
-      setIsAddExamModalVisible(false);
-    } catch (error: any) {
-      console.error('Failed to save exam:', error);
-      ErrorService.error(
-        error?.response?.data?.message || (isAr ? 'حدث خطأ أثناء حفظ الامتحان' : 'Failed to save exam')
-      );
-    }
-  };
 
   const handleEditLecture = (lecture: Lecture, e: React.MouseEvent) => {
     e.stopPropagation();

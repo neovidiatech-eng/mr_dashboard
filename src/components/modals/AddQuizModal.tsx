@@ -44,6 +44,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
   const [descriptionEn, setDescriptionEn] = useState('');
   const [quizDuration, setQuizDuration] = useState(30);
   const [passPoints, setPassPoints] = useState(50);
+  const [quizOrder, setQuizOrder] = useState<number>(1);
   const [selectedSectionId, setSelectedSectionId] = useState<string>(defaultSectionId || sections?.[0]?.id || '');
 
   useEffect(() => {
@@ -63,6 +64,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
         setDescriptionEn(activeQuiz.description_en || activeQuiz.description || '');
         setQuizDuration(activeQuiz.duration_min || activeQuiz.duration || 30);
         setPassPoints(activeQuiz.pass_points || 0);
+        setQuizOrder(activeQuiz.order || 1);
 
         const questionsList =
           activeQuiz.questions ||
@@ -160,6 +162,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
         setDescriptionEn('');
         setQuizDuration(30);
         setPassPoints(50);
+        setQuizOrder(1);
         setMcqQuestions([
           {
             text: '',
@@ -413,6 +416,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
       pass_points: Number(passPoints) || 0,
       total_points: totalScore,
       questions: [...formattedMcq, ...formattedTF],
+      order: Number(quizOrder) || 1,
     };
 
     if (courseId) {
@@ -445,7 +449,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
             course_id: courseId,
             name_ar: 'محتوى الكورس',
             name_en: 'Course Content',
-            items: createdQuizId ? [{ item_id: createdQuizId, item_type: 'QUIZ', order: 1 }] : [],
+            items: createdQuizId ? [{ item_id: createdQuizId, item_type: 'QUIZ', order: Number(quizOrder) || 1 }] : [],
           });
           targetSecId = newSec.id;
         } catch (secErr) {
@@ -457,7 +461,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
         try {
           await addItemsToSection({
             sectionId: targetSecId,
-            items: [{ item_id: createdQuizId, item_type: 'QUIZ', order: 1 }],
+            items: [{ item_id: createdQuizId, item_type: 'QUIZ', order: Number(quizOrder) || 1 }],
             courseId,
           });
         } catch (err) {
@@ -516,7 +520,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
 
         {/* Quiz Title & Duration Bar */}
         <div className="p-6 bg-slate-50 border-b border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-4 shrink-0">
-          {sections && sections.length > 0 && (
+          {/* {sections && sections.length > 0 && (
             <div className="md:col-span-2">
               <label className="block text-xs font-bold text-primary mb-1">
                 {isAr ? 'اختر السكشن المراد إضافة الكويز له *' : 'Select Target Section *'}
@@ -533,7 +537,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
                 ))}
               </select>
             </div>
-          )}
+          )} */}
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">
               {isAr ? 'عنوان الكويز (بالعربي) *' : 'Quiz Title (Arabic) *'}
@@ -613,6 +617,19 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
               dir={isAr ? 'rtl' : 'ltr'}
               value={passPoints}
               onChange={(e) => setPassPoints(Number(e.target.value))}
+              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 mb-1">
+              {isAr ? 'الترتيب *' : 'Order *'}
+            </label>
+            <input
+              type="number"
+              min="1"
+              dir={isAr ? 'rtl' : 'ltr'}
+              value={quizOrder}
+              onChange={(e) => setQuizOrder(Number(e.target.value))}
               className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
             />
           </div>
@@ -711,7 +728,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
 
                   {/* Options List */}
                   <div className="space-y-2.5 pt-2">
-                    <label className="block text-xs font-medium text-slate-600 flex items-center justify-between">
+                    <label className="block text-xs font-medium text-slate-600 items-center justify-between">
                       <span>{isAr ? 'الاختيارات (اختر الدائرة الخضراء لتحديد الإجابة الصحيحة للتصحيح التلقائي):' : 'Options (select green circle for the correct answer):'}</span>
                     </label>
 

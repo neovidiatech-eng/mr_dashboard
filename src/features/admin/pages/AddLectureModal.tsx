@@ -3,7 +3,7 @@ import { useCreateLecture, useUpdateLecture } from '../../../hooks/useLectures';
 import { useAddItemsToSection } from '../../../hooks/useSections';
 import { createSection } from '../../../services/SectionServices';
 import { useQueryClient } from '@tanstack/react-query';
-import { Video, AlignLeft, Type, Hash, Presentation, Globe, Upload, FileText, X, Layers } from 'lucide-react';
+import { Video, AlignLeft, Hash, Presentation, Globe, Upload, FileText, X, Layers } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Lecture } from '../../../types/lectures';
 import { Section } from '../../../types/courses';
@@ -11,6 +11,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { getLectureSchema, LectureFormData } from '../../../lib/schemas/LectureSchema';
 import { useLanguage } from '../../../contexts/LanguageContext';
+import ErrorService from '../../../utils/ErrorService';
 
 interface AddLectureModalProps {
     visible: boolean;
@@ -39,16 +40,16 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
             title_en: '',
             content_ar: '',
             content_en: '',
-            videoUrl: '',
-            pdfFile: null,
-            slizesFile: null,
+            video: null,
+            pdf: null,
+            slides: null,
             order: 1,
             courseId: courseId,
         }
     });
 
-    const pdfFile = watch('pdfFile');
-    const slizesFile = watch('slizesFile');
+    const pdfFile = watch('pdf');
+    const slizesFile = watch('slides');
 
     useEffect(() => {
         if (visible) {
@@ -59,13 +60,14 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
             }
 
             if (lecture) {
-                const lec = lecture as any;
                 reset({
-
                     title_ar: lecture.title_ar || lecture.title || '',
                     title_en: lecture.title_en || lecture.title || '',
                     content_ar: lecture.content_ar || lecture.content || '',
                     content_en: lecture.content_en || lecture.content || '',
+                    video: null,
+                    pdf: lecture.pdf_path || lecture.pdfUrl || null,
+                    slides: lecture.slides_path || lecture.slidesUrl || null,
                     order: lecture.order || 1,
                     courseId: courseId,
                 });
@@ -75,9 +77,9 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                     title_en: '',
                     content_ar: '',
                     content_en: '',
-                    videoUrl: '',
-                    pdfFile: null,
-                    slizesFile: null,
+                    video: null,
+                    pdf: null,
+                    slides: null,
                     order: 1,
                     courseId: courseId,
                 });
@@ -95,13 +97,8 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
             order: values.order,
         };
 
-        if (values.videoUrl) {
-            payload.videoUrl = values.videoUrl;
-            payload.video_url = values.videoUrl;
-            payload.url = values.videoUrl;
-        }
-        if (values.pdfFile) payload.pdfFile = values.pdfFile;
-        if (values.slizesFile) payload.slizesFile = values.slizesFile;
+        if (values.pdf) payload.pdf = values.pdf;
+        if (values.slides) payload.slides = values.slides;
 
         const isValidUUID = (id?: string) =>
             !!id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
@@ -120,8 +117,6 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
             }
         }
         if (values.video && values.video.length > 0) payload.video = values.video[0];
-        if (values.pdf && values.pdf.length > 0) payload.pdf = values.pdf[0];
-        if (values.slides && values.slides.length > 0) payload.slides = values.slides[0];
 
         if (isEditMode && lecture) {
             updateLecture({ id: lecture.id, data: payload }, {
@@ -158,56 +153,46 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                 queryClient.invalidateQueries({ queryKey: ['courses'] });
                 onClose();
                 reset();
-            } catch (error) {
-                console.error('Failed to create lecture:', error);
+            } catch (err: any) {
+                console.error('Failed creating lecture', err);
+                ErrorService.error(
+                    err?.response?.data?.message || (isAr ? 'حدث خطأ أثناء إضافة المحاضرة' : 'Failed to create lecture')
+                );
             }
         }
     };
 
     return (
         <Modal
-            title={
-                <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
-                        <Video size={20} />
-                    </div>
-                    <div>
-                        <h3 className="text-lg font-bold text-gray-900">{isEditMode ? t('editLecture') : t('addNewLectureModal')}</h3>
-                        <p className="text-xs font-medium text-gray-400">
-                            {isEditMode ? t('editLectureDesc') : t('addNewLectureDesc')}
-                        </p>
-                    </div>
-                </div>
-            }
+            title={<span className="text-lg font-bold text-gray-800">{isEditMode ? t('editLectureTitle') : t('addLectureTitle')}</span>}
             open={visible}
             onCancel={onClose}
             footer={null}
+            width={720}
+            className="custom-modal"
             centered
-            width={640}
-            className="premium-modal"
         >
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-5 space-y-4 text-start">
-                {/* Section Selector */}
-                {sections && sections.length > 0 && (
-                    <div>
-                        <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <Layers size={14} className="text-indigo-500" />
-                            {isAr ? 'اختر السكشن التابع له المحاضرة *' : 'Target Section *'}
-                        </label>
+            <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-4">
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-100 mb-2">
+                    <div className="p-2 bg-indigo-500 rounded-xl text-white">
+                        <Layers size={18} />
+                    </div>
+                    <div className="flex-1">
+                        <label className="text-[10px] font-bold text-gray-400 block mb-0.5 uppercase tracking-wider">{t('targetSection')}</label>
                         <select
                             value={selectedSectionId}
                             onChange={(e) => setSelectedSectionId(e.target.value)}
-                            className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm font-bold bg-gray-50/50"
+                            className="bg-transparent font-bold text-gray-800 text-sm focus:outline-none w-full"
                         >
-                            {sections.map((sec) => (
+                            {sections?.map((sec) => (
                                 <option key={sec.id} value={sec.id}>
-                                    {isAr ? sec.name_ar || sec.name : sec.name_en || sec.name}
+                                    {isAr ? sec.name_ar : sec.name_en || sec.name_ar}
                                 </option>
                             ))}
                         </select>
                     </div>
-                )}
-                {/* Titles Section */}
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
@@ -215,8 +200,7 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                         </label>
                         <input
                             {...register('title_ar')}
-                            dir="rtl"
-                            placeholder={t('lectureTitleArPlaceholder')}
+                            placeholder={t('titleArPlaceholder')}
                             className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
                         />
                         {errors.title_ar && <p className="text-red-500 text-xs mt-1 font-bold">{errors.title_ar.message}</p>}
@@ -224,19 +208,18 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
 
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <Type size={14} className="text-indigo-500" /> {t('titleEnLabel')}
+                            <Globe size={14} className="text-indigo-500" /> {t('titleEnLabel')}
                         </label>
                         <input
                             {...register('title_en')}
                             dir="ltr"
-                            placeholder={t('lectureTitleEnPlaceholder')}
+                            placeholder={t('titleEnPlaceholder')}
                             className="w-full h-11 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
                         />
                         {errors.title_en && <p className="text-red-500 text-xs mt-1 font-bold">{errors.title_en.message}</p>}
                     </div>
                 </div>
 
-                {/* Content Section */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
@@ -244,21 +227,18 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                         </label>
                         <textarea
                             {...register('content_ar')}
-                            dir="rtl"
                             placeholder={t('contentArPlaceholder')}
                             rows={3}
                             className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none text-sm"
                         />
                         {errors.content_ar && <p className="text-red-500 text-xs mt-1 font-bold">{errors.content_ar.message}</p>}
                     </div>
-
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
                             <AlignLeft size={14} className="text-indigo-500" /> {t('contentEnLabel')}
                         </label>
                         <textarea
                             {...register('content_en')}
-                            dir="ltr"
                             placeholder={t('contentEnPlaceholder')}
                             rows={3}
                             className="w-full p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none text-sm"
@@ -267,7 +247,6 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                     </div>
                 </div>
 
-                {/* Video URL & Order */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="md:col-span-2">
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
@@ -300,12 +279,10 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                     </div>
                 </div>
 
-                {/* PDF & Slides File Upload */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* PDF File */}
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
-                            <FileText size={14} className="text-indigo-500" /> {t('pdfUrl')}
+                            <FileText size={14} className="text-indigo-500" /> {t('pdf')}
                         </label>
                         {!pdfFile ? (
                             <label className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-gray-200 hover:border-indigo-500 rounded-2xl cursor-pointer bg-gray-50/50 hover:bg-indigo-50/20 transition-all group">
@@ -315,54 +292,31 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                                     className="hidden"
                                     onChange={(e) => {
                                         const file = e.target.files?.[0] || null;
-                                        setValue('pdfFile', file, { shouldValidate: true });
+                                        setValue('pdf', file, { shouldValidate: true });
                                     }}
                                 />
                                 <div className="w-10 h-10 rounded-xl bg-white group-hover:bg-indigo-100 flex items-center justify-center text-gray-400 group-hover:text-indigo-600 shadow-sm mb-2 transition-all">
                                     <Upload size={18} />
                                 </div>
-                                <span className="text-xs font-bold text-gray-600 group-hover:text-indigo-600">
-                                    {t('uploadPdf') || 'Choose PDF File'}
-                                </span>
-                                <span className="text-[10px] text-gray-400 mt-0.5">PDF (Max 25MB)</span>
+                                <span className="text-xs font-bold text-gray-600 group-hover:text-indigo-600">{t('uploadPdf')}</span>
                             </label>
                         ) : (
                             <div className="flex items-center justify-between p-3 bg-indigo-50/40 border border-indigo-100 rounded-2xl">
-                                <div className="flex items-center gap-2.5 overflow-hidden">
-                                    <div className="w-9 h-9 rounded-xl bg-indigo-500 text-white flex items-center justify-center shrink-0">
-                                        <FileText size={16} />
-                                    </div>
-                                    <div className="truncate">
-                                        <p className="text-xs font-bold text-gray-800 truncate max-w-[150px]">
-                                            {typeof pdfFile === 'string' ? pdfFile.split('/').pop() : pdfFile.name}
-                                        </p>
-                                        {pdfFile instanceof File && (
-                                            <p className="text-[10px] text-gray-400 font-medium">
-                                                {(pdfFile.size / (1024 * 1024)).toFixed(2)} MB
-                                            </p>
-                                        )}
-                                    </div>
+                                <div className="truncate text-xs font-bold text-gray-800">
+                                    {typeof pdfFile === 'string' ? pdfFile.split('/').pop() : pdfFile.name}
                                 </div>
                                 <button
                                     type="button"
-                                    onClick={() => setValue('pdfFile', null, { shouldValidate: true })}
+                                    onClick={() => setValue('pdf', null, { shouldValidate: true })}
                                     className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                                 >
                                     <X size={14} />
                                 </button>
                             </div>
                         )}
-                        {errors.pdfFile && <p className="text-red-500 text-xs mt-1 font-bold">{errors.pdfFile.message}</p>}
-                        <input
-                            type="file"
-                            accept="application/pdf"
-                            {...register('pdf')}
-                            className="w-full h-11 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
-                        />
                         {errors.pdf && <p className="text-red-500 text-xs mt-1 font-bold">{errors.pdf.message as string}</p>}
                     </div>
 
-                    {/* Slides File */}
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
                             <Presentation size={14} className="text-indigo-500" /> {t('slides')}
@@ -375,58 +329,35 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                                     className="hidden"
                                     onChange={(e) => {
                                         const file = e.target.files?.[0] || null;
-                                        setValue('slizesFile', file, { shouldValidate: true });
+                                        setValue('slides', file, { shouldValidate: true });
                                     }}
                                 />
                                 <div className="w-10 h-10 rounded-xl bg-white group-hover:bg-indigo-100 flex items-center justify-center text-gray-400 group-hover:text-indigo-600 shadow-sm mb-2 transition-all">
                                     <Upload size={18} />
                                 </div>
-                                <span className="text-xs font-bold text-gray-600 group-hover:text-indigo-600">
-                                    {t('uploadSlides') || 'Choose Slides File'}
-                                </span>
-                                <span className="text-[10px] text-gray-400 mt-0.5">PPT, PPTX, PDF (Max 25MB)</span>
+                                <span className="text-xs font-bold text-gray-600 group-hover:text-indigo-600">{t('uploadSlides')}</span>
                             </label>
                         ) : (
                             <div className="flex items-center justify-between p-3 bg-indigo-50/40 border border-indigo-100 rounded-2xl">
-                                <div className="flex items-center gap-2.5 overflow-hidden">
-                                    <div className="w-9 h-9 rounded-xl bg-indigo-500 text-white flex items-center justify-center shrink-0">
-                                        <Presentation size={16} />
-                                    </div>
-                                    <div className="truncate">
-                                        <p className="text-xs font-bold text-gray-800 truncate max-w-[150px]">
-                                            {typeof slizesFile === 'string' ? slizesFile.split('/').pop() : slizesFile.name}
-                                        </p>
-                                        {slizesFile instanceof File && (
-                                            <p className="text-[10px] text-gray-400 font-medium">
-                                                {(slizesFile.size / (1024 * 1024)).toFixed(2)} MB
-                                            </p>
-                                        )}
-                                    </div>
+                                <div className="truncate text-xs font-bold text-gray-800">
+                                    {typeof slizesFile === 'string' ? slizesFile.split('/').pop() : slizesFile.name}
                                 </div>
                                 <button
                                     type="button"
-                                    onClick={() => setValue('slizesFile', null, { shouldValidate: true })}
+                                    onClick={() => setValue('slides', null, { shouldValidate: true })}
                                     className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                                 >
                                     <X size={14} />
                                 </button>
                             </div>
                         )}
-                        {errors.slizesFile && <p className="text-red-500 text-xs mt-1 font-bold">{errors.slizesFile.message}</p>}
-                        <input
-                            type="file"
-                            accept=".ppt,.pptx,application/pdf"
-                            {...register('slides')}
-                            className="w-full h-11 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
-                        />
                         {errors.slides && <p className="text-red-500 text-xs mt-1 font-bold">{errors.slides.message as string}</p>}
                     </div>
                 </div>
 
-                {/* Actions */}
                 <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-gray-100">
                     <Button
-                        onClick={onClose}
+                         onClick={onClose}
                         className="h-11 px-6 rounded-xl font-bold text-gray-600 border-gray-200 hover:bg-gray-50"
                     >
                         {t('cancelBtn')}

@@ -1,5 +1,35 @@
 import api from "../lib/axios";
-import { CreateQuizPayload, Quiz, QuizPayload, QuizQuestion } from "../types/quiz";
+import { CreateQuizPayload, Quiz, QuizQuestion } from "../types/quiz";
+
+export interface QuizOptionPayload {
+  id?: string;
+  option_text_ar: string;
+  option_text_en?: string;
+  is_correct: boolean;
+}
+
+export interface QuizQuestionPayload {
+  id?: string;
+  question_ar: string;
+  question_en?: string;
+  type: "MCQ" | "TRUE_FALSE";
+  points: number;
+  order: number;
+  options: QuizOptionPayload[];
+}
+
+export interface QuizPayload {
+  title_ar: string;
+  title_en?: string;
+  description_ar?: string;
+  description_en?: string;
+  courseId?: string;
+  total_points: number;
+  pass_points: number;
+  duration_min: number;
+  order?: number;
+  questions: QuizQuestionPayload[];
+}
 
 export const getAllQuizzes = async (): Promise<Quiz[]> => {
   const response = await api.get("/quiz");
@@ -57,12 +87,15 @@ export const deleteQuiz = async (id: string): Promise<void> => {
   }
 };
 
-export const submitQuiz = async (data: any): Promise<any> => {
-  const response = await api.post("/quiz/submit", data);
+export const submitQuiz = async (payload: {
+  quiz_id: string;
+  answers: { question_id: string; option_id: string | null }[];
+}): Promise<any> => {
+  const response = await api.post("/quiz/submit", payload);
   return response.data.data;
 };
 
-export const getQuizHistory = async (params?: { page?: number; limit?: number; quiz_id?: string }): Promise<any> => {
+export const getQuizHistory = async (params?: { page?: number; limit?: number; quiz_id?: string }): Promise<any[]> => {
   const response = await api.get("/quiz/history", { params });
   return response.data.data;
 };
@@ -71,3 +104,5 @@ export const getQuizHistoryById = async (id: string): Promise<any> => {
   const response = await api.get(`/quiz/history/${id}`);
   return response.data.data;
 };
+
+
