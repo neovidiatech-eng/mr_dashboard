@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { QrCode, Trash2, Plus, Search, X, Download, BookOpen, Layers, Calendar } from 'lucide-react';
+import { QrCode, Trash2, Plus, Search, X, Download, BookOpen, Layers, Calendar, GraduationCap, CheckSquare, Square } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import {
   useGetOfflineGroups,
@@ -11,6 +11,7 @@ import { useGetAllStages } from '../hooks/useStage';
 import { useCourses } from '../../../hooks/useCourses';
 import ConfirmModal from '../../../components/modals/ConfirmModal';
 import { OfflineGroup } from '../../../types/offlineGroup';
+import { Stage } from '../../../types/stage';
 
 export default function OfflineGroups() {
   const { t, i18n } = useTranslation();
@@ -39,19 +40,67 @@ export default function OfflineGroups() {
   const qrRef = useRef<HTMLDivElement>(null);
 
   const offlineGroups = offlineGroupsResponse?.data?.items || [];
-  const stages = stagesResponse?.data?.items || [];
-  const courses = coursesResponse?.data?.items || [];
+  const stages: Stage[] = stagesResponse?.data?.items || [];
+  const courses = coursesResponse?.items || [];
 
-  // Filter groups
+  // Group stages by Rank
+  const stagesByRank = useMemo(() => {
+    const groups: Record<string, { rankId: string; rankName: string; stages: Stage[] }> = {};
+
+    stages.forEach((stage) => {
+      const rankId = stage.rankId || stage.rank?.id || 'other';
+      const rankName = isArabic
+        ? stage.rank?.name_ar || stage.rank?.name_en || t('other_ranks', 'أخرى')
+        : stage.rank?.name_en || stage.rank?.name_ar || t('other_ranks', 'Other');
+
+      if (!groups[rankId]) {
+        groups[rankId] = {
+          rankId,
+          rankName,
+          stages: [],
+        };
+      }
+      groups[rankId].stages.push(stage);
+    });
+
+    return Object.values(groups);
+  }, [stages, isArabic, t]);
+
+  // Filter courses based on selected stage
+  const availableCourses = useMemo(() => {
+    if (!selectedStageId) return [];
+    return courses.filter(
+      (course: any) =>
+        course.stageId === selectedStageId ||
+        course.stage?.id === selectedStageId
+    );
+  }, [courses, selectedStageId]);
+
+  // Helper to extract course title
+  const getCourseTitle = (course: any) => {
+    if (!course) return '';
+    return isArabic
+      ? course.title_ar || course.title_en || course.title || course.name_ar || course.name || ''
+      : course.title_en || course.title_ar || course.title || course.name_en || course.name || '';
+  };
+
+  // Filter groups for search
   const filteredGroups = offlineGroups.filter((group) => {
     const stageName = isArabic
       ? group.stage?.name_ar || group.stage?.name_en || ''
       : group.stage?.name_en || group.stage?.name_ar || '';
+
+    const foundStage = stages.find((s) => s.id === group.stageId);
+    const rankName = isArabic
+      ? group.stage?.rank?.name_ar || foundStage?.rank?.name_ar || ''
+      : group.stage?.rank?.name_en || foundStage?.rank?.name_en || '';
+
     const query = searchTerm.toLowerCase();
-    
-    // Search by Stage Name or Group ID
+
+    // Search by Stage Name, Rank Name, or Group ID
     return (
       stageName.toLowerCase().includes(query) ||
+      rankName.toLowerCase().includes(query) ||
       group.id.toLowerCase().includes(query)
     );
   });
@@ -102,6 +151,14 @@ export default function OfflineGroups() {
         ? prev.filter((id) => id !== courseId)
         : [...prev, courseId]
     );
+  };
+
+  const toggleSelectAllCourses = () => {
+    if (selectedCourseIds.length === availableCourses.length) {
+      setSelectedCourseIds([]);
+    } else {
+      setSelectedCourseIds(availableCourses.map((c) => c.id));
+    }
   };
 
   const downloadQRCode = (format: 'png' | 'jpg' = 'png') => {
@@ -164,8 +221,12 @@ export default function OfflineGroups() {
         </div>
 
         <button
-          onClick={() => setIsCreateModalOpen(true)}
-          className="flex items-center gap-2 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-3xl transition-all shadow-lg shadow-indigo-200 active:scale-95 font-bold"
+          onClick={() => {
+            setSelectedStageId('');
+            setSelectedCourseIds([]);
+            setIsCreateModalOpen(true);
+          }}
+          className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-3xl transition-all shadow-lg shadow-indigo-200 active:scale-95 font-bold"
         >
           <Plus className="w-5 h-5" />
           {t('create_new_group', 'Create New Group')}
@@ -222,11 +283,16 @@ export default function OfflineGroups() {
             const stageName = isArabic
               ? group.stage?.name_ar || group.stage?.name_en || ''
               : group.stage?.name_en || group.stage?.name_ar || '';
-            
+
+            const foundStage = stages.find((s) => s.id === group.stageId);
+            const rankName = isArabic
+              ? group.stage?.rank?.name_ar || foundStage?.rank?.name_ar || ''
+              : group.stage?.rank?.name_en || foundStage?.rank?.name_en || '';
+
             return (
               <div key={group.id} className="relative overflow-hidden bg-white rounded-[32px] p-6 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-3">
                     <span className="text-xs font-bold text-gray-400">
                       ID: #{group.id.slice(0, 8)}
                     </span>
@@ -247,6 +313,16 @@ export default function OfflineGroups() {
                       </button>
                     </div>
                   </div>
+
+                  {/* Rank Pill Badge */}
+                  {rankName && (
+                    <div className="mb-1.5">
+                      <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100">
+                        <GraduationCap className="w-3 h-3" />
+                        {rankName}
+                      </span>
+                    </div>
+                  )}
 
                   <h3 className="text-xl font-bold text-gray-900 mb-2">
                     {stageName}
@@ -285,9 +361,7 @@ export default function OfflineGroups() {
                   </p>
                   <div className="flex flex-wrap gap-1.5 max-h-20 overflow-y-auto no-scrollbar">
                     {group.courses?.map((c) => {
-                      const courseTitle = isArabic
-                        ? c.course?.title_ar || c.course?.title_en || ''
-                        : c.course?.title_en || c.course?.title_ar || '';
+                      const courseTitle = getCourseTitle(c.course);
                       return (
                         <span key={c.id} className="text-[10px] font-bold bg-gray-50 text-gray-600 px-2 py-1 rounded-md">
                           {courseTitle}
@@ -344,7 +418,7 @@ export default function OfflineGroups() {
               </div>
 
               <form onSubmit={handleCreateGroup} className="space-y-6">
-                {/* Select Stage */}
+                {/* Select Stage Grouped by Rank */}
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
                     <Layers className="w-4 h-4 text-gray-400" />
@@ -353,53 +427,98 @@ export default function OfflineGroups() {
                   <select
                     required
                     value={selectedStageId}
-                    onChange={(e) => setSelectedStageId(e.target.value)}
-                    className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-start"
+                    onChange={(e) => {
+                      setSelectedStageId(e.target.value);
+                      setSelectedCourseIds([]); // reset selection when stage changes
+                    }}
+                    className="w-full px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-start"
                   >
                     <option value="">{t('select_stage_placeholder', '-- Select Stage --')}</option>
-                    {stages.map((stage) => {
-                      const name = isArabic
-                        ? stage.name_ar || stage.name_en || ''
-                        : stage.name_en || stage.name_ar || '';
-                      return (
-                        <option key={stage.id} value={stage.id}>
-                          {name}
-                        </option>
-                      );
-                    })}
+                    {stagesByRank.map((group) => (
+                      <optgroup key={group.rankId} label={`🎓 ${group.rankName}`}>
+                        {group.stages.map((stage) => {
+                          const name = isArabic
+                            ? stage.name_ar || stage.name_en || ''
+                            : stage.name_en || stage.name_ar || '';
+                          return (
+                            <option key={stage.id} value={stage.id}>
+                              {name}
+                            </option>
+                          );
+                        })}
+                      </optgroup>
+                    ))}
                   </select>
                 </div>
 
-                {/* Multi-Select Courses */}
+                {/* Multi-Select Courses (Filtered by Selected Stage) */}
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
                     <BookOpen className="w-4 h-4 text-gray-400" />
                     {t('select_courses_label', 'Select Courses')}
                   </label>
-                  <div className="bg-gray-50 rounded-2xl p-4 max-h-60 overflow-y-auto space-y-2.5 border border-gray-100">
-                    {courses.length > 0 ? (
-                      courses.map((course) => {
-                        const title = isArabic
-                          ? course.title_ar || course.title_en || ''
-                          : course.title_en || course.title_ar || '';
+
+                  {!selectedStageId ? (
+                    <div className="text-center py-8 px-4 bg-gray-50/70 border border-dashed border-gray-200 rounded-2xl">
+                      <Layers className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                      <p className="text-xs font-semibold text-gray-400">
+                        {t('select_stage_first_hint', 'Please select an academic stage first to view its available courses')}
+                      </p>
+                    </div>
+                  ) : availableCourses.length === 0 ? (
+                    <div className="text-center py-8 px-4 bg-gray-50 border border-dashed border-gray-200 rounded-2xl">
+                      <BookOpen className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                      <p className="text-xs font-semibold text-gray-400">
+                        {t('no_courses_for_stage', 'No courses available for this stage currently')}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="bg-gray-50 rounded-2xl p-4 max-h-60 overflow-y-auto space-y-2.5 border border-gray-100">
+                      {/* Select All Toggle Header */}
+                      <div className="flex items-center justify-between pb-2 border-b border-gray-200/60 mb-2">
+                        <span className="text-xs font-bold text-gray-500">
+                          {t('available_courses_count', 'Available Courses')} ({availableCourses.length})
+                        </span>
+                        <button
+                          type="button"
+                          onClick={toggleSelectAllCourses}
+                          className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors"
+                        >
+                          {selectedCourseIds.length === availableCourses.length ? (
+                            <>
+                              <CheckSquare className="w-3.5 h-3.5" />
+                              {t('deselect_all', 'Deselect All')}
+                            </>
+                          ) : (
+                            <>
+                              <Square className="w-3.5 h-3.5" />
+                              {t('select_all', 'Select All')}
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      {availableCourses.map((course: any) => {
+                        const title = getCourseTitle(course);
                         return (
-                          <label key={course.id} className="flex items-center gap-3 cursor-pointer select-none">
+                          <label key={course.id} className="flex items-center gap-3 cursor-pointer select-none py-1 hover:bg-gray-100/60 px-2 rounded-xl transition-colors">
                             <input
                               type="checkbox"
                               checked={selectedCourseIds.includes(course.id)}
                               onChange={() => toggleCourseSelection(course.id)}
-                              className="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                              className="w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
                             />
                             <span className="text-sm font-bold text-gray-700">{title}</span>
                           </label>
                         );
-                      })
-                    ) : (
-                      <p className="text-xs text-gray-400 py-4 text-center">{t('no_courses_available', 'No courses available')}</p>
-                    )}
-                  </div>
-                  {selectedCourseIds.length === 0 && (
-                    <p className="text-[10px] text-red-500 font-bold px-2">{t('select_at_least_one_course', 'Please select at least one course')}</p>
+                      })}
+                    </div>
+                  )}
+
+                  {selectedStageId && availableCourses.length > 0 && selectedCourseIds.length === 0 && (
+                    <p className="text-[10px] text-red-500 font-bold px-2">
+                      {t('select_at_least_one_course', 'Please select at least one course')}
+                    </p>
                   )}
                 </div>
 

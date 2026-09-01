@@ -12,6 +12,14 @@ export interface OfflineGroupStage {
   name_en: string;
   slug: string;
   rankId: string;
+  rank?: {
+    id: string;
+    name_ar: string;
+    name_en: string;
+    slug: string;
+    color?: string;
+    icon?: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
