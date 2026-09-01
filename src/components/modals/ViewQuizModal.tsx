@@ -18,7 +18,7 @@ export default function ViewQuizModal({ isOpen, onClose, quizId }: ViewQuizModal
   if (!isOpen || !quizId) return null;
 
   const quizTitle = isAr ? quiz?.title_ar || quiz?.title : quiz?.title_en || quiz?.title;
-  const quizDesc = isAr ? quiz?.description_ar : quiz?.description_en || quiz?.description_ar;
+  const quizDesc = isAr ? (quiz?.description_ar || quiz?.description) : (quiz?.description_en || quiz?.description_ar || quiz?.description);
   const duration = quiz?.duration_min || quiz?.duration || 0;
   const passPoints = quiz?.pass_points || 0;
   const totalPoints = quiz?.total_points || quiz?.totalMarks || 0;
@@ -128,7 +128,7 @@ export default function ViewQuizModal({ isOpen, onClose, quizId }: ViewQuizModal
 
                   {/* Question Text */}
                   <h4 className="font-bold text-sm text-gray-900 leading-relaxed">
-                    {isAr ? q.question_ar || q.text_ar || q.text : q.question_en || q.text_en || q.text}
+                    {isAr ? q.question_ar || q.text_ar || q.question || q.text : q.question_en || q.text_en || q.question || q.text}
                   </h4>
 
                   {/* Options List */}
@@ -137,8 +137,8 @@ export default function ViewQuizModal({ isOpen, onClose, quizId }: ViewQuizModal
                       {q.options.map((opt: any, optIdx: number) => {
                         const isCorrect = opt.is_correct || opt.isCorrect;
                         const optText = isAr
-                          ? opt.option_text_ar || opt.text_ar || opt.text
-                          : opt.option_text_en || opt.text_en || opt.text;
+                          ? opt.option_text_ar || opt.text_ar || opt.option_text || opt.text
+                          : opt.option_text_en || opt.text_en || opt.option_text || opt.text;
 
                         return (
                           <div
