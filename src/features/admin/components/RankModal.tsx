@@ -1,4 +1,4 @@
-import { X, Trophy, Palette, Image as ImageIcon } from 'lucide-react';
+import { X, Trophy, Palette, Image as ImageIcon, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { RankItem } from '../../../types/rank';
@@ -29,7 +29,8 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
       name_ar: '',
       name_en: '',
       color: '#C0C0C0',
-   
+      stageName_ar: '',
+      stageName_en: '',
     }
   });
 
@@ -42,12 +43,16 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
           name_ar: rank.name_ar || rank.name || '',
           name_en: rank.name_en || rank.slug||'',
           color: rank.color || '#C0C0C0',
+          stageName_ar: rank.stageName_ar || '',
+          stageName_en: rank.stageName_en || '',
         });
       } else {
         reset({
           name_ar: '',
           name_en: '',
           color: '#C0C0C0',
+          stageName_ar: '',
+          stageName_en: '',
         });
         setIconFile(null);
       }
@@ -62,6 +67,8 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
         name_ar: data.name_ar,
         name_en: data.name_en,
         color: data.color,
+        stageName_ar: data.stageName_ar,
+        stageName_en: data.stageName_en,
       };
       if (iconFile) payload.icon = iconFile;
 
@@ -184,6 +191,12 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
                 className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start"
                 placeholder="e.g. Grade 10"
                 {...register('stageName_en')}
+              />
+            </div>
+
+            {/* Icon Upload */}
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
                 <ImageIcon className="w-4 h-4" />
                 {language === 'ar' ? 'أيقونة المستوى (اختياري)' : 'Level Icon (optional)'}
               </label>

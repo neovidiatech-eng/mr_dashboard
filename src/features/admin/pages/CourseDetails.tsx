@@ -43,7 +43,7 @@ const encodePath = (path: string | undefined | null) => {
 };
 
 import { useCreateQuiz } from '../../../hooks/useQuizzes';
-import { convertExamDataToQuizPayload } from '../../../services/QuizServices';
+import { convertExamDataToQuizPayload } from '../../../services/ExamServices';
 
 export default function CourseDetails() {
   const { t, language } = useLanguage();

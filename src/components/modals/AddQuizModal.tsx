@@ -418,11 +418,6 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
     if (courseId) {
       quizPayload.courseId = courseId;
     }
-    const isValidUUIDForSec = (id?: string) =>
-      !!id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    if (selectedSectionId && isValidUUIDForSec(selectedSectionId)) {
-      quizPayload.sectionId = selectedSectionId;
-    }
 
     try {
       let createdQuizId = quiz?.id;

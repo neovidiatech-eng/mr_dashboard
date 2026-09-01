@@ -353,8 +353,6 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                             </div>
                         )}
                         {errors.pdfFile && <p className="text-red-500 text-xs mt-1 font-bold">{errors.pdfFile.message}</p>}
-                            <Type size={14} className="text-indigo-500" /> {t('pdf')}
-                        </label>
                         <input
                             type="file"
                             accept="application/pdf"

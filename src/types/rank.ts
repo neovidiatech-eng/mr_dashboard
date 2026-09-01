@@ -58,6 +58,8 @@ export interface CreateRankBody {
   name_en?: string;
   color: string;
   icon?: File;
+  stageName_ar?: string;
+  stageName_en?: string;
 }
 
 export interface UpdateRankBody {
@@ -65,4 +67,6 @@ export interface UpdateRankBody {
   name_en?: string;
   color?: string;
   icon?: File;
+  stageName_ar?: string;
+  stageName_en?: string;
 }

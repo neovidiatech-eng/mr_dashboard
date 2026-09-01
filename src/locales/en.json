@@ -921,5 +921,11 @@
   "no_english_title": "No English title",
   "no_arabic_content": "No Arabic content",
   "no_english_content": "No English content",
-  "excerpt_label": "Summary / Excerpt:"
+  "excerpt_label": "Summary / Excerpt:",
+  "studentQuizzes": "Student Quizzes",
+  "noQuizzesYet": "No quizzes yet",
+  "passed": "Passed",
+  "failed": "Failed",
+  "passPoints": "Pass Score",
+  "quiz": "Quiz"
 }

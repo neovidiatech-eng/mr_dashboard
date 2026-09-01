@@ -939,5 +939,11 @@
   "no_english_title": "لا يوجد عنوان بالإنجليزية",
   "no_arabic_content": "لا يوجد محتوى بالعربية",
   "no_english_content": "لا يوجد محتوى بالإنجليزية",
-  "excerpt_label": "الملخص:"
+  "excerpt_label": "الملخص:",
+  "studentQuizzes": "اختبارات الطالب",
+  "noQuizzesYet": "لا توجد اختبارات حتى الآن",
+  "passed": "ناجح",
+  "failed": "راسب",
+  "passPoints": "درجة النجاح",
+  "quiz": "اختبار"
 }
