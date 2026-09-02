@@ -1,5 +1,5 @@
 import api from "../lib/axios";
-import { LecturesData, Lecture, CreateLecture } from "../types/lectures";
+import { LecturesData, Lecture, CreateLecture, UpdateLecture } from "../types/lectures";
 
 export const getAllLectures = async ( ): Promise<LecturesData> => {
   const response = await api.get<LecturesData>(`/materials/lectures`);
@@ -29,11 +29,11 @@ export const createLecture = async (data: CreateLecture): Promise<Lecture> => {
   return response.data;
 };
 
-export const updateLecture = async (id: string, data: CreateLecture): Promise<Lecture> => {
+export const updateLecture = async (id: string, data: UpdateLecture): Promise<Lecture> => {
   const formData = new FormData();
   
   Object.keys(data).forEach(key => {
-    const value = data[key as keyof CreateLecture];
+    const value = data[key as keyof UpdateLecture];
     if (value !== undefined) {
       formData.append(key, value as Blob | string);
     }
