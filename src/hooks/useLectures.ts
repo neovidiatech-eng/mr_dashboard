@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { completeLecture, createLecture, deleteLecture, getAllLectures, getLectureById, updateLecture, updateLectureProgress } from "../services/LecturesServices";
 import ErrorService from "../utils/ErrorService";
-import { Lecture } from "../types/lectures";
+import { Lecture, UpdateLecture } from "../types/lectures";
 
 export const useLectures = () => {
   return useQuery({
@@ -29,7 +29,7 @@ export const useCreateLecture = () => {
 export const useUpdateLecture = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Lecture> }) => updateLecture(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateLecture }) => updateLecture(id, data),
     onSuccess: (_data, variables) => {
       ErrorService.success("Lecture updated successfully");
       queryClient.invalidateQueries({ queryKey: ["lectures", variables.id] });

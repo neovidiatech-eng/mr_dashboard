@@ -6,6 +6,8 @@ import {
   CreateQuestionPayload,
   SubmitExamPayload,
 } from "../types/exam";
+import { ExamData, MCQQuestion, TrueFalseQuestion } from "../types/courseExam";
+import { QuizPayload, QuizQuestionPayload } from "../types/quiz";
 
 export const getExams = async (params?: { studentId?: string; teacherId?: string; status?: string }) => {
   const response = await api.get("/exams", { params });
@@ -64,3 +66,53 @@ export const submitExam = async (examId: string, data: SubmitExamPayload) => {
   const response = await api.post(`/exams/${examId}/submit`, data);
   return response.data.data as Exam;
 };
+
+export function convertExamDataToQuizPayload(examData: ExamData, courseId?: string): QuizPayload {
+  const mcqMapped: QuizQuestionPayload[] = (examData.mcqQuestions || []).map((q: MCQQuestion, idx: number) => ({
+    question_ar: q.text,
+    question_en: q.text,
+    type: "MCQ",
+    points: q.points || 1,
+    order: idx + 1,
+    options: (q.options || []).map((opt) => ({
+      option_text_ar: opt.text,
+      option_text_en: opt.text,
+      is_correct: !!opt.isCorrect,
+    })),
+  }));
+
+  const tfMapped: QuizQuestionPayload[] = (examData.trueFalseQuestions || []).map((q: TrueFalseQuestion, idx: number) => ({
+    question_ar: q.text,
+    question_en: q.text,
+    type: "TRUE_FALSE",
+    points: q.points || 1,
+    order: mcqMapped.length + idx + 1,
+    options: [
+      {
+        option_text_ar: "صح",
+        option_text_en: "True",
+        is_correct: q.correctAnswer === true,
+      },
+      {
+        option_text_ar: "خطأ",
+        option_text_en: "False",
+        is_correct: q.correctAnswer === false,
+      },
+    ],
+  }));
+
+  const allQuestions = [...mcqMapped, ...tfMapped];
+  const totalPoints = allQuestions.reduce((acc, q) => acc + q.points, 0);
+  const passPoints = Math.ceil(totalPoints * 0.5);
+
+  return {
+    title_ar: examData.title,
+    title_en: examData.title,
+    courseId: courseId || undefined,
+    duration_min: Number(examData.duration) || 30,
+    total_points: totalPoints || 1,
+    pass_points: passPoints,
+    questions: allQuestions,
+  };
+}
+

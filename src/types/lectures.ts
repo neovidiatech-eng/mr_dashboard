@@ -51,3 +51,5 @@ export interface CreateLecture {
   slides?: File;
   pdf?: File;
 }
+
+export type UpdateLecture = Partial<CreateLecture>;

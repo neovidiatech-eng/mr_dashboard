@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as QuizServices from "../services/QuizServices";
-import { QuizPayload } from "../services/QuizServices";
+import { QuizPayload } from "../types/quiz";
 
 export const useQuizzes = (params?: { page?: number; limit?: number }) => {
   return useQuery({
