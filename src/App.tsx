@@ -43,6 +43,9 @@ const TeacherDashboard = lazy(
 const OfflineGroup = lazy(
   () => import("./features/offlineGroup/pages/OfflineGroup"),
 );
+const CoursesDetails = lazy(
+  () => import("./features/offlineGroup/pages/CoursesDetails"),
+);
 
 // Centralized Loading Fallback UI
 const LoadingFallback = () => (
@@ -152,8 +155,12 @@ function App() {
                       {/* Offline & QR Code Scanned Routes (Public, Unauthenticated) */}
                       <Route path="/offline-group" element={<OfflineGroup />} />
                       <Route path="/offline-group/:token" element={<OfflineGroup />} />
+                      <Route path="/offline-group/course/:courseId" element={<CoursesDetails />} />
+                      <Route path="/offline-group/:token/course/:courseId" element={<CoursesDetails />} />
+                      <Route path="/offline-courses/:courseId" element={<CoursesDetails />} />
                       <Route path="/offline-groups/scan" element={<OfflineGroup />} />
                       <Route path="/offline-page" element={<OfflineGroup />} />
+                      <Route path="/offline-page/course/:courseId" element={<CoursesDetails />} />
                       <Route path="/qr-scan" element={<OfflineGroup />} />
 
                       <Route
