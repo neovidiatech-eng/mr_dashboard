@@ -79,9 +79,14 @@ export default function OfflineGroups() {
   // Helper to extract course title
   const getCourseTitle = (course: any) => {
     if (!course) return '';
+    const courseId = typeof course === 'string' ? course : course?.id || course?.courseId;
+    const foundCourse = courses.find((c) => c.id === courseId);
+    const target = foundCourse || (typeof course === 'object' ? course : null);
+
+    if (!target) return '';
     return isArabic
-      ? course.title_ar || course.title_en || course.title || course.name_ar || course.name || ''
-      : course.title_en || course.title_ar || course.title || course.name_en || course.name || '';
+      ? target.title_ar || target.title_en || target.title || target.name_ar || target.name || ''
+      : target.title_en || target.title_ar || target.title || target.name_en || target.name || '';
   };
 
   // Filter groups for search
@@ -203,7 +208,7 @@ export default function OfflineGroups() {
   // Generate URL for scanning
   const getQRLink = (token?: string) => {
     if (!token) return '';
-    return `${window.location.origin}/offline-page?token=${token}`;
+    return `${window.location.origin}/offline-group?token=${token}`;
   };
 
   return (
