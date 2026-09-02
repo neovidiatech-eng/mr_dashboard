@@ -12,7 +12,6 @@ import {
   Trophy,
   Layers,
   ShieldCheck,
-  File,
   DollarSign,
   Coins,
   CreditCard,
@@ -446,7 +445,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
 
             {/* Reports */}
 
-            {hasRouteAccess('teacher-reports') && (
+            {/* {hasRouteAccess('teacher-reports') && (
               <NavLink
                 to="/dashboard/reports"
                 onClick={onClose}
@@ -459,7 +458,7 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                 <File className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
                 {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_reports', 'Reports')}</span>}
               </NavLink>
-            )}
+            )} */}
 
             {/* Policies */}
             {hasRouteAccess('policies') && (
@@ -486,10 +485,10 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   w-full flex items-center gap-4 ${isCollapsed ? 'justify-center px-2' : 'px-5'} py-3.5 rounded-xl font-bold transition-all
                   ${isActive ? 'bg-primary-light text-primary' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}
                 `}
-                title={isCollapsed ? t('sidebar_offline', 'المجموعات الأوفلاين') : ''}
+                title={isCollapsed ? t('sidebar_offline', 'Offline Students') : ''}
               >
                 <QrCode className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
-                {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_offline', 'المجموعات الأوفلاين')}</span>}
+                {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_offline', 'Offline Students')}</span>}
               </NavLink>
             )}
 
