@@ -1,4 +1,4 @@
-import { X, Mail, Phone, MapPin, ClipboardList, Clock, Trophy, Star, MessageSquare, Download, Award, CheckCircle2, XCircle, Calendar } from 'lucide-react';
+import { X, Mail, Phone, MapPin, ClipboardList, Clock, Trophy, Star, MessageSquare, Download, Award, CheckCircle2, XCircle, Calendar, BookOpen } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import WhatsAppPhone from '../ui/WhatsAppPhone';
 import { useTranslation } from 'react-i18next';
@@ -325,62 +325,65 @@ export default function ViewStudentModal({ isOpen, onClose, studentData: initial
             </div>
 
             {studentQuizzes && studentQuizzes.length > 0 ? (
-              <div className="max-h-64 overflow-y-auto pr-1 space-y-3 custom-scrollbar">
-                {studentQuizzes.map((item: any) => {
-                  const quizObj = item.quiz || item;
-                  const quizTitle = language === 'ar'
-                    ? (quizObj.title_ar || quizObj.title || quizObj.title_en || quizObj.name || t('quiz'))
-                    : (quizObj.title_en || quizObj.title || quizObj.title_ar || quizObj.name || t('quiz'));
+              <div className="bg-gray-50/50 rounded-2xl p-2.5 border border-gray-100">
+                <div className="max-h-56 overflow-y-auto px-1 space-y-2.5 custom-scrollbar">
+                  {studentQuizzes.map((item: any) => {
+                    const quizObj = item.quiz || item;
+                    const quizTitle = language === 'ar'
+                      ? (quizObj.title_ar || quizObj.title || quizObj.title_en || quizObj.name || t('quiz'))
+                      : (quizObj.title_en || quizObj.title || quizObj.title_ar || quizObj.name || t('quiz'));
 
-                  const score = Number(item.score ?? item.result ?? 0);
-                  const totalPoints = Number(item.total_points ?? item.totalPoints ?? quizObj.total_points ?? 0);
-                  const passPoints = Number(item.pass_points ?? item.passPoints ?? quizObj.pass_points ?? 0);
-                  const isPassed = typeof item.passed === 'boolean'
-                    ? item.passed
-                    : (passPoints > 0 ? score >= passPoints : true);
-                  const percentage = totalPoints > 0
-                    ? Math.round((score / totalPoints) * 100)
-                    : 0;
+                    const courseName = language === 'ar'
+                      ? (quizObj.course?.title_ar || quizObj.course?.title || quizObj.course?.name || quizObj.course?.name_ar || item.course?.title_ar || item.course?.title || item.course?.name || quizObj.courseName || item.courseName)
+                      : (quizObj.course?.title_en || quizObj.course?.title || quizObj.course?.name || quizObj.course?.name_en || item.course?.title_en || item.course?.title || item.course?.name || quizObj.courseName || item.courseName);
 
-                  const durationMin = quizObj.duration_min || quizObj.duration;
-                  const submissionDate = item.submittedAt || item.submitted_at || item.createdAt || item.created_at;
+                    const score = Number(item.score ?? item.result ?? 0);
+                    const totalPoints = Number(item.total_points ?? item.totalPoints ?? quizObj.total_points ?? 0);
+                    const passPoints = Number(item.pass_points ?? item.passPoints ?? quizObj.pass_points ?? 0);
+                    const isPassed = typeof item.passed === 'boolean'
+                      ? item.passed
+                      : (passPoints > 0 ? score >= passPoints : true);
 
-                  return (
-                    <div
-                      key={item.id || item.quiz_id || Math.random()}
-                      className="bg-gray-50/80 hover:bg-gray-50 rounded-2xl p-4 border border-gray-100 transition-all hover:border-indigo-100 flex flex-col gap-3"
-                    >
-                      <div className="flex justify-between items-start gap-3">
-                        <div className="flex items-start gap-3">
+                    const durationMin = quizObj.duration_min || quizObj.duration;
+                    const submissionDate = item.submittedAt || item.submitted_at || item.createdAt || item.created_at;
+
+                    return (
+                      <div
+                        key={item.id || item.quiz_id || Math.random()}
+                        className="bg-white hover:bg-indigo-50/30 rounded-xl p-3.5 border border-gray-100 transition-all hover:border-indigo-200 flex items-center justify-between gap-3 shadow-xs"
+                      >
+                        <div className="flex items-start gap-3 min-w-0 flex-1">
                           <div
-                            className={`p-2.5 rounded-xl mt-0.5 shrink-0 ${
+                            className={`p-2 rounded-lg mt-0.5 shrink-0 ${
                               isPassed ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
                             }`}
                           >
                             <Award className="w-4 h-4" />
                           </div>
-                          <div>
-                            <h5 className="text-sm font-bold text-gray-900 leading-snug">
+                          <div className="min-w-0 flex-1">
+                            <h5 className="text-xs font-bold text-gray-900 leading-snug truncate">
                               {quizTitle}
                             </h5>
-                            <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+
+                            <div className="flex items-center gap-2.5 mt-1 flex-wrap">
+                              {courseName && (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">
+                                  <BookOpen className="w-2.5 h-2.5" />
+                                  {courseName}
+                                </span>
+                              )}
                               {durationMin ? (
-                                <span className="flex items-center gap-1 text-[11px] font-medium text-gray-400">
-                                  <Clock className="w-3 h-3 text-gray-400" />
+                                <span className="flex items-center gap-1 text-[10px] font-medium text-gray-400">
+                                  <Clock className="w-2.5 h-2.5 text-gray-400" />
                                   {durationMin} {language === 'ar' ? 'دقيقة' : 'min'}
                                 </span>
                               ) : null}
                               {submissionDate ? (
-                                <span className="flex items-center gap-1 text-[11px] font-medium text-gray-400">
-                                  <Calendar className="w-3 h-3 text-gray-400" />
+                                <span className="flex items-center gap-1 text-[10px] font-medium text-gray-400">
+                                  <Calendar className="w-2.5 h-2.5 text-gray-400" />
                                   {new Date(submissionDate).toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-US')}
                                 </span>
                               ) : null}
-                              {passPoints > 0 && (
-                                <span className="text-[11px] font-semibold text-gray-500">
-                                  {t('passPoints') || 'Pass Score'}: <strong className="text-gray-700">{passPoints}</strong>
-                                </span>
-                              )}
                             </div>
                           </div>
                         </div>
@@ -388,38 +391,33 @@ export default function ViewStudentModal({ isOpen, onClose, studentData: initial
                         {/* Status & Score */}
                         <div className="flex flex-col items-end gap-1 shrink-0">
                           <span
-                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold ${
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold ${
                               isPassed
                                 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
                                 : 'bg-rose-50 text-rose-700 border border-rose-200/60'
                             }`}
                           >
                             {isPassed ? (
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                             ) : (
-                              <XCircle className="w-3.5 h-3.5 text-rose-600" />
+                              <XCircle className="w-3 h-3 text-rose-600" />
                             )}
                             {isPassed ? (t('passed') || 'Passed') : (t('failed') || 'Failed')}
                           </span>
-                          <span className="text-xs font-black text-gray-900">
-                            {score} / {totalPoints}{' '}
-                            <span className="text-[10px] text-gray-400 font-bold">({percentage}%)</span>
-                          </span>
+                          <div className="text-end">
+                            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block leading-tight">
+                              {t('score') || (language === 'ar' ? 'الدرجة' : 'Score')}
+                            </span>
+                            <span className="text-xs font-black text-gray-900 leading-tight">
+                              {score}{' '}
+                              <span className="text-[10px] font-semibold text-gray-400">/ {totalPoints}</span>
+                            </span>
+                          </div>
                         </div>
                       </div>
-
-                      {/* Progress Bar */}
-                      <div className="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all duration-500 ${
-                            isPassed ? 'bg-emerald-500' : 'bg-rose-500'
-                          }`}
-                          style={{ width: `${Math.min(100, Math.max(0, percentage))}%` }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             ) : (
               <div className="bg-gray-50/50 rounded-2xl p-6 border border-gray-100 border-dashed flex flex-col items-center justify-center text-center">
@@ -448,11 +446,15 @@ export default function ViewStudentModal({ isOpen, onClose, studentData: initial
           width: 5px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
+          background: #f1f5f9;
+          border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #e2e8f0;
+          background: #cbd5e1;
           border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #94a3b8;
         }
       `}} />
     </div>
