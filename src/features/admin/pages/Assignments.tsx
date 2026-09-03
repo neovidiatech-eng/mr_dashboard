@@ -1,12 +1,15 @@
 import { useState, useMemo } from 'react';
-import { Search, ClipboardCheck, Clock, CheckCircle2, AlertCircle, ChevronDown, ChevronLeft, ChevronRight, Eye, MoreVertical, FileText, Download } from 'lucide-react';
+import { Search, ClipboardCheck, Clock, CheckCircle2, AlertCircle, ChevronDown, ChevronLeft, ChevronRight, Eye, MoreVertical, FileText, Download, Plus, Edit, Trash2 } from 'lucide-react';
 import { baseURL } from '../../../consts';
 import { useLanguage } from '../../../contexts/LanguageContext';
-import { useGetAssignments } from '../../../hooks/useAssignment';
+import { useGetAssignments, useDeleteAssignment } from '../../../hooks/useAssignment';
 import { HomeworkItem } from '../../../types/assignment';
 import { TableSkeleton } from '../../../components/ui/CustomSkeleton';
 import { Table, Dropdown } from 'antd';
 import ViewAssignmentModal from '../../../components/modals/ViewAssignmentModal';
+import AddAssignmentModal from '../../../components/modals/AddAssignmentModal';
+import ConfirmModal from '../../../components/modals/ConfirmModal';
+import { t } from 'i18next';
 
 export default function Assignments() {
   const { language } = useLanguage();
@@ -14,10 +17,15 @@ export default function Assignments() {
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedAssignmentForView, setSelectedAssignmentForView] = useState<HomeworkItem | null>(null);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [selectedAssignmentForEdit, setSelectedAssignmentForEdit] = useState<HomeworkItem | null>(null);
+  const [selectedAssignmentForDelete, setSelectedAssignmentForDelete] = useState<HomeworkItem | null>(null);
+  const [isEditAssignmentModalOpen, setIsEditAssignmentModalOpen] = useState<boolean>(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState<boolean>(false);
+  const [isAssignmentAddModalOpen, setIsAssignmentAddModalOpen] = useState<boolean>(false);
   const itemsPerPage = 10;
 
   const { data: assignmentsData, isLoading } = useGetAssignments();
+  const deleteMutation = useDeleteAssignment();
   const assignments: HomeworkItem[] = assignmentsData?.data?.items || [];
 
   const text = {
@@ -41,6 +49,10 @@ export default function Assignments() {
     graded: { ar: 'تم التصحيح', en: 'Graded' },
     completed: { ar: 'مكتمل', en: 'Completed' },
     view: { ar: 'عرض', en: 'View' },
+    edit: { ar: 'تعديل', en: 'Edit' },
+    delete: { ar: 'حذف', en: 'Delete' },
+    deleteConfirmTitle: { ar: 'تأكيد الحذف', en: 'Confirm Deletion' },
+    deleteConfirmDesc: { ar: 'هل أنت متأكد من حذف هذا الواجب؟', en: 'Are you sure you want to delete this assignment?' },
     noResults: { ar: 'لا توجد واجبات تطابق بحثك', en: 'No assignments match your search' },
     attachmentsCol: { ar: 'المرفقات', en: 'Attachments' },
     gradeCol: { ar: 'الدرجة', en: 'Grade' },
@@ -222,16 +234,43 @@ export default function Assignments() {
       title: text.actions[language],
       align: 'right' as const,
       render: (_: any, record: HomeworkItem) => {
-        const items = [
+      const items = [
           {
-            key: 'view',
-            label: <span className="flex items-center gap-2 text-xs font-bold text-gray-700"><Eye className="w-3.5 h-3.5" /> {text.view[language]}</span>,
-            onClick: () => {
+            key: "view",
+            label: (
+              <span className="flex items-center gap-2 text-xs font-bold text-gray-700">
+                <Eye className="w-3.5 h-3.5" /> View
+              </span>
+            ),
+            onClick:()=>{
               setSelectedAssignmentForView(record);
               setIsViewModalOpen(true);
+            }
+           
+          },
+          {
+            key: "edit",
+            label: (
+              <span className="flex items-center gap-2 text-xs font-bold text-gray-700">
+                <Edit className="w-3.5 h-3.5" /> Edit
+              </span>
+            ),
+            onClick: () => {
+              setSelectedAssignmentForEdit(record);
+              setIsEditAssignmentModalOpen(true);
             },
           },
-        ];
+          {
+            key: "delete",
+            label: (
+              <span className="flex items-center gap-2 text-xs font-bold text-red-600">
+                <Trash2 className="w-3.5 h-3.5" /> Delete
+              </span>
+            ),
+            onClick: () => {
+              setSelectedAssignmentForDelete(record);
+            },
+          },]
         return (
           <Dropdown menu={{ items }} placement="bottomRight" trigger={['click']}>
             <button className="p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors">
@@ -273,6 +312,16 @@ export default function Assignments() {
           <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-1">{text.title[language]}</h1>
             <p className="text-gray-500 text-sm font-medium">{text.subtitle[language]}</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setIsAssignmentAddModalOpen(true)}
+              className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-full transition-colors font-bold text-sm shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              {t('create_assignment', 'Create Assignment')}
+            </button>
+
           </div>
         </div>
 
@@ -325,12 +374,6 @@ export default function Assignments() {
               pagination={false}
               className="w-full min-w-[900px]"
               rowClassName="hover:bg-gray-50/50 transition-colors group cursor-pointer"
-              onRow={(record) => ({
-                onClick: () => {
-                  setSelectedAssignmentForView(record);
-                  setIsViewModalOpen(true);
-                },
-              })}
             />
           )}
         </div>
@@ -378,6 +421,44 @@ export default function Assignments() {
           setSelectedAssignmentForView(null);
         }}
         assignment={selectedAssignmentForView}
+      />
+      {/* Add Assignment Modal */}
+      <AddAssignmentModal
+        isOpen={isAssignmentAddModalOpen}
+        onClose={() => {
+          setIsAssignmentAddModalOpen(false);
+        }}
+        initialData={null}
+      />
+
+      {/* Edit Assignment Modal */}
+      <AddAssignmentModal
+        isOpen={isEditAssignmentModalOpen}
+        onClose={() => {
+          setIsEditAssignmentModalOpen(false);
+          setSelectedAssignmentForEdit(null);
+        }}
+        initialData={selectedAssignmentForEdit}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={selectedAssignmentForDelete !== null}
+        onClose={() => {
+          setSelectedAssignmentForDelete(null);
+        }}
+        onConfirm={() => {
+          if (selectedAssignmentForDelete) {
+            deleteMutation.mutate(selectedAssignmentForDelete.id, {
+              onSuccess: () => {
+                setSelectedAssignmentForDelete(null);
+              }
+            });
+          }
+        }}
+        title={text.deleteConfirmTitle[language]}
+        message={`${text.deleteConfirmDesc[language]} "${selectedAssignmentForDelete?.title || ''}"`}
+        confirmText={text.delete[language]}
       />
 
       <style dangerouslySetInnerHTML={{

@@ -937,5 +937,15 @@
   "no_english_title": "لا يوجد عنوان بالإنجليزية",
   "no_arabic_content": "لا يوجد محتوى بالعربية",
   "no_english_content": "لا يوجد محتوى بالإنجليزية",
-  "excerpt_label": "الملخص:"
+  "excerpt_label": "الملخص:",
+  "create_assignment": "إنشاء واجب",
+  "assignment_details": "تفاصيل الواجب",
+  "assignment_added_success": "تم إضافة الواجب بنجاح!",
+  "assignment_updated_success": "تم تحديث الواجب بنجاح!",
+  "assignment_deleted_success": "تم حذف الواجب بنجاح!",
+  "assignment_created_at": "تاريخ الإنشاء",
+  "no_assignments_found": "لا توجد واجبات",
+  "assignment_created_successfully": "تم إنشاء الواجب بنجاح",
+  "assignment_updated_successfully": "تم تحديث الواجب بنجاح",
+  "assignment_deleted_successfully": "تم حذف الواجب بنجاح"
 }

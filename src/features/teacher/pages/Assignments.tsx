@@ -93,14 +93,19 @@ export default function Assignments() {
   ], [assignments, language]);
 
   const filteredAssignments = useMemo(() => {
+    const search = searchTerm.toLowerCase().trim();
     return assignments.filter(assignment => {
       const studentName = assignment.student?.user?.name || '';
       const teacherName = assignment.teacher?.user?.name || '';
+      const title = assignment.title || assignment.title_en || assignment.title_ar || '';
+      const description = assignment.description || assignment.description_en || assignment.description_ar || '';
+
       const matchesSearch =
-        studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        teacherName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        assignment.description.toLowerCase().includes(searchTerm.toLowerCase());
+        !search ||
+        studentName.toLowerCase().includes(search) ||
+        teacherName.toLowerCase().includes(search) ||
+        title.toLowerCase().includes(search) ||
+        description.toLowerCase().includes(search);
 
       const matchesStatus = statusFilter === 'all' || assignment.status === statusFilter;
       return matchesSearch && matchesStatus;
@@ -174,15 +179,21 @@ export default function Assignments() {
     },
     {
       title: text.titleCol[language],
-      render: (_: any, record: HomeworkItem) => (
-        <span className="text-sm font-bold text-gray-900">{record.title}</span>
-      ),
+      render: (_: any, record: HomeworkItem) => {
+        const title = language === 'ar'
+          ? (record.title_ar || record.title_en || record.title)
+          : (record.title_en || record.title_ar || record.title);
+        return <span className="text-sm font-bold text-gray-900">{title || '—'}</span>;
+      },
     },
     {
       title: text.description[language],
-      render: (_: any, record: HomeworkItem) => (
-        <span className="text-sm text-gray-500 block max-w-[200px] truncate">{record.description}</span>
-      ),
+      render: (_: any, record: HomeworkItem) => {
+        const desc = language === 'ar'
+          ? (record.description_ar || record.description_en || record.description)
+          : (record.description_en || record.description_ar || record.description);
+        return <span className="text-sm text-gray-500 block max-w-[200px] truncate">{desc || '—'}</span>;
+      },
     },
     {
       title: text.dueDate[language],

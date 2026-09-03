@@ -1,3 +1,5 @@
+import { RankItem, Stage } from "./rank";
+
 export type SubscriptionStatus = 'pending' | 'approved' | 'rejected';
 
 export interface SubscriptionUser {
@@ -17,6 +19,10 @@ export interface SubscriptionUser {
   age?: number | null;
   birth_date?: string | null;
   birthDate?: string | null;
+  rankId?: string;
+  rank?: RankItem;
+  stageId?: string;
+  stage?: Stage;
 }
 export interface SubscriptionPlan {
   id: string;
@@ -43,6 +49,10 @@ export interface SubscriptionRequest {
   updatedAt: string;
   user: SubscriptionUser;
   plan: SubscriptionPlan;
+  rankId?: string;
+  rank?: RankItem;
+  stageId?: string;
+  stage?: Stage;
 }
 export interface SubscriptionRequestsResponse {
   message: string;

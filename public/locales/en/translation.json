@@ -921,5 +921,16 @@
   "no_english_title": "No English title",
   "no_arabic_content": "No Arabic content",
   "no_english_content": "No English content",
-  "excerpt_label": "Summary / Excerpt:"
+  "excerpt_label": "Summary / Excerpt:",
+  "create_assignment": "Create Assignment",
+  "assignment_details": "Assignment Details",
+  "add_new_assignment": "Add New Assignment",
+  "assignment_added_success": "Assignment added successfully!",
+  "assignment_updated_success": "Assignment updated successfully!",
+  "assignment_deleted_success": "Assignment deleted successfully!",
+  "assignment_created_at": "Created At",
+  "no_assignments_found": "No Assignments Found",
+  "assignment_created_successfully": "Assignment created successfully",
+  "assignment_updated_successfully": "Assignment updated successfully",
+  "assignment_deleted_successfully": "Assignment deleted successfully"
 }
