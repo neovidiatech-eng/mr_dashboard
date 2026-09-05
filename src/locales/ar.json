@@ -825,7 +825,7 @@
   "confirmDeleteTitle": "تأكيد الحذف؟",
   "permissionsList": {
     "DASHBOARD_READ": "قراءة لوحة التحكم",
-    "POLICIES_MANAGE": "إدارة السياسات",
+    "POLICIES_MANAGE": "إدارة السياسات", 
     "POLICIES_READ": "قراءة السياسات",
     "SETTINGS_UPDATE": "تحديث الإعدادات",
     "SETTINGS_READ": "قراءة الإعدادات"
