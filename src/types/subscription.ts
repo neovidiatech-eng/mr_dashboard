@@ -2,6 +2,16 @@ import { RankItem, Stage } from "./rank";
 
 export type SubscriptionStatus = 'pending' | 'approved' | 'rejected';
 
+export interface SubscriptionStudent {
+  id?: string;
+  user_id?: string;
+  rankId?: string | null;
+  stageId?: string | null;
+  rank?: RankItem | null;
+  stage?: Stage | null;
+  [key: string]: any;
+}
+
 export interface SubscriptionUser {
   id: string;
   email: string;
@@ -19,11 +29,13 @@ export interface SubscriptionUser {
   age?: number | null;
   birth_date?: string | null;
   birthDate?: string | null;
-  rankId?: string;
-  rank?: RankItem;
-  stageId?: string;
-  stage?: Stage;
+  rankId?: string | null;
+  rank?: RankItem | null;
+  stageId?: string | null;
+  stage?: Stage | null;
+  student?: SubscriptionStudent | null;
 }
+
 export interface SubscriptionPlan {
   id: string;
   name: string;
@@ -38,6 +50,7 @@ export interface SubscriptionPlan {
   updatedAt: string;
   active: boolean;
 }
+
 export interface SubscriptionRequest {
   id: string;
   planId: string;
@@ -49,11 +62,12 @@ export interface SubscriptionRequest {
   updatedAt: string;
   user: SubscriptionUser;
   plan: SubscriptionPlan;
-  rankId?: string;
-  rank?: RankItem;
-  stageId?: string;
-  stage?: Stage;
+  rankId?: string | null;
+  rank?: RankItem | null;
+  stageId?: string | null;
+  stage?: Stage | null;
 }
+
 export interface SubscriptionRequestsResponse {
   message: string;
   status: number;

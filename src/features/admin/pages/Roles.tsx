@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Trash2, Plus, Pencil, Search, ShieldCheck, Home } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Pagination from "../../../components/ui/Pagination";
-import { useDeleteRole, useAddRole, useSearchRoles, useUpdateRole, useAddPermissionsToRole } from "../hooks/useRoles";
+import { useDeleteRole, useAddRole, useSearchRoles, useUpdateRole } from "../hooks/useRoles";
 import AddRoleModal from "../../../components/modals/AddRoleModal";
 import { Role } from "../../../types/roles";
 import { RoleFormData } from "../../../lib/schemas/RoleSchema";
@@ -20,7 +20,6 @@ export default function Roles() {
     const { data: roles, isLoading } = useSearchRoles(debouncedSearch);
     const { mutate: addRole, isPending: isAdding } = useAddRole();
     const { mutate: updateRole, isPending: isUpdating } = useUpdateRole();
-    const { mutate: addPermissions, isPending: isAddingPermissions } = useAddPermissionsToRole();
     const { mutate: deleteRole } = useDeleteRole();
     const { confirm, ConfirmDialog } = useConfirm();
 
@@ -67,30 +66,16 @@ export default function Roles() {
     const handleSubmitRole = (data: RoleFormData) =>
         new Promise<boolean>((resolve) => {
             if (selectedRole) {
-                const addedPermissions = data.permissionIds.filter(
-                    (id: string) => !selectedRole.permissionIds.includes(id)
-                );
-
                 updateRole({
                     id: selectedRole.id,
-                    role: { name: data.name },
+                    role: {
+                        name: data.name,
+                        permissionIds: data.permissionIds,
+                    },
                 }, {
                     onSuccess: () => {
-                        if (addedPermissions.length > 0) {
-                            addPermissions({
-                                roleId: selectedRole.id,
-                                permissionIds: addedPermissions,
-                            }, {
-                                onSuccess: () => {
-                                    setSelectedRole(null);
-                                    resolve(true);
-                                },
-                                onError: () => resolve(false),
-                            });
-                        } else {
-                            setSelectedRole(null);
-                            resolve(true);
-                        }
+                        setSelectedRole(null);
+                        resolve(true);
                     },
                     onError: () => resolve(false),
                 });
@@ -279,7 +264,7 @@ export default function Roles() {
                 }}
                 onSubmit={handleSubmitRole}
                 initialData={selectedRole}
-                isLoading={isAdding || isUpdating || isAddingPermissions}
+                isLoading={isAdding || isUpdating}
             />
             {ConfirmDialog}
         </div>

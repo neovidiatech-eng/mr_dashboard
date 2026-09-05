@@ -5,11 +5,13 @@ export interface AgeRange {
 
 export interface Stage {
   id: string;
-  slug: string;
-  rankId: string;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
+  slug?: string;
+  rankId?: string;
+  name?: string;
+  name_ar?: string;
+  name_en?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface RankItem {

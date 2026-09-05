@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getAssignments, deleteAssignment, createAssignment, updateAssignment, assignAnswerToAssignment } from "../services/AssignmentServices"
 import ErrorService from "../utils/ErrorService"
-import { Assignment } from "../types/assignment"
 
 export const useGetAssignments = () => {
     return useQuery({
@@ -55,7 +54,10 @@ export const useCreateAssignment = () => {
 export const useUpdateAssignment = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ id, ...data }: { id: string } & Partial<Assignment>) => updateAssignment(id, data),
+        mutationFn: ({ id, data, ...rest }: { id: string; data?: any; [key: string]: any }) => {
+            const payload = data !== undefined ? data : rest;
+            return updateAssignment(id, payload);
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["assignments"] });
             ErrorService.success("Assignment updated successfully");

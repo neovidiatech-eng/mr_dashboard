@@ -7,13 +7,15 @@ export const getAssignments = async (): Promise<HomeworkResponse> => {
 }
 
 export const createAssignment = async (data: any): Promise<Assignment> => {
-    const response = await api.post("/homework", data)
-    return response.data
+    const headers = data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : undefined;
+    const response = await api.post("/homework", data, { headers });
+    return response.data;
 }
 
 export const updateAssignment = async (id: string, data: any): Promise<Assignment> => {
-    const response = await api.patch(`/homework/${id}`, data)
-    return response.data
+    const headers = data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : undefined;
+    const response = await api.patch(`/homework/${id}`, data, { headers });
+    return response.data;
 }
 
 export const deleteAssignment = async (id: string): Promise<void> => {
