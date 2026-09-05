@@ -163,36 +163,6 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
               {errors.color && <p className="text-xs text-red-500 font-bold px-2">{errors.color.message}</p>}
             </div>
 
-            {/* Arabic Stage Name Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                {language === 'ar' ? 'السنة الدراسية (بالعربية)' : 'Academic Year (Arabic)'}
-              </label>
-              <input
-                type="text"
-                dir="rtl"
-                className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start"
-                placeholder="مثل: الصف الأول الثانوي"
-                {...register('name_ar')}
-              />
-            </div>
-
-            {/* Academic Year (English) */}
-            <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                {language === 'ar' ? 'السنة الدراسية (بالإنجليزية)' : 'Academic Year (English)'}
-              </label>
-              <input
-                type="text"
-                dir="ltr"
-                className="w-full px-5 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary transition-all font-medium text-start"
-                placeholder="e.g. Grade 10"
-                {...register('name_en')}
-              />
-            </div>
-
             {/* Icon Upload */}
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
