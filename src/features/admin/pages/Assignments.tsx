@@ -159,12 +159,6 @@ export default function Assignments() {
       ),
     },
     {
-      title: text.teacher[language],
-      render: (_: any, record: HomeworkItem) => (
-        <span className="text-sm font-bold text-gray-700">{record.teacher?.user?.name || '—'}</span>
-      ),
-    },
-    {
       title: text.titleCol[language],
       render: (_: any, record: HomeworkItem) => {
         const title = language === 'ar'

@@ -4,7 +4,6 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import WhatsAppPhone from '../ui/WhatsAppPhone';
 import { SubscriptionRequest } from '../../types/subscription';
 import { baseURL } from '../../consts';
-import { useGetRanks } from '../../features/admin/hooks/useRank';
 
 interface ViewSubscriptionRequestModalProps {
   isOpen: boolean;
@@ -14,37 +13,19 @@ interface ViewSubscriptionRequestModalProps {
 
 export default function ViewSubscriptionRequestModal({ isOpen, onClose, request }: ViewSubscriptionRequestModalProps) {
   const { language } = useLanguage();
-  const { data: ranksData } = useGetRanks();
 
   if (!isOpen) return null;
 
-  const rank =
-    request.rank ||
-    request.user?.rank ||
-    ranksData?.data?.items?.find(
-      (r) => r.id === (request.rankId || request.user?.rankId)
-    );
-
-  const stage =
-    request.stage ||
-    request.user?.stage ||
-    rank?.stages?.find(
-      (s) => s.id === (request.stageId || request.user?.stageId)
-    );
+  const rank = request.user?.rank;
+  const stage = request.user?.stage;
 
   const rankName = rank
-    ? language === "ar"
-      ? rank.name_ar || rank.name || rank.name_en
-      : rank.name_en || rank.name || rank.name_ar
+    ? (language === "ar" ? rank.name_ar || rank.name_en : rank.name_en || rank.name_ar)
     : null;
 
-  const stageName =
-    stage?.name ||
-    (rank
-      ? language === "ar"
-        ? rank.stageName_ar || rank.stageName
-        : rank.stageName_en || rank.stageName
-      : null);
+  const stageName = stage
+    ? (language === "ar" ? stage.name_ar || stage.name_en : stage.name_en || stage.name_ar)
+    : null;
 
   const receiptImg = request.subscrption_img || request.subscription_img;
   const receiptUrl = receiptImg

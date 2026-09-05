@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { X, CheckCircle, XCircle, Trophy, User, Package, Loader2, GraduationCap } from "lucide-react";
 import { useLanguage } from "../../contexts/LanguageContext";
-import { useGetRanks } from "../../features/admin/hooks/useRank";
 import { SubscriptionRequest } from "../../types/subscription";
 
 interface UpdateSubscriptionStatusModalProps {
@@ -20,7 +19,6 @@ export default function UpdateSubscriptionStatusModal({
   initialStatus,
 }: UpdateSubscriptionStatusModalProps) {
   const { language } = useLanguage();
-  const { data: ranksData, isLoading: isLoadingRanks } = useGetRanks();
   const [status, setStatus] = useState<"approved" | "rejected">(initialStatus);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -30,39 +28,21 @@ export default function UpdateSubscriptionStatusModal({
 
   if (!isOpen || !request) return null;
 
-  const rank =
-    request.rank ||
-    request.user?.rank ||
-    ranksData?.data?.items?.find(
-      (r) => r.id === (request.rankId || request.user?.rankId)
-    );
-
-  const stage =
-    request.stage ||
-    request.user?.stage ||
-    rank?.stages?.find(
-      (s) => s.id === (request.stageId || request.user?.stageId)
-    );
+  const rank = request.user?.rank;
+  const stage = request.user?.stage;
 
   const rankName = rank
-    ? language === "ar"
-      ? rank.name_ar || rank.name || rank.name_en
-      : rank.name_en || rank.name || rank.name_ar
+    ? (language === "ar" ? rank.name_ar || rank.name_en : rank.name_en || rank.name_ar)
     : null;
 
-  const stageName =
-    stage?.name ||
-    (rank
-      ? language === "ar"
-        ? rank.stageName_ar || rank.stageName
-        : rank.stageName_en || rank.stageName
-      : null);
+  const stageName = stage
+    ? (language === "ar" ? stage.name_ar || stage.name_en : stage.name_en || stage.name_ar)
+    : null;
 
   const handleConfirm = async () => {
     try {
       setIsSubmitting(true);
-      const effectiveRankId = request.rankId || request.user?.rankId || rank?.id;
-      await onRequestStatusChange(status, status === "approved" ? effectiveRankId : undefined);
+      await onRequestStatusChange(status, status === "approved" ? (request.user?.rankId || rank?.id) : undefined);
       onClose();
     } catch (error) {
       console.error("Failed to update status:", error);
@@ -175,13 +155,7 @@ export default function UpdateSubscriptionStatusModal({
                   </span>
                 </div>
                 <p className="text-sm font-black text-slate-900 truncate">
-                  {isLoadingRanks ? (
-                    <span className="text-xs text-slate-400 italic">
-                      {text.loading[language]}
-                    </span>
-                  ) : (
-                    rankName || text.notSpecified[language]
-                  )}
+                  {rankName || text.notSpecified[language]}
                 </p>
               </div>
 
@@ -194,13 +168,7 @@ export default function UpdateSubscriptionStatusModal({
                   </span>
                 </div>
                 <p className="text-sm font-black text-slate-900 truncate">
-                  {isLoadingRanks ? (
-                    <span className="text-xs text-slate-400 italic">
-                      {text.loading[language]}
-                    </span>
-                  ) : (
-                    stageName || text.notSpecified[language]
-                  )}
+                  {stageName || text.notSpecified[language]}
                 </p>
               </div>
             </div>
