@@ -40,7 +40,7 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
             title_en: '',
             content_ar: '',
             content_en: '',
-            video: null,
+            video:'',
             pdf: null,
             slides: null,
             order: 1,
@@ -65,7 +65,7 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                     title_en: lecture.title_en || lecture.title || '',
                     content_ar: lecture.content_ar || lecture.content || '',
                     content_en: lecture.content_en || lecture.content || '',
-                    video: null,
+                    video: lecture.video_path || '',
                     pdf: lecture.pdf_path || lecture.pdfUrl || null,
                     slides: lecture.slides_path || lecture.slidesUrl || null,
                     order: lecture.order || 1,
@@ -77,7 +77,7 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                     title_en: '',
                     content_ar: '',
                     content_en: '',
-                    video: null,
+                    video: '',
                     pdf: null,
                     slides: null,
                     order: 1,
@@ -116,7 +116,7 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                 console.error('Failed auto-creating section for lecture', secErr);
             }
         }
-        if (values.video && values.video.length > 0) payload.video = values.video[0];
+        if (values.video) payload.video_path = values.video;
 
         if (isEditMode && lecture) {
             updateLecture({ id: lecture.id, data: payload }, {
@@ -253,13 +253,18 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
                             <Video size={14} className="text-indigo-500" /> {t('video')}
                         </label>
                         <input
-                            type="file"
-                            accept="video/*"
+                            type="url"
+                            placeholder="https://example.com"
                             {...register('video')}
                             className="w-full h-11 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all text-sm"
                         />
-                        {errors.video && <p className="text-red-500 text-xs mt-1 font-bold">{errors.video.message as string}</p>}
+                        {errors.video && (
+                            <p className="text-red-500 text-xs mt-1 font-bold">
+                                {errors.video.message as string}
+                            </p>
+                        )}
                     </div>
+
                     <div>
                         <label className="text-gray-700 font-bold flex items-center gap-2 mb-1.5 text-sm">
                             <Hash size={14} className="text-indigo-500" /> {t('orderLabel')}
@@ -357,7 +362,7 @@ export default function AddLectureModal({ visible, onClose, courseId, lecture, s
 
                 <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t border-gray-100">
                     <Button
-                         onClick={onClose}
+                        onClick={onClose}
                         className="h-11 px-6 rounded-xl font-bold text-gray-600 border-gray-200 hover:bg-gray-50"
                     >
                         {t('cancelBtn')}

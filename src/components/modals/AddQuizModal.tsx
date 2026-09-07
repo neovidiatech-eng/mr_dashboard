@@ -1,12 +1,19 @@
-import { useState, useEffect } from 'react';
-import { X, Plus, Trash2, CheckCircle2, ListChecks, HelpCircle, Save, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import {
+  ListChecks,
+  X,
+  Plus,
+  Trash2,
+  CheckCircle2,
+  HelpCircle,
+  Clock,
+  Sparkles,
+  Save,
+} from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 import ErrorService from '../../utils/ErrorService';
 import { MCQQuestion, TrueFalseQuestion } from '../../types/courseExam';
-import { useCreateQuiz, useUpdateQuiz, useQuizById } from '../../hooks/useQuiz';
-import { useAddItemsToSection } from '../../hooks/useSections';
-import { createSection } from '../../services/SectionServices';
-import { useQueryClient } from '@tanstack/react-query';
+import { useCreateQuiz, useUpdateQuiz, useQuizById } from '../../hooks/useQuizzes';
 import { CreateQuizPayload, CreateQuizQuestionPayload } from '../../types/quiz';
 import { Section } from '../../types/courses';
 
@@ -20,24 +27,30 @@ export interface AddQuizProps {
   quiz?: any;
 }
 
-export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaultSectionId, courseId, quiz }: AddQuizProps) {
+export default function AddQuizModal({
+  isOpen,
+  onClose,
+  onSave,
+  sections,
+  defaultSectionId,
+  courseId,
+  quiz,
+}: AddQuizProps) {
   const { language } = useLanguage();
   const isAr = language === 'ar';
-  const queryClient = useQueryClient();
 
-  const editingQuizId = isOpen && quiz ? (quiz.id || quiz.item_id || quiz.details?.id) : null;
+  const editingQuizId = isOpen && quiz ? quiz.id || quiz.item_id || quiz.details?.id : null;
   const { data: fetchedQuizData } = useQuizById(editingQuizId);
   const activeQuiz = fetchedQuizData || quiz?.details || quiz;
 
   const { mutateAsync: createQuiz, isPending: isCreating } = useCreateQuiz();
   const { mutateAsync: updateQuiz, isPending: isUpdating } = useUpdateQuiz();
-  const { mutateAsync: addItemsToSection } = useAddItemsToSection();
   const isPending = isCreating || isUpdating;
   const isEditMode = !!quiz;
 
   const [activeTab, setActiveTab] = useState<'mcq' | 'true_false'>('mcq');
 
-  // Quiz general info
+  // General Info Form State
   const [quizTitle, setQuizTitle] = useState('');
   const [titleEn, setTitleEn] = useState('');
   const [descriptionAr, setDescriptionAr] = useState('');
@@ -45,7 +58,22 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
   const [quizDuration, setQuizDuration] = useState(30);
   const [passPoints, setPassPoints] = useState(50);
   const [quizOrder, setQuizOrder] = useState<number>(1);
-  const [selectedSectionId, setSelectedSectionId] = useState<string>(defaultSectionId || sections?.[0]?.id || '');
+  const [selectedSectionId, setSelectedSectionId] = useState<string>(
+    defaultSectionId || sections?.[0]?.id || ''
+  );
+
+  // Questions State
+  const [mcqQuestions, setMcqQuestions] = useState<MCQQuestion[]>([
+    {
+      text: '',
+      points: 1,
+      options: [
+        { text: '', isCorrect: true },
+        { text: '', isCorrect: false },
+      ],
+    },
+  ]);
+  const [trueFalseQuestions, setTrueFalseQuestions] = useState<TrueFalseQuestion[]>([]);
 
   useEffect(() => {
     if (defaultSectionId) {
@@ -53,7 +81,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
     } else if (sections && sections.length > 0 && !selectedSectionId) {
       setSelectedSectionId(sections[0].id);
     }
-  }, [defaultSectionId, sections]);
+  }, [defaultSectionId, sections, selectedSectionId]);
 
   useEffect(() => {
     if (isOpen) {
@@ -94,21 +122,33 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
                   q.title ||
                   '';
             const points = q.points || q.marks || 1;
-            const optionsList = q.options || q.quiz_options || q.QuizOptions || q.choices || q.answers || [];
+            const optionsList =
+              q.options || q.quiz_options || q.QuizOptions || q.choices || q.answers || [];
 
             const isTrueFalse =
               qType === 'TRUE_FALSE' ||
               qType === 'BOOLEAN' ||
               (optionsList.length === 2 &&
                 optionsList.some((o: any) => {
-                  const oTxt = (typeof o === 'string' ? o : o.option_text_ar || o.option_text_en || o.option_text || o.text || '').toLowerCase();
+                  const oTxt = (
+                    typeof o === 'string'
+                      ? o
+                      : o.option_text_ar || o.option_text_en || o.option_text || o.text || ''
+                  ).toLowerCase();
                   return oTxt === 'true' || oTxt === 'صح' || oTxt === 'false' || oTxt === 'خطأ';
                 }));
 
             if (isTrueFalse) {
               const isCorrectTrue = optionsList.some((o: any) => {
-                const isCorr = typeof o === 'object' && o !== null ? !!(o.is_correct || o.isCorrect || o.correct || o.is_answer) : false;
-                const oTxt = (typeof o === 'string' ? o : o.option_text_ar || o.option_text_en || o.option_text || o.text || '').toLowerCase();
+                const isCorr =
+                  typeof o === 'object' && o !== null
+                    ? !!(o.is_correct || o.isCorrect || o.correct || o.is_answer)
+                    : false;
+                const oTxt = (
+                  typeof o === 'string'
+                    ? o
+                    : o.option_text_ar || o.option_text_en || o.option_text || o.text || ''
+                ).toLowerCase();
                 return isCorr && (oTxt === 'true' || oTxt === 'صح');
               });
               tfs.push({
@@ -136,7 +176,10 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
                       o.value ||
                       o.name ||
                       '';
-                const isCorr = typeof o === 'object' && o !== null ? !!(o.is_correct || o.isCorrect || o.correct || o.is_answer) : idx === 0;
+                const isCorr =
+                  typeof o === 'object' && o !== null
+                    ? !!(o.is_correct || o.isCorrect || o.correct || o.is_answer)
+                    : idx === 0;
                 return {
                   text: oTxt,
                   isCorrect: isCorr,
@@ -145,7 +188,13 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
               mcqs.push({
                 text,
                 points,
-                options: parsedOptions.length > 0 ? parsedOptions : [{ text: '', isCorrect: true }, { text: '', isCorrect: false }],
+                options:
+                  parsedOptions.length > 0
+                    ? parsedOptions
+                    : [
+                        { text: '', isCorrect: true },
+                        { text: '', isCorrect: false },
+                      ],
               });
             }
           });
@@ -178,24 +227,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
     }
   }, [isOpen, activeQuiz]);
 
-  // MCQ Questions State
-  const [mcqQuestions, setMcqQuestions] = useState<MCQQuestion[]>([
-    {
-      text: '',
-      points: 1,
-      options: [
-        { text: '', isCorrect: true },
-        { text: '', isCorrect: false },
-      ],
-    },
-  ]);
-
-  // True / False Questions State
-  const [trueFalseQuestions, setTrueFalseQuestions] = useState<TrueFalseQuestion[]>([]);
-
-  if (!isOpen) return null;
-
-  // --- MCQ Handlers ---
+  // MCQ Handlers
   const handleAddMCQQuestion = () => {
     setMcqQuestions((prev) => [
       ...prev,
@@ -212,7 +244,9 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
 
   const handleRemoveMCQQuestion = (qIndex: number) => {
     if (mcqQuestions.length + trueFalseQuestions.length <= 1) {
-      ErrorService.warning(isAr ? 'يجب أن يحتوي الكويز على سؤال واحد على الأقل' : 'Must have at least one question');
+      ErrorService.warning(
+        isAr ? 'يجب أن يحتوي الكويز على سؤال واحد على الأقل' : 'Must have at least one question'
+      );
       return;
     }
     setMcqQuestions((prev) => prev.filter((_, i) => i !== qIndex));
@@ -235,15 +269,14 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
       prev.map((q, i) => {
         if (i !== qIndex) return q;
         if (q.options.length >= 6) {
-          ErrorService.warning(isAr ? 'الحد الأقصى 6 اختيارات لكل سؤال' : 'Max 6 options per question');
+          ErrorService.warning(
+            isAr ? 'الحد الأقصى 6 اختيارات لكل سؤال' : 'Max 6 options per question'
+          );
           return q;
         }
         return {
           ...q,
-          options: [
-            ...q.options,
-            { text: '', isCorrect: false },
-          ],
+          options: [...q.options, { text: '', isCorrect: false }],
         };
       })
     );
@@ -254,7 +287,9 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
       prev.map((q, i) => {
         if (i !== qIndex) return q;
         if (q.options.length <= 2) {
-          ErrorService.warning(isAr ? 'يجب أن يحتوي السؤال على اختيارين على الأقل' : 'Must have at least 2 options');
+          ErrorService.warning(
+            isAr ? 'يجب أن يحتوي السؤال على اختيارين على الأقل' : 'Must have at least 2 options'
+          );
           return q;
         }
         const wasCorrect = q.options[optIndex].isCorrect;
@@ -296,7 +331,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
     );
   };
 
-  // --- True / False Handlers ---
+  // True / False Handlers
   const handleAddTFQuestion = () => {
     setTrueFalseQuestions((prev) => [
       ...prev,
@@ -310,7 +345,9 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
 
   const handleRemoveTFQuestion = (qIndex: number) => {
     if (mcqQuestions.length + trueFalseQuestions.length <= 1) {
-      ErrorService.warning(isAr ? 'يجب أن يحتوي الكويز على سؤال واحد على الأقل' : 'Must have at least one question');
+      ErrorService.warning(
+        isAr ? 'يجب أن يحتوي الكويز على سؤال واحد على الأقل' : 'Must have at least one question'
+      );
       return;
     }
     setTrueFalseQuestions((prev) => prev.filter((_, i) => i !== qIndex));
@@ -334,7 +371,13 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
     );
   };
 
-  // --- Validation & Submit ---
+  // Totals
+  const totalMCQPoints = mcqQuestions.reduce((acc, q) => acc + (q.points || 0), 0);
+  const totalTFPoints = trueFalseQuestions.reduce((acc, q) => acc + (q.points || 0), 0);
+  const totalScore = totalMCQPoints + totalTFPoints;
+  const totalQuestions = mcqQuestions.length + trueFalseQuestions.length;
+
+  // Validation & Submit Handler
   const handleSubmit = async () => {
     if (!quizTitle.trim()) {
       ErrorService.error(isAr ? 'يرجى كتابة عنوان الكويز' : 'Please enter quiz title');
@@ -345,7 +388,9 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
     const activeTfs = trueFalseQuestions.filter((q) => q.text.trim());
 
     if (activeMcqs.length + activeTfs.length === 0) {
-      ErrorService.error(isAr ? 'يجب إضافة سؤال واحد على الأقل في الكويز وتعبئة بياناته' : 'Must add and fill at least one question');
+      ErrorService.error(
+        isAr ? 'يجب إضافة سؤال واحد على الأقل في الكويز وتعبئة بياناته' : 'Must add and fill at least one question'
+      );
       return;
     }
 
@@ -353,20 +398,32 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
     for (let i = 0; i < activeMcqs.length; i++) {
       const q = activeMcqs[i];
       if (!q.text.trim()) {
-        ErrorService.error(isAr ? `يرجى إدخال نص السؤال رقم ${i + 1} في أسئلة الاختيار من متعدد` : `Please enter question text for MCQ #${i + 1}`);
+        ErrorService.error(
+          isAr
+            ? `يرجى إدخال نص السؤال رقم ${i + 1} في أسئلة الاختيار من متعدد`
+            : `Please enter question text for MCQ #${i + 1}`
+        );
         setActiveTab('mcq');
         return;
       }
       for (let j = 0; j < q.options.length; j++) {
         if (!q.options[j].text.trim()) {
-          ErrorService.error(isAr ? `يرجى ملء الاختيار رقم ${j + 1} للسؤال رقم ${i + 1}` : `Please fill option #${j + 1} for MCQ #${i + 1}`);
+          ErrorService.error(
+            isAr
+              ? `يرجى ملء الاختيار رقم ${j + 1} للسؤال رقم ${i + 1}`
+              : `Please fill option #${j + 1} for MCQ #${i + 1}`
+          );
           setActiveTab('mcq');
           return;
         }
       }
       const hasCorrect = q.options.some((opt) => opt.isCorrect);
       if (!hasCorrect) {
-        ErrorService.error(isAr ? `يرجى تحديد الإجابة الصحيحة للسؤال رقم ${i + 1}` : `Please select correct answer for MCQ #${i + 1}`);
+        ErrorService.error(
+          isAr
+            ? `يرجى تحديد الإجابة الصحيحة للسؤال رقم ${i + 1}`
+            : `Please select correct answer for MCQ #${i + 1}`
+        );
         setActiveTab('mcq');
         return;
       }
@@ -376,7 +433,11 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
     for (let i = 0; i < activeTfs.length; i++) {
       const q = activeTfs[i];
       if (!q.text.trim()) {
-        ErrorService.error(isAr ? `يرجى إدخال نص السؤال رقم ${i + 1} في أسئلة صح وخطأ` : `Please enter question text for True/False #${i + 1}`);
+        ErrorService.error(
+          isAr
+            ? `يرجى إدخال نص السؤال رقم ${i + 1} في أسئلة صح وخطأ`
+            : `Please enter question text for True/False #${i + 1}`
+        );
         setActiveTab('true_false');
         return;
       }
@@ -424,70 +485,25 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
     }
 
     try {
-      let createdQuizId = quiz?.id;
       if (onSave) {
-        const result: any = await onSave(quizPayload);
-        if (result?.id || result?.data?.id) {
-          createdQuizId = result.id || result.data.id;
-        }
-      } else if (isEditMode && createdQuizId) {
-        await updateQuiz({ id: createdQuizId, data: quizPayload });
-        ErrorService.success(isAr ? 'تم تحديث الكويز بنجاح!' : 'Quiz updated successfully!');
+        await onSave(quizPayload);
+      } else if (isEditMode && editingQuizId) {
+        await updateQuiz({ id: editingQuizId, data: quizPayload, courseId });
       } else {
-        const res: any = await createQuiz(quizPayload);
-        createdQuizId = res?.id || res?.data?.id;
-        ErrorService.success(isAr ? 'تم إنشاء الكويز بنجاح!' : 'Quiz created successfully!');
+        await createQuiz({
+          data: quizPayload,
+          targetSectionId: selectedSectionId,
+          courseId,
+          order: Number(quizOrder) || 1,
+        });
       }
-
-      const isValidUUID = (id?: string) =>
-        !!id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-
-      let targetSecId = selectedSectionId;
-      if ((!targetSecId || !isValidUUID(targetSecId)) && courseId) {
-        try {
-          const newSec = await createSection({
-            course_id: courseId,
-            name_ar: 'محتوى الكورس',
-            name_en: 'Course Content',
-            items: createdQuizId ? [{ item_id: createdQuizId, item_type: 'QUIZ', order: Number(quizOrder) || 1 }] : [],
-          });
-          targetSecId = newSec.id;
-        } catch (secErr) {
-          console.error('Failed to auto-create section for quiz:', secErr);
-        }
-      }
-
-      if (!isEditMode && createdQuizId && targetSecId && isValidUUID(targetSecId)) {
-        try {
-          await addItemsToSection({
-            sectionId: targetSecId,
-            items: [{ item_id: createdQuizId, item_type: 'QUIZ', order: Number(quizOrder) || 1 }],
-            courseId,
-          });
-        } catch (err) {
-          console.error('Failed to link quiz to section:', err);
-        }
-      }
-
-      if (courseId) {
-        queryClient.invalidateQueries({ queryKey: ['sections', courseId] });
-        queryClient.invalidateQueries({ queryKey: ['courses', courseId] });
-      }
-      queryClient.invalidateQueries({ queryKey: ['sections'] });
-      queryClient.invalidateQueries({ queryKey: ['courses'] });
-      queryClient.invalidateQueries({ queryKey: ['quizzes'] });
       onClose();
-    } catch (error: any) {
-      ErrorService.error(
-        error?.response?.data?.message || error?.message || (isAr ? 'حدث خطأ أثناء حفظ الكويز' : 'Failed to save quiz')
-      );
+    } catch {
+      // Handled in mutation onError
     }
   };
 
-  // Calculate totals
-  const totalMCQPoints = mcqQuestions.reduce((acc, q) => acc + (q.points || 0), 0);
-  const totalTFPoints = trueFalseQuestions.reduce((acc, q) => acc + (q.points || 0), 0);
-  const totalScore = totalMCQPoints + totalTFPoints;
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -495,7 +511,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
         dir={isAr ? 'rtl' : 'ltr'}
         className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 text-start"
       >
-        {/* Header */}
+        {/* Modal Header */}
         <div className="bg-primary px-6 py-4 flex items-center justify-between text-white shrink-0">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-white/10 rounded-xl">
@@ -503,10 +519,18 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
             </div>
             <div>
               <h2 className="text-xl font-bold">
-                {isAr ? 'إنشاء وتصميم كويز جديد (/quiz)' : 'Create New Quiz (/quiz)'}
+                {isEditMode
+                  ? isAr
+                    ? 'تعديل الكويز'
+                    : 'Edit Quiz'
+                  : isAr
+                  ? 'إنشاء وتصميم كويز جديد (/quiz)'
+                  : 'Create New Quiz (/quiz)'}
               </h2>
               <p className="text-xs text-white/80">
-                {isAr ? 'إضافة أسئلة اختيار من متعدد وصح أو خطأ للكويز' : 'Add MCQ and True/False questions for Quiz'}
+                {isAr
+                  ? 'إضافة أسئلة اختيار من متعدد وصح أو خطأ للكويز'
+                  : 'Add MCQ and True/False questions for Quiz'}
               </p>
             </div>
           </div>
@@ -518,26 +542,8 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
           </button>
         </div>
 
-        {/* Quiz Title & Duration Bar */}
+        {/* Quiz General Info Form */}
         <div className="p-6 bg-slate-50 border-b border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-4 shrink-0">
-          {/* {sections && sections.length > 0 && (
-            <div className="md:col-span-2">
-              <label className="block text-xs font-bold text-primary mb-1">
-                {isAr ? 'اختر السكشن المراد إضافة الكويز له *' : 'Select Target Section *'}
-              </label>
-              <select
-                value={selectedSectionId}
-                onChange={(e) => setSelectedSectionId(e.target.value)}
-                className="w-full px-4 py-2.5 bg-white border border-primary/30 rounded-xl text-sm font-bold text-gray-800 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start shadow-sm cursor-pointer"
-              >
-                {sections.map((sec) => (
-                  <option key={sec.id} value={sec.id}>
-                    {isAr ? sec.name_ar || sec.name : sec.name_en || sec.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )} */}
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">
               {isAr ? 'عنوان الكويز (بالعربي) *' : 'Quiz Title (Arabic) *'}
@@ -607,6 +613,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
               className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
             />
           </div>
+
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">
               {isAr ? 'درجات النجاح' : 'Pass Points'}
@@ -620,6 +627,7 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
               className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
             />
           </div>
+
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1">
               {isAr ? 'الترتيب *' : 'Order *'}
@@ -636,302 +644,351 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
         </div>
 
         {/* Tabs Switcher */}
-        <div className="flex border-b border-slate-200 bg-white px-6 pt-2 shrink-0">
-          <button
-            type="button"
-            onClick={() => setActiveTab('mcq')}
-            className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-all ${activeTab === 'mcq'
-                ? 'border-primary text-primary font-bold'
-                : 'border-transparent text-slate-500 hover:text-slate-700'
+        <div className="px-6 pt-4 bg-white border-b border-slate-200 flex items-center justify-between shrink-0">
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setActiveTab('mcq')}
+              className={`pb-3 px-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${
+                activeTab === 'mcq'
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
               }`}
-          >
-            <ListChecks className="w-4 h-4" />
-            <span>{isAr ? 'اختيار من متعدد (MCQ)' : 'Multiple Choice (MCQ)'}</span>
-            <span className="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700 font-bold">
-              {mcqQuestions.length}
-            </span>
-          </button>
+            >
+              <HelpCircle className="w-4 h-4" />
+              <span>{isAr ? 'اختيار من متعدد (MCQ)' : 'Multiple Choice (MCQ)'}</span>
+              <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full font-bold">
+                {mcqQuestions.length}
+              </span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab('true_false')}
-            className={`flex items-center gap-2 px-6 py-3 border-b-2 font-medium text-sm transition-all ${activeTab === 'true_false'
-                ? 'border-primary text-primary font-bold'
-                : 'border-transparent text-slate-500 hover:text-slate-700'
+            <button
+              type="button"
+              onClick={() => setActiveTab('true_false')}
+              className={`pb-3 px-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${
+                activeTab === 'true_false'
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
               }`}
-          >
-            <HelpCircle className="w-4 h-4" />
-            <span>{isAr ? 'صح / خطأ (True & False)' : 'True / False'}</span>
-            <span className="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700 font-bold">
-              {trueFalseQuestions.length}
-            </span>
-          </button>
+            >
+              <CheckCircle2 className="w-4 h-4" />
+              <span>{isAr ? 'صح أو خطأ (True / False)' : 'True / False'}</span>
+              <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full font-bold">
+                {trueFalseQuestions.length}
+              </span>
+            </button>
+          </div>
         </div>
 
         {/* Scrollable Questions Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
-          {/* TAB 1: MCQ QUESTIONS */}
-          {activeTab === 'mcq' && (
+          {activeTab === 'mcq' ? (
             <div className="space-y-6">
-              {mcqQuestions.map((q, qIndex) => (
-                <div
-                  key={qIndex}
-                  className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4 transition-all hover:border-slate-300"
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-bold text-slate-800 text-base">
+                    {isAr ? 'أسئلة الاختيار من متعدد' : 'Multiple Choice Questions'}
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    {isAr
+                      ? 'حدد نص السؤال، والاختيارات، والإجابة الصحيحة لكل سؤال'
+                      : 'Set question text, options, and choose the correct answer for each'}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAddMCQQuestion}
+                  className="flex items-center gap-2 px-3.5 py-2 bg-primary hover:bg-primary/90 text-white rounded-xl text-xs font-semibold shadow-sm transition-all shadow-primary/20"
                 >
-                  {/* Question Header & Points */}
-                  <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="w-7 h-7 rounded-lg bg-primary/10 text-primary font-bold text-xs flex items-center justify-center">
-                        {qIndex + 1}
-                      </span>
-                      <h4 className="font-semibold text-sm text-slate-800">
-                        {isAr ? `سؤال اختيار من متعدد #${qIndex + 1}` : `MCQ Question #${qIndex + 1}`}
-                      </h4>
-                    </div>
+                  <Plus className="w-4 h-4" />
+                  <span>{isAr ? 'إضافة سؤال MCQ' : 'Add MCQ Question'}</span>
+                </button>
+              </div>
 
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-xl">
-                        <span className="text-xs text-slate-500 font-medium">{isAr ? 'الدرجة:' : 'Points:'}</span>
-                        <input
-                          type="number"
-                          min="1"
-                          value={q.points}
-                          onChange={(e) => handleMCQPointsChange(qIndex, Number(e.target.value))}
-                          className="w-12 bg-transparent text-xs font-bold text-slate-800 text-center outline-none"
-                        />
+              <div className="space-y-4">
+                {mcqQuestions.map((q, qIndex) => (
+                  <div
+                    key={qIndex}
+                    className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4 transition-all hover:border-slate-300"
+                  >
+                    {/* Question Header & Points */}
+                    <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="w-7 h-7 rounded-lg bg-primary/10 text-primary font-bold text-xs flex items-center justify-center">
+                          {qIndex + 1}
+                        </span>
+                        <h4 className="font-semibold text-sm text-slate-800">
+                          {isAr ? `سؤال اختيار من متعدد #${qIndex + 1}` : `MCQ Question #${qIndex + 1}`}
+                        </h4>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveMCQQuestion(qIndex)}
-                        className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                        title={isAr ? 'حذف السؤال' : 'Delete Question'}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
 
-                  {/* Question Text */}
-                  <div>
-                    <label className="block text-xs font-medium text-slate-600 mb-1.5">
-                      {isAr ? 'نص السؤال *' : 'Question Text *'}
-                    </label>
-                    <input
-                      type="text"
-                      dir={isAr ? 'rtl' : 'ltr'}
-                      value={q.text}
-                      onChange={(e) => handleMCQTextChange(qIndex, e.target.value)}
-                      placeholder={isAr ? 'اكتب نص السؤال هنا...' : 'Type the question text here...'}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
-                    />
-                  </div>
-
-                  {/* Options List */}
-                  <div className="space-y-2.5 pt-2">
-                    <label className="block text-xs font-medium text-slate-600 items-center justify-between">
-                      <span>{isAr ? 'الاختيارات (اختر الدائرة الخضراء لتحديد الإجابة الصحيحة للتصحيح التلقائي):' : 'Options (select green circle for the correct answer):'}</span>
-                    </label>
-
-                    <div className="space-y-2">
-                      {q.options.map((opt, optIndex) => (
-                        <div
-                          key={optIndex}
-                          className={`flex items-center gap-3 p-2 rounded-xl border transition-all ${opt.isCorrect
-                              ? 'border-emerald-400 bg-emerald-50/50'
-                              : 'border-slate-200 bg-white hover:border-slate-300'
-                            }`}
-                        >
-                          {/* Radio Button to mark Correct */}
-                          <button
-                            type="button"
-                            onClick={() => handleSetCorrectOption(qIndex, optIndex)}
-                            className={`w-6 h-6 rounded-full flex items-center justify-center transition-all shrink-0 ${opt.isCorrect
-                                ? 'bg-emerald-500 text-white ring-2 ring-emerald-200'
-                                : 'border-2 border-slate-300 text-transparent hover:border-emerald-400'
-                              }`}
-                            title={isAr ? 'تحديد كإجابة صحيحة' : 'Mark as correct answer'}
-                          >
-                            <CheckCircle2 className="w-4 h-4" />
-                          </button>
-
-                          {/* Option Text Input */}
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-xl">
+                          <span className="text-xs text-slate-500 font-medium">
+                            {isAr ? 'الدرجة:' : 'Points:'}
+                          </span>
                           <input
-                            type="text"
-                            dir={isAr ? 'rtl' : 'ltr'}
-                            value={opt.text}
-                            onChange={(e) => handleOptionTextChange(qIndex, optIndex, e.target.value)}
-                            placeholder={`${isAr ? 'الاختيار' : 'Option'} ${optIndex + 1}`}
-                            className="flex-1 bg-transparent px-2 py-1 text-sm outline-none text-slate-800 font-medium text-start"
+                            type="number"
+                            min="1"
+                            value={q.points}
+                            onChange={(e) => handleMCQPointsChange(qIndex, Number(e.target.value))}
+                            className="w-12 bg-transparent text-xs font-bold text-slate-800 text-center outline-none"
                           />
-
-                          {opt.isCorrect && (
-                            <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full shrink-0">
-                              {isAr ? 'الإجابة الصحيحة' : 'Correct Answer'}
-                            </span>
-                          )}
-
-                          {/* Delete Option Button */}
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveOption(qIndex, optIndex)}
-                            className="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
-                            title={isAr ? 'حذف الاختيار' : 'Delete Option'}
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
                         </div>
-                      ))}
-                    </div>
-
-                    {/* Add Option Button */}
-                    <button
-                      type="button"
-                      onClick={() => handleAddOption(qIndex)}
-                      className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 bg-blue-50/70 hover:bg-blue-50 px-3 py-2 rounded-xl transition-colors mt-2"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>{isAr ? 'إضافة اختيار إضافي' : 'Add Another Option'}</span>
-                    </button>
-                  </div>
-                </div>
-              ))}
-
-              {/* Add New MCQ Question Button */}
-              <button
-                type="button"
-                onClick={handleAddMCQQuestion}
-                className="w-full py-3.5 border-2 border-dashed border-primary/40 hover:border-primary bg-blue-50/30 hover:bg-blue-50/70 text-primary font-bold rounded-2xl flex items-center justify-center gap-2 transition-all text-sm"
-              >
-                <Plus className="w-4 h-4" />
-                <span>{isAr ? 'إضافة سؤال اختيار من متعدد جديد +' : 'Add New MCQ Question +'}</span>
-              </button>
-            </div>
-          )}
-
-          {/* TAB 2: TRUE / FALSE QUESTIONS */}
-          {activeTab === 'true_false' && (
-            <div className="space-y-6">
-              {trueFalseQuestions.map((q, qIndex) => (
-                <div
-                  key={qIndex}
-                  className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4 transition-all hover:border-slate-300"
-                >
-                  {/* Question Header & Points */}
-                  <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="w-7 h-7 rounded-lg bg-primary/10 text-primary font-bold text-xs flex items-center justify-center">
-                        {qIndex + 1}
-                      </span>
-                      <h4 className="font-semibold text-sm text-slate-800">
-                        {isAr ? `سؤال صح / خطأ #${qIndex + 1}` : `True/False Question #${qIndex + 1}`}
-                      </h4>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-xl">
-                        <span className="text-xs text-slate-500 font-medium">{isAr ? 'الدرجة:' : 'Points:'}</span>
-                        <input
-                          type="number"
-                          min="1"
-                          value={q.points}
-                          onChange={(e) => handleTFPointsChange(qIndex, Number(e.target.value))}
-                          className="w-12 bg-transparent text-xs font-bold text-slate-800 text-center outline-none"
-                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveMCQQuestion(qIndex)}
+                          className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                          title={isAr ? 'حذف السؤال' : 'Delete Question'}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
+                    </div>
+
+                    {/* Question Text */}
+                    <div>
+                      <label className="block text-xs font-medium text-slate-600 mb-1.5">
+                        {isAr ? 'نص السؤال *' : 'Question Text *'}
+                      </label>
+                      <input
+                        type="text"
+                        dir={isAr ? 'rtl' : 'ltr'}
+                        value={q.text}
+                        onChange={(e) => handleMCQTextChange(qIndex, e.target.value)}
+                        placeholder={isAr ? 'اكتب نص السؤال هنا...' : 'Type the question text here...'}
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
+                      />
+                    </div>
+
+                    {/* Options List */}
+                    <div className="space-y-2.5 pt-2">
+                      <label className="block text-xs font-medium text-slate-600">
+                        {isAr
+                          ? 'الاختيارات (اختر الدائرة الخضراء لتحديد الإجابة الصحيحة للتصحيح التلقائي):'
+                          : 'Options (select green circle for the correct answer):'}
+                      </label>
+
+                      <div className="space-y-2">
+                        {q.options.map((opt, optIndex) => (
+                          <div
+                            key={optIndex}
+                            className={`flex items-center gap-3 p-2 rounded-xl border transition-all ${
+                              opt.isCorrect
+                                ? 'border-emerald-400 bg-emerald-50/50'
+                                : 'border-slate-200 bg-white hover:border-slate-300'
+                            }`}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => handleSetCorrectOption(qIndex, optIndex)}
+                              className={`w-6 h-6 rounded-full flex items-center justify-center transition-all shrink-0 ${
+                                opt.isCorrect
+                                  ? 'bg-emerald-500 text-white ring-2 ring-emerald-200'
+                                  : 'border-2 border-slate-300 text-transparent hover:border-emerald-400'
+                              }`}
+                              title={isAr ? 'تحديد كإجابة صحيحة' : 'Mark as correct answer'}
+                            >
+                              <CheckCircle2 className="w-4 h-4" />
+                            </button>
+
+                            <input
+                              type="text"
+                              dir={isAr ? 'rtl' : 'ltr'}
+                              value={opt.text}
+                              onChange={(e) => handleOptionTextChange(qIndex, optIndex, e.target.value)}
+                              placeholder={`${isAr ? 'الاختيار' : 'Option'} ${optIndex + 1}`}
+                              className="flex-1 bg-transparent px-2 py-1 text-sm outline-none text-slate-800 font-medium text-start"
+                            />
+
+                            {opt.isCorrect && (
+                              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full shrink-0">
+                                {isAr ? 'الإجابة الصحيحة' : 'Correct Answer'}
+                              </span>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveOption(qIndex, optIndex)}
+                              className="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                              title={isAr ? 'حذف الاختيار' : 'Delete Option'}
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+
                       <button
                         type="button"
-                        onClick={() => handleRemoveTFQuestion(qIndex)}
-                        className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                        title={isAr ? 'حذف السؤال' : 'Delete Question'}
+                        onClick={() => handleAddOption(qIndex)}
+                        className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 bg-blue-50/70 hover:bg-blue-50 px-3 py-2 rounded-xl transition-colors mt-2"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>{isAr ? 'إضافة اختيار إضافي' : 'Add Another Option'}</span>
                       </button>
                     </div>
                   </div>
-
-                  {/* Question Text */}
-                  <div>
-                    <label className="block text-xs font-medium text-slate-600 mb-1.5">
-                      {isAr ? 'نص السؤال (العبارة) *' : 'Question Statement *'}
-                    </label>
-                    <input
-                      type="text"
-                      dir={isAr ? 'rtl' : 'ltr'}
-                      value={q.text}
-                      onChange={(e) => handleTFTextChange(qIndex, e.target.value)}
-                      placeholder={isAr ? 'اكتب العبارة هنا لمعرفة إن كانت صحيحة أم خاطئة...' : 'Type statement here...'}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
-                    />
-                  </div>
-
-                  {/* Select Correct Answer (True vs False) */}
-                  <div className="pt-2">
-                    <label className="block text-xs font-medium text-slate-600 mb-2">
-                      {isAr ? 'حدد الإجابة الصحيحة للعبارة (للتصحيح التلقائي):' : 'Select the correct answer for auto-grading:'}
-                    </label>
-                    <div className="grid grid-cols-2 gap-4">
-                      {/* True Button */}
-                      <button
-                        type="button"
-                        onClick={() => handleSetTFAnswer(qIndex, true)}
-                        className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 font-bold text-sm transition-all ${q.correctAnswer === true
-                            ? 'bg-emerald-50 border-emerald-500 text-emerald-700 shadow-sm ring-2 ring-emerald-200'
-                            : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                          }`}
-                      >
-                        <CheckCircle2 className={`w-4 h-4 ${q.correctAnswer === true ? 'text-emerald-600' : 'text-slate-400'}`} />
-                        <span>{isAr ? 'صح (True)' : 'True'}</span>
-                      </button>
-
-                      {/* False Button */}
-                      <button
-                        type="button"
-                        onClick={() => handleSetTFAnswer(qIndex, false)}
-                        className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 font-bold text-sm transition-all ${q.correctAnswer === false
-                            ? 'bg-red-50 border-red-500 text-red-700 shadow-sm ring-2 ring-red-200'
-                            : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-                          }`}
-                      >
-                        <X className={`w-4 h-4 ${q.correctAnswer === false ? 'text-red-600' : 'text-slate-400'}`} />
-                        <span>{isAr ? 'خطأ (False)' : 'False'}</span>
-                      </button>
-                    </div>
-                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-bold text-slate-800 text-base">
+                    {isAr ? 'أسئلة صح أو خطأ' : 'True or False Questions'}
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    {isAr
+                      ? 'حدد نص العبارة وحدد ما إذا كانت صحيحة أم خاطئة'
+                      : 'Set question statement and pick whether it is True or False'}
+                  </p>
                 </div>
-              ))}
+                <button
+                  type="button"
+                  onClick={handleAddTFQuestion}
+                  className="flex items-center gap-2 px-3.5 py-2 bg-primary hover:bg-primary/90 text-white rounded-xl text-xs font-semibold shadow-sm transition-all shadow-primary/20"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>{isAr ? 'إضافة سؤال صح/خطأ' : 'Add True/False Question'}</span>
+                </button>
+              </div>
 
-              {/* Add New True / False Question Button */}
-              <button
-                type="button"
-                onClick={handleAddTFQuestion}
-                className="w-full py-3.5 border-2 border-dashed border-primary/40 hover:border-primary bg-blue-50/30 hover:bg-blue-50/70 text-primary font-bold rounded-2xl flex items-center justify-center gap-2 transition-all text-sm"
-              >
-                <Plus className="w-4 h-4" />
-                <span>{isAr ? 'إضافة سؤال صح / خطأ جديد +' : 'Add New True/False Question +'}</span>
-              </button>
+              <div className="space-y-4">
+                {trueFalseQuestions.map((q, qIndex) => (
+                  <div
+                    key={qIndex}
+                    className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4 transition-all hover:border-slate-300"
+                  >
+                    {/* Question Header & Points */}
+                    <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="w-7 h-7 rounded-lg bg-primary/10 text-primary font-bold text-xs flex items-center justify-center">
+                          {qIndex + 1}
+                        </span>
+                        <h4 className="font-semibold text-sm text-slate-800">
+                          {isAr ? `سؤال صح / خطأ #${qIndex + 1}` : `True/False Question #${qIndex + 1}`}
+                        </h4>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-xl">
+                          <span className="text-xs text-slate-500 font-medium">
+                            {isAr ? 'الدرجة:' : 'Points:'}
+                          </span>
+                          <input
+                            type="number"
+                            min="1"
+                            value={q.points}
+                            onChange={(e) => handleTFPointsChange(qIndex, Number(e.target.value))}
+                            className="w-12 bg-transparent text-xs font-bold text-slate-800 text-center outline-none"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTFQuestion(qIndex)}
+                          className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                          title={isAr ? 'حذف السؤال' : 'Delete Question'}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Question Text */}
+                    <div>
+                      <label className="block text-xs font-medium text-slate-600 mb-1.5">
+                        {isAr ? 'نص السؤال (العبارة) *' : 'Question Statement *'}
+                      </label>
+                      <input
+                        type="text"
+                        dir={isAr ? 'rtl' : 'ltr'}
+                        value={q.text}
+                        onChange={(e) => handleTFTextChange(qIndex, e.target.value)}
+                        placeholder={
+                          isAr
+                            ? 'اكتب العبارة هنا لمعرفة إن كانت صحيحة أم خاطئة...'
+                            : 'Type statement here...'
+                        }
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
+                      />
+                    </div>
+
+                    {/* Select Correct Answer (True vs False) */}
+                    <div className="pt-2">
+                      <label className="block text-xs font-medium text-slate-600 mb-2">
+                        {isAr
+                          ? 'حدد الإجابة الصحيحة للعبارة (للتصحيح التلقائي):'
+                          : 'Select the correct answer for auto-grading:'}
+                      </label>
+                      <div className="grid grid-cols-2 gap-4">
+                        <button
+                          type="button"
+                          onClick={() => handleSetTFAnswer(qIndex, true)}
+                          className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 font-bold text-sm transition-all ${
+                            q.correctAnswer === true
+                              ? 'bg-emerald-50 border-emerald-500 text-emerald-700 shadow-sm ring-2 ring-emerald-200'
+                              : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                          }`}
+                        >
+                          <CheckCircle2
+                            className={`w-4 h-4 ${
+                              q.correctAnswer === true ? 'text-emerald-600' : 'text-slate-400'
+                            }`}
+                          />
+                          <span>{isAr ? 'صح (True)' : 'True'}</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleSetTFAnswer(qIndex, false)}
+                          className={`py-3 px-4 rounded-xl border flex items-center justify-center gap-2 font-bold text-sm transition-all ${
+                            q.correctAnswer === false
+                              ? 'bg-red-50 border-red-500 text-red-700 shadow-sm ring-2 ring-red-200'
+                              : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                          }`}
+                        >
+                          <X
+                            className={`w-4 h-4 ${
+                              q.correctAnswer === false ? 'text-red-600' : 'text-slate-400'
+                            }`}
+                          />
+                          <span>{isAr ? 'خطأ (False)' : 'False'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
 
-        {/* Footer Summary & Actions */}
-        <div className="p-4 px-6 bg-white border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
-          <div className="flex items-center gap-4 text-xs font-semibold text-slate-600">
-            <span>
-              {isAr ? 'إجمالي الأسئلة:' : 'Total Questions:'}{' '}
-              <strong className="text-slate-900">{mcqQuestions.length + trueFalseQuestions.length}</strong>
-            </span>
-            <span>•</span>
-            <span>
-              {isAr ? 'الدرجة الكلية:' : 'Total Score:'}{' '}
-              <strong className="text-primary">{totalScore} {isAr ? 'درجة' : 'pts'}</strong>
-            </span>
+        {/* Modal Footer Summary & Actions */}
+        <div className="p-4 bg-white border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
+          <div className="flex items-center gap-6 text-xs text-slate-500 font-medium">
+            <div className="flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-primary" />
+              <span>
+                {isAr ? 'إجمالي الأسئلة:' : 'Total Questions:'}{' '}
+                <strong className="text-slate-800">{totalQuestions}</strong>
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Clock className="w-4 h-4 text-amber-500" />
+              <span>
+                {isAr ? 'الدرجة الكلية:' : 'Total Score:'}{' '}
+                <strong className="text-slate-800">{totalScore}</strong> {isAr ? 'درجة' : 'pts'}
+              </span>
+            </div>
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 sm:flex-none px-5 py-2.5 border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold rounded-xl text-sm transition"
+              className="flex-1 sm:flex-none px-5 py-2.5 border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl text-sm font-semibold transition-colors"
             >
               {isAr ? 'إلغاء' : 'Cancel'}
             </button>
@@ -939,10 +996,22 @@ export default function AddQuizModal({ isOpen, onClose, onSave, sections, defaul
               type="button"
               onClick={handleSubmit}
               disabled={isPending}
-              className="flex-1 sm:flex-none px-6 py-2.5 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-md transition"
+              className="flex-1 sm:flex-none px-6 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-primary/25"
             >
-              {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-              <span>{isAr ? 'حفظ الكويز والأسئلة' : 'Save Quiz & Questions'}</span>
+              {isPending ? (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              <span>
+                {isPending
+                  ? isAr
+                    ? 'جاري الحفظ...'
+                    : 'Saving...'
+                  : isAr
+                  ? 'حفظ الكويز'
+                  : 'Save Quiz'}
+              </span>
             </button>
           </div>
         </div>
