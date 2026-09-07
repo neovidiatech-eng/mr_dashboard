@@ -36,7 +36,7 @@ export default function AddPlanModal({ isOpen, onClose, onSave, initialData, cur
     },
   });
 
-  const features = watch('features');
+  const features = watch('features') ?? [];
   const watchIsGroup = watch('isGroup');
   
   const addFeature = () => {

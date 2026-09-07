@@ -2,7 +2,6 @@ import { Pagination } from "./courses";
 
 export interface Lecture {
   id: string;
-
   title: string;
   title_ar?: string;
   title_en?: string;
@@ -47,9 +46,9 @@ export interface CreateLecture {
   duration?: string;
   date?: string;
   courseId: string;
-  video?: File;
+  video_path?: string;
   slides?: File;
   pdf?: File;
 }
 
-export type UpdateLecture = Partial<CreateLecture>;
+export type UpdateLecture = Partial<CreateLecture>;
