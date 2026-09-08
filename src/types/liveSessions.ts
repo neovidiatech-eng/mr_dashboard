@@ -1,5 +1,6 @@
 export interface LiveSessions{
     id:string;
+    title:string;
     planId:string;
     stageId:string;
     userId:string;
@@ -9,6 +10,7 @@ export interface LiveSessions{
 }
 
 export interface CreateLiveSession{
+    title:string;
     stageId:string;
     planId:string;
     startAt:string;

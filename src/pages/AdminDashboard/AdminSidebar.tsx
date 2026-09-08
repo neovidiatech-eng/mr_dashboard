@@ -153,6 +153,22 @@ export default function AdminSidebar({ isOpen, onClose, isCollapsed, setIsCollap
                   {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{t('sidebar_courses', 'Curriculum')}</span>}
                 </NavLink>
               )}
+
+              {hasRouteAccess('live-sessions') && (
+                <NavLink
+                  to="/dashboard/live-sessions"
+                  onClick={onClose}
+                  className={({ isActive }) => `
+                    w-full flex items-center gap-4 ${isCollapsed ? 'justify-center px-2' : 'px-5'} py-3.5 rounded-xl font-bold transition-all
+                    ${isActive ? 'bg-primary-light text-primary' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}
+                  `}
+                  title={isCollapsed ? (language === 'ar' ? 'الجلسات المباشرة' : 'Live Sessions') : ''}
+                >
+                  <PlayCircle className={`w-5 h-5 flex-shrink-0 transition-all ${isCollapsed ? 'mx-auto' : ''}`} />
+                  {!isCollapsed && <span className={`text-sm flex-1 ${language === 'ar' ? 'text-right' : 'text-left'}`}>{language === 'ar' ? 'الجلسات المباشرة' : 'Live Sessions'}</span>}
+                </NavLink>
+              )}
+
               {hasRouteAccess('students') && (
                 <NavLink
                   to="/dashboard/students"

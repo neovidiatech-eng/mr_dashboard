@@ -20,6 +20,7 @@ const routeResources: Record<string, string[]> = {
   dashboard: ["dashboard"],
   admins: ["users", "admins"],
   students: ["users", "students"],
+  "live-sessions": ["live_sessions", "livesessions", "live-sessions", "sessions"],
   parents: ["users", "parents"],
   teachers: ["users", "teachers"],
   "teacher-availability": ["teachers"],
