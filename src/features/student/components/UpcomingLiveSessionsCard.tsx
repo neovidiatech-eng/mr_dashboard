@@ -1,5 +1,5 @@
-﻿import { useState } from 'react';
-import { Radio, Clock, CalendarDays, Loader2, Play } from 'lucide-react';
+import { useState } from 'react';
+import { Radio, Clock, CalendarDays, Loader2, Play, LogIn } from 'lucide-react';
 import { useGetStudentUpcomingLiveSessions, useJoinLiveSession } from '../../../hooks/useLiveSessions';
 import { useLanguage } from '../../../contexts/LanguageContext';
 import JitsiMeeting from '../../../components/modals/JitsiMeeting';
@@ -35,6 +35,7 @@ export default function UpcomingLiveSessionsCard() {
     const { mutate: joinLive, isPending: isJoining } = useJoinLiveSession();
 
     const [joiningSessionId, setJoiningSessionId] = useState<string | null>(null);
+    const [joinedSessionIds, setJoinedSessionIds] = useState<string[]>([]);
     const [activeJitsiSession, setActiveJitsiSession] = useState<{
         roomName: string;
         token: string;
@@ -45,6 +46,26 @@ export default function UpcomingLiveSessionsCard() {
 
     const handleJoin = (session: any) => {
         if (session.status !== 'live') return;
+
+        // Check if we already have a cached token for this session (for rejoin)
+        const cached = sessionStorage.getItem(`live_session_${session.id}`);
+        if (cached) {
+            try {
+                const parsed = JSON.parse(cached);
+                if (parsed.token && parsed.roomName) {
+                    setActiveJitsiSession({
+                        roomName: parsed.roomName,
+                        token: parsed.token,
+                        title: parsed.title || session.title,
+                    });
+                    setJoinedSessionIds((prev) => (prev.includes(session.id) ? prev : [...prev, session.id]));
+                    return;
+                }
+            } catch (e) {
+                console.warn('Failed to parse cached session token:', e);
+            }
+        }
+
         setJoiningSessionId(session.id);
         joinLive(session.id, {
             onSuccess: (res: any) => {
@@ -53,11 +74,28 @@ export default function UpcomingLiveSessionsCard() {
                 const title = res?.data?.title || res?.title || session.title;
 
                 if (token && roomName) {
-                    setActiveJitsiSession({
-                        roomName,
-                        token,
-                        title,
-                    });
+                    const sessionData = { roomName, token, title };
+                    sessionStorage.setItem(`live_session_${session.id}`, JSON.stringify(sessionData));
+                    setActiveJitsiSession(sessionData);
+                    setJoinedSessionIds((prev) => (prev.includes(session.id) ? prev : [...prev, session.id]));
+                }
+            },
+            onError: () => {
+                const fallbackCached = sessionStorage.getItem(`live_session_${session.id}`);
+                if (fallbackCached) {
+                    try {
+                        const parsed = JSON.parse(fallbackCached);
+                        if (parsed.token && parsed.roomName) {
+                            setActiveJitsiSession({
+                                roomName: parsed.roomName,
+                                token: parsed.token,
+                                title: parsed.title || session.title,
+                            });
+                            setJoinedSessionIds((prev) => (prev.includes(session.id) ? prev : [...prev, session.id]));
+                        }
+                    } catch (e) {
+                        console.error('Fallback join failed:', e);
+                    }
                 }
             },
             onSettled: () => {
@@ -159,14 +197,24 @@ export default function UpcomingLiveSessionsCard() {
                                                 onClick={() => handleJoin(session)}
                                                 disabled={isCurrentJoining}
                                                 type="button"
-                                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-bold shadow-md hover:bg-rose-700 active:scale-95 transition-all cursor-pointer"
+                                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-white text-xs font-bold shadow-md active:scale-95 transition-all cursor-pointer ${
+                                                    joinedSessionIds.includes(session.id)
+                                                        ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20'
+                                                        : 'bg-rose-600 hover:bg-rose-700 shadow-rose-500/20'
+                                                }`}
                                             >
                                                 {isCurrentJoining ? (
                                                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                                ) : joinedSessionIds.includes(session.id) ? (
+                                                    <LogIn className="w-3.5 h-3.5" />
                                                 ) : (
                                                     <Play className="w-3.5 h-3.5 fill-current" />
                                                 )}
-                                                <span>{isAr ? 'انضم' : 'Join'}</span>
+                                                <span>
+                                                    {joinedSessionIds.includes(session.id)
+                                                        ? (isAr ? 'إعادة الانضمام' : 'Rejoin')
+                                                        : (isAr ? 'انضم' : 'Join')}
+                                                </span>
                                             </button>
                                         ) : (
                                             <span

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { JitsiMeeting as JitsiSDKMeeting } from '@jitsi/react-sdk';
 import { X, Radio, Loader2, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -43,14 +44,27 @@ export default function JitsiMeeting({
     }
   }, [isOpen]);
 
-  if (!isOpen || !roomName) return null;
+  // Lock background body scroll while meeting is active
+  useEffect(() => {
+    if (isOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
+
+  const userRole = (localStorage.getItem('role') || sessionStorage.getItem('role') || '').toLowerCase();
+  const isActualStudent = isStudent || userRole === 'student';
 
   const handleEnd = async () => {
     try {
       if (jitsiApi) {
         jitsiApi.executeCommand('hangup');
       }
-      if (!isStudent && onEndSession) {
+      // ONLY Admin / Teacher can trigger ending the session on backend
+      if (!isActualStudent && onEndSession) {
         await onEndSession();
       }
     } catch (err) {
@@ -60,12 +74,12 @@ export default function JitsiMeeting({
     }
   };
 
-  const displayName = localStorage.getItem('name') || (isAr ? (isStudent ? 'طالب' : 'المحاضر') : (isStudent ? 'Student' : 'Moderator'));
+  const displayName = localStorage.getItem('name') || (isAr ? (isActualStudent ? 'طالب' : 'المحاضر') : (isActualStudent ? 'Student' : 'Moderator'));
   const email = localStorage.getItem('email') || '';
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-[999999] bg-slate-950 flex flex-col w-screen h-screen overflow-hidden"
+      className="fixed inset-0 top-0 left-0 right-0 bottom-0 z-[99999999] bg-slate-950 flex flex-col w-screen h-screen m-0 p-0 overflow-hidden"
       dir={isAr ? 'rtl' : 'ltr'}
     >
       {/* Top Bar Navigation inside System */}
@@ -89,11 +103,15 @@ export default function JitsiMeeting({
         <button
           onClick={handleEnd}
           type="button"
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer text-white ${
+            isActualStudent
+              ? 'bg-slate-700 hover:bg-slate-600'
+              : 'bg-rose-600 hover:bg-rose-700'
+          }`}
         >
-          {isStudent ? <LogOut className="w-4 h-4" /> : <X className="w-4 h-4" />}
+          {isActualStudent ? <LogOut className="w-4 h-4" /> : <X className="w-4 h-4" />}
           <span>
-            {isStudent
+            {isActualStudent
               ? (isAr ? 'مغادرة البث' : 'Leave Stream')
               : (isAr ? 'إنهاء البث للجميع والعودة' : 'End For All & Return')}
           </span>
@@ -124,11 +142,48 @@ export default function JitsiMeeting({
             enableWelcomePage: false,
             disableDeepLinking: true,
             disableInviteFunctions: true,
+            disableEndConference: isActualStudent,
+            disableHangupMenu: isActualStudent,
+            hideEndConferenceButton: isActualStudent,
+            enableFeaturesBasedOnToken: !isActualStudent,
+            disableRemoteMute: isActualStudent,
+            remoteVideoMenu: {
+              disableKick: isActualStudent,
+              disableGrantModerator: isActualStudent,
+            },
+            ...(isActualStudent
+              ? {
+                  toolbarButtons: [
+                    'microphone',
+                    'camera',
+                    'desktop',
+                    'chat',
+                    'raisehand',
+                    'tileview',
+                    'fullscreen',
+                  ],
+                }
+              : {}),
           }}
           interfaceConfigOverwrite={{
             DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
             SHOW_JITSI_WATERMARK: false,
             SHOW_WATERMARK_FOR_GUESTS: false,
+            DISABLE_FOCUS_INDICATOR: isActualStudent,
+            DISABLE_DOMINANT_SPEAKER_INDICATOR: isActualStudent,
+            ...(isActualStudent
+              ? {
+                  TOOLBAR_BUTTONS: [
+                    'microphone',
+                    'camera',
+                    'desktop',
+                    'chat',
+                    'raisehand',
+                    'tileview',
+                    'fullscreen',
+                  ],
+                }
+              : {}),
           }}
           userInfo={{
             displayName,
@@ -168,6 +223,7 @@ export default function JitsiMeeting({
           }}
         />
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

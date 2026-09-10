@@ -32,6 +32,7 @@ export interface UpdatePlanPayload {
   price?: number;
   duration?: number;
   sessionsCount?: number;
+  liveSessionsCount?: number;
   active?: boolean;
   currencyId?: string;
   features?: string[];

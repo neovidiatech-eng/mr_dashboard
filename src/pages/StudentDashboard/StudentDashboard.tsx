@@ -70,6 +70,8 @@ export default function StudentDashboard() {
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
 
+  const [hasJoinedSession, setHasJoinedSession] = useState(false);
+
   const handleSubmitClick = (e: React.MouseEvent, assignment: Assignment) => {
     e.stopPropagation();
     setSelectedAssignment(assignment);
@@ -206,6 +208,7 @@ export default function StudentDashboard() {
               <button
                 onClick={async () => {
                   if (nextSession) {
+                    setHasJoinedSession(true);
                     joinSession(nextSession.id);
                     if (nextSession.link) {
                       window.open(nextSession.link, "_blank", "noopener,noreferrer");
@@ -221,7 +224,9 @@ export default function StudentDashboard() {
                 {isJoining
                   ? (language === "ar" ? "جاري الانضمام..." : "Joining...")
                   : (isSessionOngoing
-                    ? (language === "ar" ? "انضم للحصة الآن" : "Join Ongoing Session")
+                    ? (hasJoinedSession
+                      ? (language === "ar" ? "إعادة الانضمام للحصة" : "Rejoin Session")
+                      : (language === "ar" ? "انضم للحصة الآن" : "Join Ongoing Session"))
                     : (isSessionReady
                       ? (language === "ar" ? "انضم الآن" : "Join Now")
                       : (language === "ar" ? "انتظر الحصة" : "Wait for Session")))}

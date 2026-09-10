@@ -112,6 +112,7 @@ export const useGetStudentUpcomingLiveSessions = (
     return useQuery({
         queryKey: ['studentUpcomingLiveSessions', page, limit, search],
         queryFn: () => getStudentUpcomingLiveSessions(page, limit, search),
+        refetchInterval: 5000,
     });
 };
 
@@ -119,7 +120,7 @@ export const useGetStudentNextLiveSession = () => {
     return useQuery({
         queryKey: ['studentNextLiveSession'],
         queryFn: () => getStudentNextLiveSession(),
-        refetchInterval: 30000,
+        refetchInterval: 5000,
     });
 };
 
@@ -139,8 +140,8 @@ export const useJoinLiveSession = () => {
                 queryKey: ['liveSessions'],
             });
         },
-        onError: () => {
-            ErrorService.error("Failed to Join Live Session");
+        onError: (error: any) => {
+            ErrorService.handleError(error);
         },
     });
 };

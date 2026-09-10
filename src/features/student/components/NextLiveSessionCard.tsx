@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Radio, CalendarDays, Clock, Play, Loader2, Sparkles, Layers } from 'lucide-react';
-import { useGetStudentNextLiveSession, useJoinLiveSession } from '../../../hooks/useLiveSessions';
+import { Radio, CalendarDays, Clock, Play, Loader2, Sparkles, Layers, LogIn } from 'lucide-react';
+import { useGetStudentNextLiveSession, useGetStudentUpcomingLiveSessions, useJoinLiveSession } from '../../../hooks/useLiveSessions';
 import { useLanguage } from '../../../contexts/LanguageContext';
 import { useServerTime } from '../../../hooks/useServerTime';
 import JitsiMeeting from '../../../components/modals/JitsiMeeting';
@@ -26,7 +26,8 @@ export default function NextLiveSessionCard() {
     const isAr = language === 'ar';
     const { getServerTime } = useServerTime();
 
-    const { data: response, isLoading } = useGetStudentNextLiveSession();
+    const { data: nextResponse, isLoading: isNextLoading } = useGetStudentNextLiveSession();
+    const { data: upcomingResponse, isLoading: isUpcomingLoading } = useGetStudentUpcomingLiveSessions(1, 10);
     const { mutate: joinLive, isPending: isJoining } = useJoinLiveSession();
 
     const [activeJitsiSession, setActiveJitsiSession] = useState<{
@@ -34,9 +35,22 @@ export default function NextLiveSessionCard() {
         token: string;
         title?: string;
     } | null>(null);
+    const [joinedSessionIds, setJoinedSessionIds] = useState<string[]>([]);
 
-    const session = response?.data;
+    // Find active live session with highest priority, or fallback to next scheduled session
+    const session = useMemo(() => {
+        const nextSession = nextResponse?.data;
+        const upcomingItems: any[] = upcomingResponse?.data?.items ?? (Array.isArray(upcomingResponse?.data) ? upcomingResponse?.data : []);
+
+        const liveFromUpcoming = upcomingItems.find((s) => s?.status === 'live');
+        const liveFromNext = nextSession?.status === 'live' ? nextSession : null;
+
+        return liveFromUpcoming || liveFromNext || nextSession || upcomingItems[0] || null;
+    }, [nextResponse, upcomingResponse]);
+
     const isLive = session?.status === 'live';
+    const hasJoinedBefore = session?.id ? joinedSessionIds.includes(session.id) : false;
+    const isLoading = isNextLoading && isUpcomingLoading && !session;
 
     // Timer calculation for countdown if session is scheduled
     const [timeLeft, setTimeLeft] = useState<number>(0);
@@ -78,6 +92,26 @@ export default function NextLiveSessionCard() {
     const handleJoin = () => {
         if (!session || !isLive) return;
 
+        // Check if we already have a cached token for this session (for rejoin)
+        const cached = sessionStorage.getItem(`live_session_${session.id}`);
+        if (cached) {
+            try {
+                const parsed = JSON.parse(cached);
+                if (parsed.token && parsed.roomName) {
+                    setActiveJitsiSession({
+                        roomName: parsed.roomName,
+                        token: parsed.token,
+                        title: parsed.title || session.title,
+                    });
+                    setJoinedSessionIds((prev) => (prev.includes(session.id) ? prev : [...prev, session.id]));
+                    return;
+                }
+            } catch (e) {
+                console.warn('Failed to parse cached session token:', e);
+            }
+        }
+
+        // Otherwise request join token from backend
         joinLive(session.id, {
             onSuccess: (res: any) => {
                 const token = res?.data?.token || res?.token;
@@ -85,11 +119,29 @@ export default function NextLiveSessionCard() {
                 const title = res?.data?.title || res?.title || session.title;
 
                 if (token && roomName) {
-                    setActiveJitsiSession({
-                        roomName,
-                        token,
-                        title,
-                    });
+                    const sessionData = { roomName, token, title };
+                    sessionStorage.setItem(`live_session_${session.id}`, JSON.stringify(sessionData));
+                    setActiveJitsiSession(sessionData);
+                    setJoinedSessionIds((prev) => (prev.includes(session.id) ? prev : [...prev, session.id]));
+                }
+            },
+            onError: () => {
+                // If backend throws an error on duplicate join, check if token was saved
+                const fallbackCached = sessionStorage.getItem(`live_session_${session.id}`);
+                if (fallbackCached) {
+                    try {
+                        const parsed = JSON.parse(fallbackCached);
+                        if (parsed.token && parsed.roomName) {
+                            setActiveJitsiSession({
+                                roomName: parsed.roomName,
+                                token: parsed.token,
+                                title: parsed.title || session.title,
+                            });
+                            setJoinedSessionIds((prev) => (prev.includes(session.id) ? prev : [...prev, session.id]));
+                        }
+                    } catch (e) {
+                        console.error('Fallback join failed:', e);
+                    }
                 }
             },
         });
@@ -240,6 +292,13 @@ export default function NextLiveSessionCard() {
                                     <>
                                         <Loader2 className="w-5 h-5 animate-spin" />
                                         <span>{isAr ? 'جاري الانضمام...' : 'Joining...'}</span>
+                                    </>
+                                ) : hasJoinedBefore ? (
+                                    <>
+                                        <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
+                                            <LogIn className="w-4 h-4 ml-0.5" />
+                                        </div>
+                                        <span>{isAr ? 'إعادة الانضمام للبث' : 'Rejoin Live Stream'}</span>
                                     </>
                                 ) : (
                                     <>

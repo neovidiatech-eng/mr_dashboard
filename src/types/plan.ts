@@ -13,6 +13,7 @@ export type Plan = {
   price: string | number;
   duration: number;
   sessionsCount: number;
+  liveSessionCount: number;
   rescheduleCount: number;
   features: string[];
   currencyId: string;

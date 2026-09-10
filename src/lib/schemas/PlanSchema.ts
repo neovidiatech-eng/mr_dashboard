@@ -8,7 +8,8 @@ export const getPlanSchema = (t: TFunc) => z.object({
   price: z.coerce.number().positive(),
   currencyId: z.string().min(1, t("validation.required")),
   duration: z.coerce.number().positive(t("validation.min", { count: 1 })),
-  sessionsCount: z.coerce.number().positive(),
+  sessionsCount: z.coerce.number().min(0).nullable().optional(),
+  liveSessionsCount: z.coerce.number().min(0).nullable().optional(),
   sessionTime: z.coerce.number().positive(),
   type: z.enum(['quarterly', 'halfAnnually', 'annually'], { message: t("validation.required") }),
   features: z.array(z.string()).optional(),
@@ -18,6 +19,13 @@ export const getPlanSchema = (t: TFunc) => z.object({
 }).refine((data) => !data.isGroup || (data.maxStudents && data.maxStudents.trim() !== ''), {
   message: t("validation.required"),
   path: ["maxStudents"],
+}).refine((data) => {
+  const sessions = Number(data.sessionsCount || 0);
+  const liveSessions = Number(data.liveSessionsCount || 0);
+  return sessions > 0 || liveSessions > 0;
+}, {
+  message: t("validation.atLeastOneSessionRequired") || "At least one session or live session is required",
+  path: ["sessionsCount"],
 });
 
 export type PlanFormData = z.infer<ReturnType<typeof getPlanSchema>>;
