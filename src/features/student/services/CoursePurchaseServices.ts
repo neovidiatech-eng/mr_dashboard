@@ -9,3 +9,9 @@ export const getMyCoursePurchaseRequests = async () => {
   const response = await api.get("/course-purchase-requests");
   return response.data;
 };
+
+export const getMyCourses = async () => {
+  const response = await api.get("/materials/courses/my-courses");
+  return response.data;
+};
+

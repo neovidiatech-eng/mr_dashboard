@@ -1,5 +1,17 @@
 import { useState } from "react";
-import { Search, CheckCircle, XCircle, Clock, User, BookOpen, Calendar, ShoppingCart } from "lucide-react";
+import {
+  Search,
+  CheckCircle,
+  XCircle,
+  Clock,
+  User,
+  BookOpen,
+  Calendar,
+  ShoppingCart,
+  Phone,
+  ImageOff,
+} from "lucide-react";
+import { Image } from "antd";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "../../../contexts/LanguageContext";
 import Pagination from "../../../components/ui/Pagination";
@@ -10,7 +22,7 @@ import {
   changeCoursePurchaseRequestStatus,
 } from "../services/CoursePurchaseRequestsServices";
 import { CoursePurchaseRequest } from "../../../types/coursePurchaseRequest";
-import { useConfirm } from "../../../hooks/useConfirm";
+import { baseURL } from "../../../consts";
 
 export default function CoursePurchaseRequests() {
   const { language } = useLanguage();
@@ -21,12 +33,17 @@ export default function CoursePurchaseRequests() {
   >("all");
   const itemsPerPage = 10;
   const queryClient = useQueryClient();
-  const { confirm, ConfirmDialog } = useConfirm();
 
   const text = {
     title: { ar: "طلبات شراء الكورسات", en: "Course Purchase Requests" },
-    subtitle: { ar: "مراجعة طلبات الطلاب لشراء كورس منفرد والموافقة عليها", en: "Review and approve student requests to purchase individual courses" },
-    search: { ar: "بحث باسم الطالب أو الكورس...", en: "Search by student or course..." },
+    subtitle: {
+      ar: "مراجعة طلبات الطلاب لشراء كورس منفرد والموافقة عليها",
+      en: "Review and approve student requests to purchase individual courses",
+    },
+    search: {
+      ar: "بحث باسم الطالب أو الكورس...",
+      en: "Search by student or course...",
+    },
     filter: { ar: "تصفية", en: "Filter" },
     all: { ar: "الكل", en: "All" },
     pending: { ar: "قيد الانتظار", en: "Pending" },
@@ -35,46 +52,66 @@ export default function CoursePurchaseRequests() {
     studentName: { ar: "الطالب", en: "Student" },
     course: { ar: "الكورس", en: "Course" },
     price: { ar: "السعر", en: "Price" },
+    receipt: { ar: "إيصال الدفع", en: "Payment Receipt" },
     notes: { ar: "ملاحظات", en: "Notes" },
     requestDate: { ar: "تاريخ الطلب", en: "Request Date" },
     status: { ar: "الحالة", en: "Status" },
     actions: { ar: "الإجراءات", en: "Actions" },
     approve: { ar: "قبول", en: "Approve" },
     reject: { ar: "رفض", en: "Reject" },
-    noRequests: { ar: "لا توجد طلبات شراء كورسات", en: "No course purchase requests found" },
-    confirmApproveTitle: { ar: "قبول الطلب", en: "Approve Request" },
-    confirmApproveMsg: { ar: "هيتم فتح الكورس للطالب فورًا. متأكد؟", en: "The course will be unlocked for the student immediately. Are you sure?" },
-    confirmRejectTitle: { ar: "رفض الطلب", en: "Reject Request" },
-    confirmRejectMsg: { ar: "متأكد إنك عايز ترفض الطلب ده؟", en: "Are you sure you want to reject this request?" },
+    noRequests: {
+      ar: "لا توجد طلبات شراء كورسات",
+      en: "No course purchase requests found",
+    },
+    noReceipt: { ar: "بدون إيصال", en: "No Receipt" },
+    hasReceipt: { ar: "عرض الإيصال", en: "View Receipt" },
   };
 
   const { data, isLoading } = useQuery({
-    queryKey: ["course-purchase-requests", statusFilter],
-    queryFn: () => getCoursePurchaseRequests(statusFilter === "all" ? undefined : statusFilter),
+    queryKey: ["course-purchase-requests", statusFilter, currentPage],
+    queryFn: () =>
+      getCoursePurchaseRequests(
+        statusFilter === "all" ? undefined : statusFilter,
+        currentPage,
+        itemsPerPage,
+      ),
   });
 
   const { mutate: changeStatus } = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: "approved" | "rejected" }) =>
-      changeCoursePurchaseRequestStatus(id, status),
+    mutationFn: ({
+      id,
+      status,
+    }: {
+      id: string;
+      status: "approved" | "rejected";
+    }) => changeCoursePurchaseRequestStatus(id, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["course-purchase-requests"] });
     },
   });
 
   const requests: CoursePurchaseRequest[] = data?.data?.items ?? [];
+  const pagination = data?.data?.pagination;
+  const totalPages = pagination?.totalPages ?? 1;
+  const totalItems = pagination?.totalItems ?? 0;
 
+  // Client-side search filter
   const filteredRequests = requests.filter((request) => {
     const term = searchTerm.toLowerCase();
+    if (!term) return true;
+    const courseTitle =
+      request.course?.title_ar || request.course?.title || "";
     return (
       request.student?.user?.name?.toLowerCase().includes(term) ||
-      request.course?.title?.toLowerCase().includes(term) ||
-      !searchTerm
+      courseTitle.toLowerCase().includes(term)
     );
   });
 
-  const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedRequests = filteredRequests.slice(startIndex, startIndex + itemsPerPage);
+  const getReceiptUrl = (path: string) => {
+    if (!path) return "";
+    if (path.startsWith("http")) return path;
+    return `${baseURL}/${path}`;
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -104,25 +141,19 @@ export default function CoursePurchaseRequests() {
     }
   };
 
-  const handleApprove = async (request: CoursePurchaseRequest) => {
-    const confirmed = await confirm({
-      title: text.confirmApproveTitle[language],
-      message: text.confirmApproveMsg[language],
-    });
-    if (confirmed) changeStatus({ id: request.id, status: "approved" });
+  const handleApprove = (request: CoursePurchaseRequest) => {
+    changeStatus({ id: request.id, status: "approved" });
   };
 
-  const handleReject = async (request: CoursePurchaseRequest) => {
-    const confirmed = await confirm({
-      title: text.confirmRejectTitle[language],
-      message: text.confirmRejectMsg[language],
-    });
-    if (confirmed) changeStatus({ id: request.id, status: "rejected" });
+  const handleReject = (request: CoursePurchaseRequest) => {
+    changeStatus({ id: request.id, status: "rejected" });
   };
 
   return (
     <div className="p-8 space-y-8 animate-in fade-in duration-700">
-      <div className={`${language === 'ar' ? 'text-right' : 'text-left'} space-y-2`}>
+      <div
+        className={`${language === "ar" ? "text-right" : "text-left"} space-y-2`}
+      >
         <h1 className="text-4xl font-black text-slate-900 tracking-tight">
           {text.title[language]}
         </h1>
@@ -130,16 +161,19 @@ export default function CoursePurchaseRequests() {
       </div>
 
       <div className="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
+        {/* Filters */}
         <div className="p-8 border-b border-slate-50 bg-slate-50/30">
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex-1 relative group">
-              <Search className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5 group-focus-within:text-blue-500 transition-colors`} />
+              <Search
+                className={`absolute ${language === "ar" ? "right-4" : "left-4"} top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5 group-focus-within:text-blue-500 transition-colors`}
+              />
               <input
                 type="text"
                 placeholder={text.search[language]}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-full ${language === 'ar' ? 'pr-12 pl-4' : 'pl-12 pr-4'} py-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none text-slate-700 font-medium transition-all shadow-sm`}
+                className={`w-full ${language === "ar" ? "pr-12 pl-4" : "pl-12 pr-4"} py-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none text-slate-700 font-medium transition-all shadow-sm`}
               />
             </div>
 
@@ -147,7 +181,9 @@ export default function CoursePurchaseRequests() {
               <CustomSelect
                 value={statusFilter}
                 onChange={(value) => {
-                  setStatusFilter(value as "all" | "pending" | "approved" | "rejected");
+                  setStatusFilter(
+                    value as "all" | "pending" | "approved" | "rejected",
+                  );
                   setCurrentPage(1);
                 }}
                 options={[
@@ -162,26 +198,33 @@ export default function CoursePurchaseRequests() {
           </div>
         </div>
 
+        {/* Table */}
         <div className="overflow-x-auto no-scrollbar">
           {isLoading ? (
             <div className="p-8">
-              <TableSkeleton rows={8} columns={6} />
+              <TableSkeleton rows={8} columns={7} />
             </div>
-          ) : paginatedRequests.length === 0 ? (
+          ) : filteredRequests.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 bg-slate-50/20">
               <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-300 mb-4">
                 <ShoppingCart size={40} />
               </div>
-              <p className="text-slate-500 text-lg font-bold">{text.noRequests[language]}</p>
+              <p className="text-slate-500 text-lg font-bold">
+                {text.noRequests[language]}
+              </p>
             </div>
           ) : (
-            <table className="w-full border-collapse" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+            <table
+              className="w-full border-collapse"
+              dir={language === "ar" ? "rtl" : "ltr"}
+            >
               <thead>
                 <tr className="bg-slate-50/50 border-b border-slate-100">
                   {[
                     { label: text.studentName[language], icon: User },
                     { label: text.course[language], icon: BookOpen },
                     { label: text.price[language], icon: null },
+                    { label: text.receipt[language], icon: null },
                     { label: text.notes[language], icon: null },
                     { label: text.requestDate[language], icon: Calendar },
                     { label: text.status[language], icon: CheckCircle },
@@ -197,32 +240,94 @@ export default function CoursePurchaseRequests() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
-                {paginatedRequests.map((request) => (
-                  <tr key={request.id} className="hover:bg-blue-50/30 transition-colors group">
+                {filteredRequests.map((request) => (
+                  <tr
+                    key={request.id}
+                    className="hover:bg-blue-50/30 transition-colors group"
+                  >
+                    {/* Student */}
                     <td className="px-6 py-5">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{request.student?.user?.name}</span>
-                        <span className="text-xs text-slate-400 font-medium">{request.student?.user?.email}</span>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">
+                          {request.student?.user?.name}
+                        </span>
+                        <span className="text-xs text-slate-400 font-medium">
+                          {request.student?.user?.email}
+                        </span>
+                        {request.student?.user?.phone && (
+                          <span className="inline-flex items-center gap-1 text-xs text-slate-400 font-medium">
+                            <Phone size={11} />
+                            {request.student.user.phone}
+                          </span>
+                        )}
                       </div>
                     </td>
+
+                    {/* Course */}
                     <td className="px-6 py-5">
-                      <span className="text-sm font-bold text-slate-700">{request.course?.title}</span>
+                      <span className="text-sm font-bold text-slate-700">
+                        {request.course?.title_ar ||
+                          request.course?.title ||
+                          "—"}
+                      </span>
                     </td>
+
+                    {/* Price */}
                     <td className="px-6 py-5">
-                      <span className="text-sm font-black text-slate-900">{request.course?.price ?? '—'}</span>
+                      <span className="text-sm font-black text-slate-900">
+                        {request.course?.price != null
+                          ? `${request.course.price} ج.م`
+                          : "—"}
+                      </span>
                     </td>
+
+                    {/* Receipt Image */}
                     <td className="px-6 py-5">
-                      <span className="text-xs text-slate-500 font-medium max-w-[160px] truncate block">{request.notes || '—'}</span>
+                      {request.receipt_img ? (
+                        <Image
+                          src={getReceiptUrl(request.receipt_img)}
+                          width={48}
+                          height={48}
+                          className="rounded-xl object-cover border border-slate-100 cursor-pointer"
+                          style={{ borderRadius: 12 }}
+                          fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
+                          preview={{
+                            mask: (
+                              <span className="text-[10px] font-bold text-white">
+                                {text.hasReceipt[language]}
+                              </span>
+                            ),
+                          }}
+                        />
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs text-slate-400 font-medium">
+                          <ImageOff size={14} />
+                          {text.noReceipt[language]}
+                        </span>
+                      )}
                     </td>
+
+                    {/* Notes */}
+                    <td className="px-6 py-5">
+                      <span className="text-xs text-slate-500 font-medium max-w-[160px] truncate block">
+                        {request.notes || "—"}
+                      </span>
+                    </td>
+
+                    {/* Date */}
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-2 text-sm text-slate-500 font-medium">
                         <Calendar size={14} />
                         {request.createdAt.substring(0, 10)}
                       </div>
                     </td>
+
+                    {/* Status */}
                     <td className="px-6 py-5">
                       {getStatusBadge(request.status)}
                     </td>
+
+                    {/* Actions */}
                     <td className="px-6 py-5">
                       {request.status === "pending" && (
                         <div className="flex items-center gap-2">
@@ -250,19 +355,22 @@ export default function CoursePurchaseRequests() {
           )}
         </div>
 
-        {!isLoading && paginatedRequests.length > 0 && (
+        {/* Pagination */}
+        {!isLoading && totalItems > 0 && (
           <div className="p-8 border-t border-slate-50 bg-slate-50/10">
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
-              totalItems={filteredRequests.length}
+              totalItems={totalItems}
               itemsPerPage={itemsPerPage}
-              onPageChange={setCurrentPage}
+              onPageChange={(page) => {
+                setCurrentPage(page);
+                setSearchTerm("");
+              }}
             />
           </div>
         )}
       </div>
-      {ConfirmDialog}
     </div>
   );
 }

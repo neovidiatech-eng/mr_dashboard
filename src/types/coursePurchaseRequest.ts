@@ -3,12 +3,14 @@ export interface CoursePurchaseRequestStudent {
   user: {
     name: string;
     email: string;
+    phone?: string;
   };
 }
 
 export interface CoursePurchaseRequestCourse {
   id: string;
-  title: string;
+  title?: string;
+  title_ar?: string;
   price?: number | null;
   image?: string;
 }
@@ -18,24 +20,26 @@ export interface CoursePurchaseRequest {
   studentId: string;
   courseId: string;
   status: 'pending' | 'approved' | 'rejected';
+  receipt_img?: string | null;
   notes?: string | null;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
   student: CoursePurchaseRequestStudent;
   course: CoursePurchaseRequestCourse;
 }
 
 export interface CoursePurchaseRequestsResponse {
   message: string;
-  status: number;
+  status: string | number;
   data: {
     items: CoursePurchaseRequest[];
     pagination: {
-      page: number;
+      currentPage: number;
+      page?: number;
       limit: number;
       totalItems: number;
       totalPages: number;
-      hasNextPage: boolean;
+      hasNextPage?: boolean;
     };
   };
 }
