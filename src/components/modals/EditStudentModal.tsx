@@ -104,17 +104,21 @@ export default function EditStudentModal({
     }))
   ];
 
+  const isAr = language === 'ar';
+
   const ranks = ranksResponse?.data.items || [];
   const rankOptions = ranks.map((r: any) => ({
     value: r.id,
-    label: r.name || (language === 'ar' ? r.name_ar : r.name_en),
+    label: isAr ? (r.name_ar || r.name || r.name_en) : (r.name_en || r.name || r.name_ar),
   }));
 
   const selectedRank = ranks.find((r: any) => r.id === rankIdValue);
   const stages = selectedRank?.stages || [];
   const stageOptions = stages.map((s: any) => ({
     value: s.id,
-    label: s.name_ar || s.name_en || s.slug,
+    label: isAr
+      ? (s.name_ar || s.name || s.name_en || s.slug)
+      : (s.name_en || s.name || s.name_ar || s.slug),
   }));
 
   const statusOptions = [

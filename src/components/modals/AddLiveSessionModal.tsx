@@ -1,13 +1,15 @@
 import { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { X, Video } from 'lucide-react';
+import { X, Video, Edit3 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import dayjs from 'dayjs';
 
-import { useCreateLiveSessions } from '../../hooks/useLiveSessions';
+import { useCreateLiveSessions, useUpdateLiveSession } from '../../hooks/useLiveSessions';
 import { useGetAllStages } from '../../features/admin/hooks/useStage';
 import { usePlans } from '../../features/admin/hooks/usePlans';
 import { getLiveSessionSchema, LiveSessionFormData } from '../../lib/schemas/LiveSessionSchema';
+import { LiveSessions } from '../../types/liveSessions';
 
 import CustomSelect from '../ui/CustomSelect';
 import DatePickerField from '../ui/DatePickerField';
@@ -17,16 +19,21 @@ import { Input } from 'antd';
 export interface AddLiveSessionProps {
   open: boolean;
   onClose: () => void;
+  initialData?: LiveSessions | null;
 }
 
-export default function AddLiveSessionModal({ open, onClose }: AddLiveSessionProps) {
+export default function AddLiveSessionModal({ open, onClose, initialData }: AddLiveSessionProps) {
   const { t, i18n } = useTranslation();
   const language = i18n.language.split('-')[0];
+  const isEditMode = !!initialData;
 
-  // 1. Data Fetching
+  // 1. Data Fetching & Mutations
   const { data: stagesResponse, isLoading: isLoadingStages } = useGetAllStages();
   const { data: plans = [], isLoading: isLoadingPlans } = usePlans();
-  const { mutate: createSession, isPending } = useCreateLiveSessions();
+  const { mutate: createSession, isPending: isCreating } = useCreateLiveSessions();
+  const { mutate: updateSession, isPending: isUpdating } = useUpdateLiveSession();
+
+  const isPending = isCreating || isUpdating;
 
   // 2. Form Setup
   const {
@@ -42,15 +49,35 @@ export default function AddLiveSessionModal({ open, onClose }: AddLiveSessionPro
       planId: '',
       date: '',
       time: '',
+      status: 'scheduled',
     },
   });
 
-  // Reset form when modal opens/closes
+  // Reset/populate form when modal opens or initialData changes
   useEffect(() => {
-    if (!open) {
-      reset();
+    if (open) {
+      if (initialData) {
+        const startDateObj = dayjs(initialData.startAt);
+        reset({
+          title: initialData.title || initialData.roomName || '',
+          stageId: initialData.stage?.id || '',
+          planId: initialData.plan?.id || '',
+          date: startDateObj.isValid() ? startDateObj.format('YYYY-MM-DD') : '',
+          time: startDateObj.isValid() ? startDateObj.format('HH:mm') : '',
+          status: (initialData.status as LiveSessionFormData['status']) || 'scheduled',
+        });
+      } else {
+        reset({
+          title: '',
+          stageId: '',
+          planId: '',
+          date: '',
+          time: '',
+          status: 'scheduled',
+        });
+      }
     }
-  }, [open, reset]);
+  }, [open, initialData, reset]);
 
   if (!open) return null;
 
@@ -65,24 +92,50 @@ export default function AddLiveSessionModal({ open, onClose }: AddLiveSessionPro
     label: plan.name,
   }));
 
+  const statusOptions = [
+    { value: 'scheduled', label: language === 'ar' ? 'مجدولة (Scheduled)' : 'Scheduled' },
+    { value: 'live', label: language === 'ar' ? 'مباشر (Live)' : 'Live' },
+    { value: 'completed', label: language === 'ar' ? 'مكتملة (Completed)' : 'Completed' },
+    { value: 'cancelled', label: language === 'ar' ? 'ملغاة (Cancelled)' : 'Cancelled' },
+  ];
+
   // 4. Form Submit
   const onSubmit = (formData: LiveSessionFormData) => {
-    // Combine Date and Time into ISO string for startAt (e.g. 2026-09-08T14:30:00.000Z)
     const combinedStartAt = new Date(`${formData.date}T${formData.time}:00`).toISOString();
 
-    createSession(
-      {
-        title: formData.title,
-        stageId: formData.stageId,
-        planId: formData.planId,
-        startAt: combinedStartAt,
-      },
-      {
-        onSuccess: () => {
-          onClose();
+    if (isEditMode && initialData) {
+      updateSession(
+        {
+          id: initialData.id,
+          data: {
+            title: formData.title,
+            stageId: formData.stageId,
+            planId: formData.planId,
+            startAt: combinedStartAt,
+            status: formData.status || initialData.status || 'Scheduled',
+          },
         },
-      }
-    );
+        {
+          onSuccess: () => {
+            onClose();
+          },
+        }
+      );
+    } else {
+      createSession(
+        {
+          title: formData.title,
+          stageId: formData.stageId,
+          planId: formData.planId,
+          startAt: combinedStartAt,
+        },
+        {
+          onSuccess: () => {
+            onClose();
+          },
+        }
+      );
+    }
   };
 
   return (
@@ -93,14 +146,18 @@ export default function AddLiveSessionModal({ open, onClose }: AddLiveSessionPro
         <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600">
-              <Video className="w-5 h-5" />
+              {isEditMode ? <Edit3 className="w-5 h-5" /> : <Video className="w-5 h-5" />}
             </div>
             <div>
               <h2 className="text-lg font-bold text-gray-900">
-                {language === 'ar' ? 'إضافة جلسة لايف جديدة' : 'Add New Live Session'}
+                {isEditMode
+                  ? language === 'ar' ? 'تعديل الجلسة المباشرة' : 'Edit Live Session'
+                  : language === 'ar' ? 'إضافة جلسة لايف جديدة' : 'Add New Live Session'}
               </h2>
               <p className="text-xs text-gray-500">
-                {language === 'ar' ? 'قم بتحديد المرحلة والخطة والموعد' : 'Select stage, plan and schedule'}
+                {isEditMode
+                  ? language === 'ar' ? 'تعديل تفاصيل الجلسة والحالة' : 'Update session details and status'
+                  : language === 'ar' ? 'قم بتحديد المرحلة والخطة والموعد' : 'Select stage, plan and schedule'}
               </p>
             </div>
           </div>
@@ -116,7 +173,7 @@ export default function AddLiveSessionModal({ open, onClose }: AddLiveSessionPro
         {/* Form Body */}
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
 
-          {/*Title */}
+          {/* Title */}
           <Controller
             name="title"
             control={control}
@@ -204,6 +261,24 @@ export default function AddLiveSessionModal({ open, onClose }: AddLiveSessionPro
             />
           </div>
 
+          {/* Status Select (Shown in Edit Mode or Optional) */}
+          {isEditMode && (
+            <Controller
+              name="status"
+              control={control}
+              render={({ field }) => (
+                <CustomSelect
+                  label={language === 'ar' ? 'حالة الجلسة' : 'Session Status'}
+                  placeholder={language === 'ar' ? 'اختر الحالة' : 'Select Status'}
+                  options={statusOptions}
+                  value={field.value || 'Scheduled'}
+                  onChange={field.onChange}
+                  error={errors.status?.message}
+                />
+              )}
+            />
+          )}
+
           {/* Actions Footer */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
             <button
@@ -219,9 +294,17 @@ export default function AddLiveSessionModal({ open, onClose }: AddLiveSessionPro
               className="px-6 py-2.5 rounded-xl bg-purple-600 text-white text-sm font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {isPending ? (
-                <span>{language === 'ar' ? 'جاري الإنشاء...' : 'Creating...'}</span>
+                <span>
+                  {isEditMode
+                    ? (language === 'ar' ? 'جاري التحديث...' : 'Updating...')
+                    : (language === 'ar' ? 'جاري الإنشاء...' : 'Creating...')}
+                </span>
               ) : (
-                <span>{language === 'ar' ? 'إنشاء الجلسة' : 'Create Session'}</span>
+                <span>
+                  {isEditMode
+                    ? (language === 'ar' ? 'تحديث الجلسة' : 'Update Session')
+                    : (language === 'ar' ? 'إنشاء الجلسة' : 'Create Session')}
+                </span>
               )}
             </button>
           </div>
@@ -231,3 +314,4 @@ export default function AddLiveSessionModal({ open, onClose }: AddLiveSessionPro
     </div>
   );
 }
+

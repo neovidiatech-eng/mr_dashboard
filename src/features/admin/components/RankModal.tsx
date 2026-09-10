@@ -1,4 +1,4 @@
-import { X, Trophy, Palette, Image as ImageIcon, Users } from 'lucide-react';
+import { X, Trophy, Palette, Image as ImageIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { RankItem } from '../../../types/rank';

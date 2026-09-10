@@ -9,6 +9,8 @@ import {
   Plus,
   ClipboardList,
 } from "lucide-react";
+import UpcomingLiveSessionsCard from "../../features/student/components/UpcomingLiveSessionsCard";
+import NextLiveSessionCard from "../../features/student/components/NextLiveSessionCard";
 // Student Dashboard Page
 import { useState, useEffect, useMemo } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
@@ -36,6 +38,7 @@ const getActualEndTime = (session: any) => {
 };
 
 export default function StudentDashboard() {
+
   const { language } = useLanguage();
   const navigate = useNavigate();
   const { getServerTime } = useServerTime();
@@ -277,8 +280,11 @@ export default function StudentDashboard() {
         </div>
       </div>
 
-      {/* Main Content Area: Subscription & Feedback Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch mb-8">
+      {/* Next Live Session Feature Card */}
+      <NextLiveSessionCard />
+
+      {/* Main Content Area: Subscription, Assignments, Upcoming Live & Feedback Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-stretch mb-8">
         <div className="lg:col-span-1 h-full">
           {/* Your Subscription Card */}
           <div className="bg-white rounded-[32px] p-6 border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all group h-full flex flex-col justify-between">
@@ -393,6 +399,12 @@ export default function StudentDashboard() {
           </div>
         </div>
 
+        {/* Upcoming Live Sessions Card */}
+        <div className="lg:col-span-1 h-full">
+          <UpcomingLiveSessionsCard />
+        </div>
+
+        {/* Reviews / Feedback Card */}
         <div className="lg:col-span-1 h-full">
           {(dashboardData?.metadata?.user?.reviewsReceived?.length ?? 0) > 0 ? (
             <TeacherFeedback
