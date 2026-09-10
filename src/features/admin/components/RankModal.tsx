@@ -29,7 +29,8 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
       name_ar: '',
       name_en: '',
       color: '#C0C0C0',
-   
+      stageName_ar: '',
+      stageName_en: '',
     }
   });
 
@@ -42,12 +43,16 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
           name_ar: rank.name_ar || rank.name || '',
           name_en: rank.name_en || rank.slug||'',
           color: rank.color || '#C0C0C0',
+          stageName_ar: rank.stageName_ar || '',
+          stageName_en: rank.stageName_en || '',
         });
       } else {
         reset({
           name_ar: '',
           name_en: '',
           color: '#C0C0C0',
+          stageName_ar: '',
+          stageName_en: '',
         });
         setIconFile(null);
       }
@@ -62,6 +67,8 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
         name_ar: data.name_ar,
         name_en: data.name_en,
         color: data.color,
+        stageName_ar: data.stageName_ar,
+        stageName_en: data.stageName_en,
       };
       if (iconFile) payload.icon = iconFile;
 

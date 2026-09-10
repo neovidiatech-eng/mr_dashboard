@@ -17,7 +17,6 @@ export default function ViewAssignmentModal({ isOpen, onClose, assignment }: Vie
   const text = {
     modalTitle: { ar: 'تفاصيل الواجب', en: 'Assignment Details' },
     studentInfo: { ar: 'بيانات الطالب', en: 'Student Information' },
-    teacherInfo: { ar: 'بيانات المعلم', en: 'Teacher Information' },
     title: { ar: 'العنوان', en: 'Title' },
     titleAr: { ar: 'العنوان (بالعربية)', en: 'Title (Arabic)' },
     titleEn: { ar: 'العنوان (بالإنجليزية)', en: 'Title (English)' },
@@ -29,7 +28,8 @@ export default function ViewAssignmentModal({ isOpen, onClose, assignment }: Vie
     graded: { ar: 'تم التصحيح', en: 'Graded' },
     completed: { ar: 'مكتمل', en: 'Completed' },
     grade: { ar: 'الدرجة', en: 'Grade' },
-    feedback: { ar: 'ملاحظات المعلم', en: 'Teacher Feedback' },
+    feedback: { ar: 'ملاحظات المعلم / التقييم', en: 'Teacher Feedback' },
+    noFeedback: { ar: 'لا توجد ملاحظات مسجلة', en: 'No feedback provided' },
     attachments: { ar: 'المرفقات والملفات', en: 'Attachments & Files' },
     noAttachments: { ar: 'لا توجد ملفات مرفقة', en: 'No attachments available' },
     download: { ar: 'تحميل', en: 'Download' },
@@ -150,7 +150,7 @@ export default function ViewAssignmentModal({ isOpen, onClose, assignment }: Vie
             )}
           </div>
 
-          {/* Student & Teacher Info Grid */}
+          {/* Student & Feedback Info Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Student Card */}
             <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-start gap-4">
@@ -170,21 +170,24 @@ export default function ViewAssignmentModal({ isOpen, onClose, assignment }: Vie
               </div>
             </div>
 
-            {/* Teacher Card */}
+            {/* Feedback Card (Replaces Teacher Card) */}
             <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 font-bold shrink-0">
-                <User className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 font-bold shrink-0">
+                <MessageSquare className="w-5 h-5" />
               </div>
               <div className="min-w-0 flex-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 block mb-0.5">
-                  {text.teacherInfo[language]}
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 block mb-0.5">
+                  {text.feedback[language]}
                 </span>
-                <p className="text-sm font-bold text-gray-900 truncate">
-                  {assignment.teacher?.user?.name || '—'}
-                </p>
-                <p className="text-xs text-gray-400 truncate mt-0.5">
-                  {assignment.teacher?.user?.email || '—'}
-                </p>
+                {assignment.feedback ? (
+                  <p className="text-sm font-semibold text-gray-800 leading-relaxed whitespace-pre-wrap">
+                    {assignment.feedback}
+                  </p>
+                ) : (
+                  <p className="text-xs text-gray-400 italic mt-0.5">
+                    {text.noFeedback[language]}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -230,19 +233,6 @@ export default function ViewAssignmentModal({ isOpen, onClose, assignment }: Vie
               </div>
             </div>
           </div>
-
-          {/* Feedback (if available and not pending) */}
-          {!isPending && assignment.feedback && (
-            <div className="bg-amber-50/50 rounded-2xl p-5 border border-amber-100/60 space-y-2">
-              <div className="flex items-center gap-2 text-amber-700 font-bold text-xs uppercase tracking-wider">
-                <MessageSquare className="w-4 h-4" />
-                <span>{text.feedback[language]}</span>
-              </div>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                {assignment.feedback}
-              </p>
-            </div>
-          )}
 
           {/* Attachments Section */}
           <div className="space-y-3">

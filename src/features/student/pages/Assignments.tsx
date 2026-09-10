@@ -43,11 +43,14 @@ export default function Assignments() {
     const teacherName = assignment.teacher?.user?.name || '';
     const subjectName = language === 'ar' ? assignment.subject?.name_ar : assignment.subject?.name_en || assignment.subject?.name_ar;
 
+    const title = assignment.title || assignment.title_en || assignment.title_ar || '';
+    const description = assignment.description || assignment.description_en || assignment.description_ar || '';
+
     const matchesSearch =
-      assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (subjectName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       teacherName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      assignment.description.toLowerCase().includes(searchTerm.toLowerCase());
+      description.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus = !filters.status || assignment.status === filters.status;
     const matchesSubject = !filters.subject || (subjectName || '').toLowerCase().includes(filters.subject.toLowerCase());

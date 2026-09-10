@@ -15,6 +15,7 @@ export const useStudentById = (id: string) => {
     return useQuery({
         queryKey: ["student", id],
         queryFn: () => getStudentById(id),
+        enabled: Boolean(id),
     });
 }
 export const useUpdateStudent = () => {

@@ -9,7 +9,7 @@ export const getAssignmentSchema = (t: TFunc) => z.object({
   description_ar: z.string().min(1, t("validation.required")),
   description_en: z.string().min(1, t("validation.required")),
   dueDate: z.string().min(1, t("validation.required")),
-  status: z.enum(['pending', 'submitted', 'graded']).optional().default('pending'),
+  status: z.enum(['pending', 'submitted', 'graded', 'completed']).optional().default('pending'),
   grade: z.union([z.coerce.number().min(0), z.literal('')]).optional(),
   feedback: z.string().max(2000).optional(),
 });

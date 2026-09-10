@@ -43,6 +43,7 @@ const encodePath = (path: string | undefined | null) => {
 };
 
 
+
 export default function CourseDetails() {
   const { t, language } = useLanguage();
   const isAr = language === 'ar';

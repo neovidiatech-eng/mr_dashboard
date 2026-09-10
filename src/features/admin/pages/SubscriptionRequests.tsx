@@ -291,7 +291,7 @@ export default function SubscriptionRequests() {
                                 alt="Receipt"
                                 className="w-full h-full object-cover"
                                 preview={{
-                                  mask: (
+                                  cover: (
                                     <div className="text-[10px] text-white font-bold flex items-center justify-center">
                                       <Eye size={12} />
                                     </div>

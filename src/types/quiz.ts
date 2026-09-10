@@ -98,3 +98,33 @@ export interface CreateQuizPayload {
   order?: number;
   questions?: CreateQuizQuestionPayload[];
 }
+
+export interface QuizOptionPayload {
+  id?: string;
+  option_text_ar: string;
+  option_text_en?: string;
+  is_correct: boolean;
+}
+
+export interface QuizQuestionPayload {
+  id?: string;
+  question_ar: string;
+  question_en?: string;
+  type: "MCQ" | "TRUE_FALSE";
+  points: number;
+  order: number;
+  options: QuizOptionPayload[];
+}
+
+export interface QuizPayload {
+  title_ar: string;
+  title_en?: string;
+  description_ar?: string;
+  description_en?: string;
+  courseId?: string;
+  total_points: number;
+  pass_points: number;
+  duration_min: number;
+  questions: QuizQuestionPayload[];
+}
+

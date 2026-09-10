@@ -1,4 +1,4 @@
-import { X, User, Package, Calendar, Clock, CheckCircle, XCircle, Info, Receipt, Eye, ImageOff } from 'lucide-react';
+import { X, User, Package, Calendar, Clock, CheckCircle, XCircle, Info, Receipt, Eye, ImageOff, Trophy, GraduationCap } from 'lucide-react';
 import { Image } from 'antd';
 import { useLanguage } from '../../contexts/LanguageContext';
 import WhatsAppPhone from '../ui/WhatsAppPhone';
@@ -16,6 +16,17 @@ export default function ViewSubscriptionRequestModal({ isOpen, onClose, request 
 
   if (!isOpen) return null;
 
+  const rank = request.user?.rank;
+  const stage = request.user?.stage;
+
+  const rankName = rank
+    ? (language === "ar" ? rank.name_ar || rank.name_en : rank.name_en || rank.name_ar)
+    : null;
+
+  const stageName = stage
+    ? (language === "ar" ? stage.name_ar || stage.name_en : stage.name_en || stage.name_ar)
+    : null;
+
   const receiptImg = request.subscrption_img || request.subscription_img;
   const receiptUrl = receiptImg
     ? (receiptImg.startsWith('http') ? receiptImg : `${baseURL}/${receiptImg.replace(/^\//, '')}`)
@@ -32,6 +43,8 @@ export default function ViewSubscriptionRequestModal({ isOpen, onClose, request 
     parentName: { ar: 'ولي الأمر', en: 'Parent Name' },
     phone: { ar: 'رقم الهاتف', en: 'Phone Number' },
     email: { ar: 'البريد الإلكتروني', en: 'Email' },
+    rank: { ar: 'المرحلة الدراسية', en: 'Academic Level (Rank)' },
+    stage: { ar: 'السنة الدراسية', en: 'Academic Year (Stage)' },
     plan: { ar: 'الخطة', en: 'Plan' },
     price: { ar: 'السعر', en: 'Price' },
     sessionsCount: { ar: 'عدد الحصص', en: 'Sessions Count' },
@@ -139,6 +152,29 @@ export default function ViewSubscriptionRequestModal({ isOpen, onClose, request 
                   </label>
                   <p className="text-slate-900 font-bold truncate" dir="ltr">{request.user.email}</p>
                 </div>
+
+                {(rankName || stageName) && (
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    {rankName && (
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <div className="flex items-center gap-1.5 text-amber-500 mb-1">
+                          <Trophy size={12} />
+                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">{text.rank[language]}</span>
+                        </div>
+                        <p className="text-xs font-black text-slate-800 truncate">{rankName}</p>
+                      </div>
+                    )}
+                    {stageName && (
+                      <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <div className="flex items-center gap-1.5 text-indigo-500 mb-1">
+                          <GraduationCap size={12} />
+                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">{text.stage[language]}</span>
+                        </div>
+                        <p className="text-xs font-black text-slate-800 truncate">{stageName}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 

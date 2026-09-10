@@ -70,7 +70,7 @@ export interface AssignmentsResponse {
     data: Assignment[];
 }
 
-export type HomeworkStatus = 'pending' | 'completed' | 'submitted';
+export type HomeworkStatus = 'pending' | 'completed' | 'submitted' | 'graded' | string;
 
 export interface HomeworkTeacher {
   id: string;
@@ -107,14 +107,16 @@ export interface HomeworkItem {
   status: HomeworkStatus;
   dueDate: string;
   studentId: string;
-  teacherId: string;
+  teacherId?: string;
+  userId?: string;
+  subjectId?: string | null;
   grade?: number | null;
   feedback?: string | null;
   attachments: Attachment[] | null;
   createdAt: string;
   updatedAt: string;
 
-  student: {
+  student?: {
     id: string;
     user_id: string;
     birth_date: string;
@@ -137,7 +139,8 @@ export interface HomeworkItem {
     };
   };
 
-  teacher: HomeworkTeacher;
+  teacher?: HomeworkTeacher;
+  subject?: SubjectInAssignment;
 }
 
 export interface HomeworkResponse {

@@ -17,3 +17,11 @@ export interface TrueFalseQuestion {
   points: number;
   correctAnswer: boolean; 
 }
+
+export interface ExamData {
+  id?: string;
+  title: string;
+  duration?: number | string;
+  mcqQuestions?: MCQQuestion[];
+  trueFalseQuestions?: TrueFalseQuestion[];
+}
