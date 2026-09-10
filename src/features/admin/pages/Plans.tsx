@@ -17,6 +17,7 @@ interface Plan {
   currencyCode: string;
   duration: number;
   sessionsCount: number;
+  liveSessionsCount: number;
   sessionTime: number;
   type: "quarterly" | "halfAnnually" | "annually";
   features: string[];
@@ -48,6 +49,7 @@ export default function Plans() {
     currencyCode: item.currency?.code || "EGP",
     duration: item.duration,
     sessionsCount: item.sessionsCount || 0,
+    liveSessionsCount: item.liveSessionsCount || 0,
     sessionTime: item.sessionTime || 60,
     type: item.type || 'full',
     features: item.features || [],
@@ -89,7 +91,8 @@ export default function Plans() {
         name: planData.name,
         price: Number(planData.price),
         duration: Number(planData.duration),
-        sessionsCount: Number(planData.sessionsCount),
+        sessionsCount: Number(planData.sessionsCount || 0),
+        liveSessionsCount: Number(planData.liveSessionsCount || 0),
         active: planData.status === "active",
         currencyId: planData.currencyId,
         type: planData.type,

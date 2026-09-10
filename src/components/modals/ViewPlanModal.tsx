@@ -12,6 +12,8 @@ interface ViewPlanModalProps {
     currency: string;
     duration: number;
     sessionsCount: number;
+    liveSessionsCount?: number;
+    sessionTime?: number;
     features: string[];
     status: 'active' | 'inactive';
   };

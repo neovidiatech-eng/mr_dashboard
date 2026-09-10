@@ -715,7 +715,7 @@ export default function AddSessionModal({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5">
                   {/* Video */}
-                  <div>
+                  {/* <div>
                     <label className="label">
                       <Video className="w-3.5 h-3.5" />
                       {t('video')}
@@ -733,7 +733,7 @@ export default function AddSessionModal({
                         {errors.video.message as string}
                       </p>
                     )}
-                  </div>
+                  </div> */}
 
                   {/* Slides */}
                   <div>

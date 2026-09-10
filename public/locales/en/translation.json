@@ -35,7 +35,8 @@
     "passwordNumber": "Password must contain at least one number",
     "passwordSpecial": "Password must contain at least one special character (@$!%*?&^#)",
     "imageMax": "Maximum image size is 5MB",
-    "imageFormat": "Unsupported image format"
+    "imageFormat": "Unsupported image format",
+    "atLeastOneSessionRequired": "At least one session or live session is required"
   },
   "login": "Login",
   "academyName": "Mr Mahmoud",

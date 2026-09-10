@@ -71,6 +71,7 @@ const SupportPage = lazy(() => import("../../features/admin/pages/Support"));
 const PostsPage = lazy(() => import("../../features/admin/pages/Posts"));
 const AttendancePage = lazy(() => import("../../features/admin/pages/Attendance"));
 const OfflineGroupsPage = lazy(() => import("../../features/admin/pages/OfflineGroups"));
+const LiveSessionsPage = lazy(() => import("../../features/admin/pages/LiveSessions"));
 
 
 export const adminDashboardRoutes: RouteConfig[] = [
@@ -158,6 +159,13 @@ export const adminDashboardRoutes: RouteConfig[] = [
     icon: Eye,
     path: "attendance",
     element: <AttendancePage />,
+  },
+  {
+    id: "live-sessions",
+    label: "Live Sessions",
+    icon: Play,
+    path: "live-sessions",
+    element: <LiveSessionsPage />,
   },
   {
     id: "content",
