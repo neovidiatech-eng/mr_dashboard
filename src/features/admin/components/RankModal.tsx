@@ -166,7 +166,7 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
             {/* Icon Upload */}
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
-                <ImageIcon className="w-4 h-4" />
+                <ImageIcon className="w-4 h-4" /> 
                 {language === 'ar' ? 'أيقونة المستوى (اختياري)' : 'Level Icon (optional)'}
               </label>
               <input

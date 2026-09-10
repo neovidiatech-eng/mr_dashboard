@@ -57,7 +57,6 @@ const ExpensesPage = lazy(() => import("../../features/admin/pages/Expenses"));
 const TransactionsPage = lazy(() => import("../../features/admin/pages/Transactions"));
 // const TeacherRequestsPage = lazy(() => import("../../features/admin/pages/TeacherRequests"));
 // const TeacherAvailabilityPage = lazy(() => import("../../features/admin/pages/TeacherAvailability"));
-// const SubjectsPage = lazy(() => import("../../features/admin/pages/Subjects"));
 const CategoriesPage = lazy(() => import("../../features/admin/pages/Categories"));
 const CoursePurchaseRequestsPage = lazy(() => import("../../features/admin/pages/CoursePurchaseRequests"));
 const SettingsPage = lazy(() => import("../../features/admin/pages/Settings"));
@@ -68,7 +67,6 @@ const CourseDetailsPage = lazy(() => import("../../features/admin/pages/CourseDe
 const LibraryPage = lazy(() => import("../../features/admin/pages/Library"));
 const RanksPage = lazy(() => import("../../features/admin/pages/Ranks"));
 const PoliciesPage = lazy(() => import("../../features/admin/pages/Policies"));
-// const ReportsPage = lazy(() => import("../../features/admin/pages/Reports"));
 const SupportPage = lazy(() => import("../../features/admin/pages/Support"));
 const PostsPage = lazy(() => import("../../features/admin/pages/Posts"));
 const AttendancePage = lazy(() => import("../../features/admin/pages/Attendance"));
@@ -252,6 +250,13 @@ export const adminDashboardRoutes: RouteConfig[] = [
     icon: ClipboardList,
     path: "requests",
     element: <RequestsPage />
+  },
+  {
+    id: "course-purchase-requests",
+    label: "طلبات شراء الكورسات",
+    icon: ShoppingCart,
+    path: "course-purchase-requests",
+    element: <CoursePurchaseRequestsPage />,
   },
   {
     id: "subscriptions",
