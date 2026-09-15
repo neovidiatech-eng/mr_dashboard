@@ -82,10 +82,19 @@ export default function AddLiveSessionModal({ open, onClose, initialData }: AddL
   if (!open) return null;
 
   // 3. Dropdown Options
-  const stageOptions = (stagesResponse?.data?.items || []).map((stage) => ({
-    value: stage.id,
-    label: language === 'ar' ? stage.name_ar : stage.name_en || stage.name_ar,
-  }));
+  const stageOptions = (stagesResponse?.data?.items || []).map((stage) => {
+    const rankName = stage.rank
+      ? (language === 'ar' ? stage.rank.name_ar : stage.rank.name_en || stage.rank.name_ar)
+      : (language === 'ar' ? 'المرحلة الدراسية' : 'Stage');
+    const stageName = language === 'ar' ? stage.name_ar : stage.name_en || stage.name_ar;
+
+    return {
+      value: stage.id,
+      label: stageName,
+      searchText: `${stageName} ${rankName}`,
+      group: rankName,
+    };
+  });
 
   const planOptions = plans.map((plan) => ({
     value: plan.id,
