@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ListChecks,
   X,
@@ -506,7 +506,7 @@ export default function AddQuizModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
       <div
         dir={isAr ? 'rtl' : 'ltr'}
         className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 text-start"
@@ -542,146 +542,148 @@ export default function AddQuizModal({
           </button>
         </div>
 
-        {/* Quiz General Info Form */}
-        <div className="p-6 bg-slate-50 border-b border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-4 shrink-0">
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">
-              {isAr ? 'عنوان الكويز (بالعربي) *' : 'Quiz Title (Arabic) *'}
-            </label>
-            <input
-              type="text"
-              dir="rtl"
-              value={quizTitle}
-              onChange={(e) => setQuizTitle(e.target.value)}
-              placeholder={isAr ? 'مثال: كويز المحاضرة الأولى' : 'e.g. Lecture 1 Quiz'}
-              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
-            />
+        {/* Scrollable Modal Content */}
+        <div className="flex-1 overflow-y-auto">
+          {/* Quiz General Info Form */}
+          <div className="p-6 bg-slate-50 border-b border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
+                {isAr ? 'عنوان الكويز (بالعربي) *' : 'Quiz Title (Arabic) *'}
+              </label>
+              <input
+                type="text"
+                dir="rtl"
+                value={quizTitle}
+                onChange={(e) => setQuizTitle(e.target.value)}
+                placeholder={isAr ? 'مثال: كويز المحاضرة الأولى' : 'e.g. Lecture 1 Quiz'}
+                className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
+                {isAr ? 'عنوان الكويز (بالإنجليزي)' : 'Quiz Title (English)'}
+              </label>
+              <input
+                type="text"
+                dir="ltr"
+                value={titleEn}
+                onChange={(e) => setTitleEn(e.target.value)}
+                placeholder="e.g. Lecture 1 Quiz"
+                className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
+                {isAr ? 'وصف الكويز (بالعربي)' : 'Quiz Description (Arabic)'}
+              </label>
+              <textarea
+                rows={2}
+                dir="rtl"
+                value={descriptionAr}
+                onChange={(e) => setDescriptionAr(e.target.value)}
+                placeholder={isAr ? 'اكتب وصفاً للكويز...' : 'Type quiz description...'}
+                className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start resize-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
+                {isAr ? 'وصف الكويز (بالإنجليزي)' : 'Quiz Description (English)'}
+              </label>
+              <textarea
+                rows={2}
+                dir="ltr"
+                value={descriptionEn}
+                onChange={(e) => setDescriptionEn(e.target.value)}
+                placeholder="Type English quiz description..."
+                className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start resize-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
+                {isAr ? 'المدة (بالدقائق)' : 'Duration (Minutes)'}
+              </label>
+              <input
+                type="number"
+                min="5"
+                dir={isAr ? 'rtl' : 'ltr'}
+                value={quizDuration}
+                onChange={(e) => setQuizDuration(Number(e.target.value))}
+                className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
+                {isAr ? 'درجات النجاح' : 'Pass Points'}
+              </label>
+              <input
+                type="number"
+                min="0"
+                dir={isAr ? 'rtl' : 'ltr'}
+                value={passPoints}
+                onChange={(e) => setPassPoints(Number(e.target.value))}
+                className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
+                {isAr ? 'الترتيب *' : 'Order *'}
+              </label>
+              <input
+                type="number"
+                min="1"
+                dir={isAr ? 'rtl' : 'ltr'}
+                value={quizOrder}
+                onChange={(e) => setQuizOrder(Number(e.target.value))}
+                className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">
-              {isAr ? 'عنوان الكويز (بالإنجليزي)' : 'Quiz Title (English)'}
-            </label>
-            <input
-              type="text"
-              dir="ltr"
-              value={titleEn}
-              onChange={(e) => setTitleEn(e.target.value)}
-              placeholder="e.g. Lecture 1 Quiz"
-              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
-            />
+          {/* Tabs Switcher */}
+          <div className="sticky top-0 z-10 px-6 pt-4 bg-white border-b border-slate-200 flex items-center justify-between shadow-[0_1px_3px_0_rgba(0,0,0,0.05)]">
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setActiveTab('mcq')}
+                className={`pb-3 px-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${
+                  activeTab === 'mcq'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                <HelpCircle className="w-4 h-4" />
+                <span>{isAr ? 'اختيار من متعدد (MCQ)' : 'Multiple Choice (MCQ)'}</span>
+                <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full font-bold">
+                  {mcqQuestions.length}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('true_false')}
+                className={`pb-3 px-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${
+                  activeTab === 'true_false'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>{isAr ? 'صح أو خطأ (True / False)' : 'True / False'}</span>
+                <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full font-bold">
+                  {trueFalseQuestions.length}
+                </span>
+              </button>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">
-              {isAr ? 'وصف الكويز (بالعربي)' : 'Quiz Description (Arabic)'}
-            </label>
-            <textarea
-              rows={2}
-              dir="rtl"
-              value={descriptionAr}
-              onChange={(e) => setDescriptionAr(e.target.value)}
-              placeholder={isAr ? 'اكتب وصفاً للكويز...' : 'Type quiz description...'}
-              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start resize-none"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">
-              {isAr ? 'وصف الكويز (بالإنجليزي)' : 'Quiz Description (English)'}
-            </label>
-            <textarea
-              rows={2}
-              dir="ltr"
-              value={descriptionEn}
-              onChange={(e) => setDescriptionEn(e.target.value)}
-              placeholder="Type English quiz description..."
-              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start resize-none"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">
-              {isAr ? 'المدة (بالدقائق)' : 'Duration (Minutes)'}
-            </label>
-            <input
-              type="number"
-              min="5"
-              dir={isAr ? 'rtl' : 'ltr'}
-              value={quizDuration}
-              onChange={(e) => setQuizDuration(Number(e.target.value))}
-              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">
-              {isAr ? 'درجات النجاح' : 'Pass Points'}
-            </label>
-            <input
-              type="number"
-              min="0"
-              dir={isAr ? 'rtl' : 'ltr'}
-              value={passPoints}
-              onChange={(e) => setPassPoints(Number(e.target.value))}
-              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1">
-              {isAr ? 'الترتيب *' : 'Order *'}
-            </label>
-            <input
-              type="number"
-              min="1"
-              dir={isAr ? 'rtl' : 'ltr'}
-              value={quizOrder}
-              onChange={(e) => setQuizOrder(Number(e.target.value))}
-              className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-start"
-            />
-          </div>
-        </div>
-
-        {/* Tabs Switcher */}
-        <div className="px-6 pt-4 bg-white border-b border-slate-200 flex items-center justify-between shrink-0">
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setActiveTab('mcq')}
-              className={`pb-3 px-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${
-                activeTab === 'mcq'
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-slate-500 hover:text-slate-700'
-              }`}
-            >
-              <HelpCircle className="w-4 h-4" />
-              <span>{isAr ? 'اختيار من متعدد (MCQ)' : 'Multiple Choice (MCQ)'}</span>
-              <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full font-bold">
-                {mcqQuestions.length}
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('true_false')}
-              className={`pb-3 px-4 text-sm font-bold flex items-center gap-2 border-b-2 transition-colors ${
-                activeTab === 'true_false'
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-slate-500 hover:text-slate-700'
-              }`}
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>{isAr ? 'صح أو خطأ (True / False)' : 'True / False'}</span>
-              <span className="bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full font-bold">
-                {trueFalseQuestions.length}
-              </span>
-            </button>
-          </div>
-        </div>
-
-        {/* Scrollable Questions Content */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
+          {/* Questions Content */}
+          <div className="p-6 space-y-6 bg-slate-50/50">
           {activeTab === 'mcq' ? (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
@@ -963,6 +965,7 @@ export default function AddQuizModal({
               </div>
             </div>
           )}
+          </div>
         </div>
 
         {/* Modal Footer Summary & Actions */}

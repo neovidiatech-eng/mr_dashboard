@@ -1,4 +1,4 @@
-import { Bell, LogOut, Menu, Globe } from "lucide-react";
+import { LogOut, Menu, Globe } from "lucide-react";
 
 import { useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +7,7 @@ import { useTeacherProfile } from "../../features/teacher/hooks/useTeacherProfil
 import { disconnectSocket } from "../../lib/socket";
 import MiniHeaderTimer from "../ui/Counter";
 import { useTranslation } from "react-i18next";
+import NotificationDropdown from "./NotificationDropdown";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -43,6 +44,7 @@ export default function Header({
 
   const profileData = profileResponse?.data;
   const teacherData = teacherProfileResponse?.data?.teacher;
+
 
   const marginClass = useMemo(() => {
     if (userRole === "student") return "";
@@ -141,6 +143,7 @@ export default function Header({
 
           {isTeacherOrStudent ? (
             <div className="flex items-center gap-2 md:gap-4">
+              <NotificationDropdown userRole={userRole} />
               <DesktopProfile
                 navigate={navigate}
                 name={userInfo.name}
@@ -160,10 +163,7 @@ export default function Header({
             </div>
           ) : (
             <div className="flex items-center gap-3 md:gap-6">
-              {/* <div className="relative p-2 text-gray-500 hover:bg-gray-50 rounded-lg cursor-pointer">
-                <Bell className="w-5 h-5" />
-                <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></div>
-              </div> */}
+              <NotificationDropdown userRole={userRole} />
 
               <div
                 className="flex items-center gap-2 cursor-pointer md:pl-4 md:border-l border-gray-100 group"
@@ -193,7 +193,6 @@ const DesktopProfile = ({
   subtext,
   avatar,
   targetPath,
-  compact = false,
 }: {
   className?: string;
   navigate: any;
@@ -204,12 +203,7 @@ const DesktopProfile = ({
   compact?: boolean;
 }) => (
   <div className={`flex items-center gap-2 md:gap-4 ${className}`}>
-    {!compact && (
-      <button className="p-2.5 md:p-3 bg-white rounded-xl md:rounded-2xl text-slate-400 hover:text-primary hover:bg-primary-light transition-all border border-slate-100 relative">
-        <Bell size={18} className="md:w-5 md:h-5" />
-        <div className="absolute top-2 right-2 w-1.5 h-1.5 md:w-2 md:h-2 bg-red-500 rounded-full border-2 border-white" />
-      </button>
-    )}
+
 
     <div
       className="flex items-center gap-2 md:gap-3 hover:cursor-pointer hover:bg-gray-50 rounded-xl p-1 md:p-1.5 transition-all"

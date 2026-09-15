@@ -48,6 +48,7 @@ const routeResources: Record<string, string[]> = {
   support: ["support"],
   policies: ["policies"],
   offline: ["offline_groups", "offline"],
+  notifications: ["notifications", "notification"],
 };
 
 export const getDashboardPathForRole = (role?: string | null) => {
