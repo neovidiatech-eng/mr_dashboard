@@ -25,7 +25,8 @@ import {
   Star,
   File,
   Eye,
-  QrCode
+  QrCode,
+  Bell
 } from 'lucide-react';
 import TransactionRequests from "../../features/admin/pages/TransactionRequests";
 
@@ -72,6 +73,7 @@ const PostsPage = lazy(() => import("../../features/admin/pages/Posts"));
 const AttendancePage = lazy(() => import("../../features/admin/pages/Attendance"));
 const OfflineGroupsPage = lazy(() => import("../../features/admin/pages/OfflineGroups"));
 const LiveSessionsPage = lazy(() => import("../../features/admin/pages/LiveSessions"));
+const NotificationPage = lazy(() => import("../../features/admin/pages/Notification"));
 
 
 export const adminDashboardRoutes: RouteConfig[] = [
@@ -244,6 +246,13 @@ export const adminDashboardRoutes: RouteConfig[] = [
       path: "posts",
       element: <PostsPage />,
     },
+    {
+      id: "notifications",
+      label: "sidebar_notifications",
+      icon: Bell,
+      path: "notifications",
+      element: <NotificationPage />,
+    },
   {
     id: "requests",
     label: "Requests Management",
@@ -253,7 +262,7 @@ export const adminDashboardRoutes: RouteConfig[] = [
   },
   {
     id: "course-purchase-requests",
-    label: "طلبات شراء الكورسات",
+    label: "sidebar_course_purchase_requests",
     icon: ShoppingCart,
     path: "course-purchase-requests",
     element: <CoursePurchaseRequestsPage />,
@@ -287,7 +296,7 @@ export const adminDashboardRoutes: RouteConfig[] = [
       },
       {
         id: "course-purchase-requests",
-        label: "Course Purchase Requests",
+        label: "sidebar_course_purchase_requests",
         icon: ShoppingCart,
         path: "course-purchase-requests",
         element: <CoursePurchaseRequestsPage />,

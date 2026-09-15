@@ -3,16 +3,22 @@ import { createRank, deleteRank, getAllRanks, getRank, updateRank } from "../ser
 import { CreateRankBody, UpdateRankBody } from "../../../types/rank";
 import { message } from "antd";
 
+import { useTranslation } from "react-i18next";
+
 export const useGetRanks = () => {
+    const { i18n } = useTranslation();
+    const lang = i18n.language?.split('-')[0] || 'ar';
     return useQuery({
-        queryKey: ['ranks'],
+        queryKey: ['ranks', lang],
         queryFn: () => getAllRanks(),
     });
 };
 
 export const useGetRank = (id: string) => {
+    const { i18n } = useTranslation();
+    const lang = i18n.language?.split('-')[0] || 'ar';
     return useQuery({
-        queryKey: ['rank', id],
+        queryKey: ['rank', id, lang],
         queryFn: () => getRank(id),
     });
 };

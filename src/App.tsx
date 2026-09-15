@@ -22,6 +22,7 @@ import { googleClientId } from "./components/constants";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import { connectSocket, disconnectSocket } from "./lib/socket";
+import { useFCM } from "./hooks/useFCM";
 
 // --- Lazy Loading Core Layouts & Pages ---
 const AuthLayout = lazy(() => import("./pages/AuthLayout/AuthLayout"));
@@ -64,7 +65,8 @@ const queryClient = new QueryClient({
   },
 });
 
-function App() {
+function AppContent() {
+  useFCM();
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return !!localStorage.getItem("token") || !!sessionStorage.getItem("token");
   });
@@ -93,101 +95,105 @@ function App() {
   };
 
   return (
+    <SessionsProvider>
+      <Router>
+        {!isAuthenticated && <LanguageSwitcher />}
+        <Suspense fallback={<LoadingFallback />}>
+          <Routes>
+            {/* Auth Routes */}
+            <Route element={<GuestGuard />}>
+              <Route element={<AuthLayout />}>
+                <Route
+                  path="/login"
+                  element={<Login onLoginSuccess={handleLogin} />}
+                />
+                <Route
+                  path="/register"
+                  element={<Register onRegisterSuccess={handleLogin} />}
+                />
+                <Route
+                  path="/forgot-password"
+                  element={<ForgotPassword />}
+                />
+                <Route
+                  path="/reset-password"
+                  element={<ResetPassword />}
+                />
+                <Route
+                  path="/verify-account"
+                  element={<VerifyAccount />}
+                />
+              </Route>
+            </Route>
+
+            {/* Protected Dashboard Routes */}
+            <Route element={<AuthGuard allowedRoles={['super_admin', 'admin']} allowCustomAdminRoles={true} />}>
+              <Route path="/dashboard/*" element={<AdminDashboard />} />
+            </Route>
+
+            <Route element={<AuthGuard allowedRoles={['student']} />}>
+              <Route
+                path="/student-dashboard/*"
+                element={<StudentDashboard />}
+              />
+              <Route
+                path="/student-portal"
+                element={<StudentPortalView />}
+              />
+            </Route>
+
+            <Route element={<AuthGuard allowedRoles={['teacher']} />}>
+              <Route
+                path="/teacher-dashboard/*"
+                element={<TeacherDashboard />}
+              />
+            </Route>
+
+            {/* Offline & QR Code Scanned Routes (Public, Unauthenticated) */}
+            <Route path="/offline-group" element={<OfflineGroup />} />
+            <Route path="/offline-group/:token" element={<OfflineGroup />} />
+            <Route path="/offline-group/course/:courseId" element={<CoursesDetails />} />
+            <Route path="/offline-group/:token/course/:courseId" element={<CoursesDetails />} />
+            <Route path="/offline-courses/:courseId" element={<CoursesDetails />} />
+            <Route path="/offline-groups/scan" element={<OfflineGroup />} />
+            <Route path="/offline-page" element={<OfflineGroup />} />
+            <Route path="/offline-page/course/:courseId" element={<CoursesDetails />} />
+            <Route path="/qr-scan" element={<OfflineGroup />} />
+
+            <Route
+              path="/"
+              element={
+                isAuthenticated ? (
+                  <Navigate to={getDashboardPathForRole(localStorage.getItem('role'))} replace />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+            <Route
+              path="*"
+              element={
+                isAuthenticated ? (
+                  <Navigate to={getDashboardPathForRole(localStorage.getItem('role'))} replace />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+          </Routes>
+        </Suspense>
+      </Router>
+    </SessionsProvider>
+  );
+}
+
+function App() {
+  return (
     <ErrorBoundary>
       <GoogleOAuthProvider clientId={googleClientId}>
         <QueryClientProvider client={queryClient}>
           <Provider store={store}>
-
-            <SessionsProvider>
-              <Router>
-                {!isAuthenticated && <LanguageSwitcher />}
-                <Suspense fallback={<LoadingFallback />}>
-                  <Routes>
-                    {/* Auth Routes */}
-                    <Route element={<GuestGuard />}>
-                      <Route element={<AuthLayout />}>
-                        <Route
-                          path="/login"
-                          element={<Login onLoginSuccess={handleLogin} />}
-                        />
-                        <Route
-                          path="/register"
-                          element={<Register onRegisterSuccess={handleLogin} />}
-                        />
-                        <Route
-                          path="/forgot-password"
-                          element={<ForgotPassword />}
-                        />
-                        <Route
-                          path="/reset-password"
-                          element={<ResetPassword />}
-                        />
-                        <Route
-                          path="/verify-account"
-                          element={<VerifyAccount />}
-                        />
-                      </Route>
-                    </Route>
-
-                    {/* Protected Dashboard Routes */}
-                    <Route element={<AuthGuard allowedRoles={['super_admin', 'admin']} allowCustomAdminRoles={true} />}>
-                      <Route path="/dashboard/*" element={<AdminDashboard />} />
-                    </Route>
-
-                    <Route element={<AuthGuard allowedRoles={['student']} />}>
-                      <Route
-                        path="/student-dashboard/*"
-                        element={<StudentDashboard />}
-                      />
-                      <Route
-                        path="/student-portal"
-                        element={<StudentPortalView />}
-                      />
-                    </Route>
-
-                    <Route element={<AuthGuard allowedRoles={['teacher']} />}>
-                      <Route
-                        path="/teacher-dashboard/*"
-                        element={<TeacherDashboard />}
-                      />
-                    </Route>
-
-                    {/* Offline & QR Code Scanned Routes (Public, Unauthenticated) */}
-                    <Route path="/offline-group" element={<OfflineGroup />} />
-                    <Route path="/offline-group/:token" element={<OfflineGroup />} />
-                    <Route path="/offline-group/course/:courseId" element={<CoursesDetails />} />
-                    <Route path="/offline-group/:token/course/:courseId" element={<CoursesDetails />} />
-                    <Route path="/offline-courses/:courseId" element={<CoursesDetails />} />
-                    <Route path="/offline-groups/scan" element={<OfflineGroup />} />
-                    <Route path="/offline-page" element={<OfflineGroup />} />
-                    <Route path="/offline-page/course/:courseId" element={<CoursesDetails />} />
-                    <Route path="/qr-scan" element={<OfflineGroup />} />
-
-                    <Route
-                      path="/"
-                      element={
-                        isAuthenticated ? (
-                          <Navigate to={getDashboardPathForRole(localStorage.getItem('role'))} replace />
-                        ) : (
-                          <Navigate to="/login" replace />
-                        )
-                      }
-                    />
-                    <Route
-                      path="*"
-                      element={
-                        isAuthenticated ? (
-                          <Navigate to={getDashboardPathForRole(localStorage.getItem('role'))} replace />
-                        ) : (
-                          <Navigate to="/login" replace />
-                        )
-                      }
-                    />
-                  </Routes>
-                </Suspense>
-              </Router>
-            </SessionsProvider>
-
+            <AppContent />
           </Provider>
         </QueryClientProvider>
       </GoogleOAuthProvider>
