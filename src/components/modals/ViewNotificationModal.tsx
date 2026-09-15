@@ -22,13 +22,9 @@ export default function ViewNotificationModal({
   const arTranslation = notification.translations?.find((t) => t.lang === "ar");
   const enTranslation = notification.translations?.find((t) => t.lang === "en");
 
-  const title = isAr
-    ? arTranslation?.title || notification.title || enTranslation?.title || ""
-    : enTranslation?.title || notification.title || arTranslation?.title || "";
-
-  const message = isAr
-    ? arTranslation?.message || notification.message || enTranslation?.message || ""
-    : enTranslation?.message || notification.message || arTranslation?.message || "";
+  const currentTranslation = isAr ? arTranslation : enTranslation;
+  const title = currentTranslation?.title || notification.title || "";
+  const message = currentTranslation?.message || notification.message || "";
 
   return (
     <Modal

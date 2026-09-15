@@ -67,8 +67,6 @@ export default function RankModal({ isOpen, onClose, rank }: RankModalProps) {
         name_ar: data.name_ar,
         name_en: data.name_en,
         color: data.color,
-        stageName_ar: data.stageName_ar,
-        stageName_en: data.stageName_en,
       };
       if (iconFile) payload.icon = iconFile;
 

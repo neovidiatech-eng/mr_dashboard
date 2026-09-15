@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { Bell, CheckCheck, Check, Inbox } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   useGetNotifications,
@@ -11,14 +10,10 @@ import {
 import { NotificationItem } from "../../types/notification";
 import ViewNotificationModal from "../modals/ViewNotificationModal";
 
-interface NotificationDropdownProps {
-  userRole: "admin" | "super_admin" | "teacher" | "student" | string;
-}
 
-export default function NotificationDropdown({ userRole }: NotificationDropdownProps) {
+export default function NotificationDropdown() {
   const { i18n } = useTranslation();
   const isAr = i18n.language.startsWith("ar");
-  const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
   const [viewingNotification, setViewingNotification] = useState<NotificationItem | null>(null);
@@ -57,13 +52,6 @@ export default function NotificationDropdown({ userRole }: NotificationDropdownP
     }
     setViewingNotification(item);
     setIsOpen(false);
-  };
-
-  const handleViewAll = () => {
-    setIsOpen(false);
-    if (userRole === "admin" || userRole === "super_admin") {
-      navigate("/dashboard/notifications");
-    }
   };
 
   return (
@@ -239,20 +227,6 @@ export default function NotificationDropdown({ userRole }: NotificationDropdownP
                 })
               )}
             </div>
-
-            {/* Dropdown Footer (for Admin / Super Admin) */}
-            {/* {(userRole === "admin" || userRole === "super_admin") && (
-              <div className="p-3 bg-slate-50 border-t border-slate-100 text-center">
-                <button
-                  type="button"
-                  onClick={handleViewAll}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary-dark transition-colors"
-                >
-                  <span>{isAr ? "عرض كل الإشعارات وإدارتها" : "View & Manage All Notifications"}</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            )} */}
           </div>
         )}
       </div>

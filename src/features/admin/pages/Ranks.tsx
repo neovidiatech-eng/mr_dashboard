@@ -218,11 +218,18 @@ function EnhancedRankCard({ rank }: { rank: RankItem }) {
                 </div>
 
                 <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-indigo-600 transition-colors">
-                    {isArabic ? (rank.name_ar || rank.name_en || rank.name) : (rank.name_en || rank.name_ar || rank.name)}
+                    {(() => {
+                        const rankTranslation = (rank as any).translations?.find((t: any) => t.lang === (isArabic ? 'ar' : 'en'));
+                        return rankTranslation?.name || (isArabic ? (rank.name_ar || rank.name || rank.name_en) : (rank.name_en || rank.name || rank.name_ar));
+                    })()}
                 </h3>
-                {((isArabic && rank.name_en) || (!isArabic && rank.name_ar)) && (
-                    <p className="text-xs text-gray-400 font-medium mb-2">{isArabic ? rank.name_en : rank.name_ar}</p>
-                )}
+                {(() => {
+                    const altTranslation = (rank as any).translations?.find((t: any) => t.lang === (isArabic ? 'en' : 'ar'));
+                    const altName = altTranslation?.name || (isArabic ? rank.name_en : rank.name_ar);
+                    return altName ? (
+                        <p className="text-xs text-gray-400 font-medium mb-2">{altName}</p>
+                    ) : null;
+                })()}
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-tighter mb-4">
                    {t("accademicProgression")}
                 </p>

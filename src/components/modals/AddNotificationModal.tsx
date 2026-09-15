@@ -28,7 +28,7 @@ export default function AddNotificationModal({
   const isAr = language === "ar";
 
   // Fetch students
-  const { data: studentsResponse, isLoading: isLoadingStudents } = useStudents(1, 100);
+  const { data: studentsResponse, isLoading: isLoadingStudents } = useStudents(1, 1000);
   const students = studentsResponse?.data?.studentsData || [];
 
   // Students select state
@@ -109,20 +109,29 @@ export default function AddNotificationModal({
       title_ar: data.title_ar,
       title_en: data.title_en,
       message_ar: data.message_ar,
-      message_en: data.message_en ,
+      message_en: data.message_en,
       type: data.type,
     };
 
     if (selectedIds.length === 1) {
       payload.userId = selectedIds[0];
-      payload.userIds = undefined;
     } else if (selectedIds.length > 1) {
-      payload.userId = undefined;
       payload.userIds = selectedIds;
     } else {
-      // Broadcast to all
-      payload.userId = undefined;
-      payload.userIds = undefined;
+      // Broadcast to all: send list of all student IDs to satisfy backend validation
+      const allStudentUserIds = Array.from(
+        new Set(
+          students
+            .map((s) => s.user_id || s.user?.id || s.id)
+            .filter((id): id is string => Boolean(id))
+        )
+      );
+
+      if (allStudentUserIds.length === 1) {
+        payload.userId = allStudentUserIds[0];
+      } else if (allStudentUserIds.length > 1) {
+        payload.userIds = allStudentUserIds;
+      }
     }
 
     onSubmit(payload);

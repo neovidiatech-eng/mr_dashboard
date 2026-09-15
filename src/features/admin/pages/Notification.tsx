@@ -6,7 +6,6 @@ import {
   CheckCheck,
   Trash2,
   Eye,
-  Sparkles,
   CheckCircle2,
   Check,
 } from "lucide-react";
@@ -100,14 +99,14 @@ export default function Notification() {
   return (
     <div className="p-6 md:p-8 space-y-8 animate-in fade-in duration-500" dir={isAr ? "rtl" : "ltr"}>
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gradient-to-r from-primary-dark via-primary to-primary/90 border border-primary/30 p-8 rounded-3xl text-white shadow-xl relative overflow-hidden">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-gradient-to-r from-primary-dark via-primary to-[#000] border border-primary/30 p-8 rounded-3xl text-white shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-white/5 rounded-full blur-2xl pointer-events-none -ml-20 -mb-20"></div>
 
 
         <div className="relative z-10 space-y-2.5">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-xs font-bold text-white shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 text-yellow-300 animate-pulse" />
+            {/* <Sparkles className="w-3.5 h-3.5 text-yellow-300 animate-pulse" /> */}
             <span>{isAr ? "مركز البث المباشر والإشعارات" : "Broadcast & Notification Center"}</span>
           </div>
           <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white drop-shadow-sm">
@@ -281,18 +280,18 @@ export default function Notification() {
               <h3 className="text-lg font-bold text-slate-700">
                 {isAr ? "لا توجد إشعارات تطابق البحث" : "No notifications found"}
               </h3>
-              <p className="text-slate-400 text-sm max-w-sm mx-auto">
+              {/* <p className="text-slate-400 text-sm max-w-sm mx-auto">
                 {isAr
-                  ? "يمكنك البدء بإنشاء وبث إشعار جديد للطلاب أو أولياء الأمور الآن."
-                  : "You can create and broadcast a new notification now."}
-              </p>
-              <button
+                  ? "لا توجد إشعارات بعد"
+                  : "No notifications yet."}
+              </p> */}
+              {/* <button
                 onClick={() => setIsCreateOpen(true)}
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white font-bold rounded-xl shadow hover:bg-primary-dark transition-all text-sm"
               >
                 <Plus className="w-4 h-4" />
                 <span>{isAr ? "إرسال إشعار" : "Send Notification"}</span>
-              </button>
+              </button> */}
             </div>
           ) : (
             filteredNotifications.map((item) => {

@@ -221,16 +221,7 @@ export default function ViewStudentModal({ isOpen, onClose, studentData: initial
                   <p className="text-sm font-bold text-gray-800">{studentData.country}</p>
                 </div>
               </div>
-              <div className="flex items-start gap-4 group">
-                <div className="p-2.5 rounded-xl bg-gray-50 text-gray-400 group-hover:bg-amber-50 group-hover:text-amber-600 transition-colors">
-                  <Trophy className="w-4 h-4" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{t('rank')}</p>
-                  <p className="text-sm font-bold text-gray-800">{rank?.name || (language === 'ar' ? rank?.name_ar : rank?.name_en)}</p>
-                </div>
-              
-              </div>                 
+                           
             </div>
 
             {/* Academic Information */}
@@ -264,9 +255,40 @@ export default function ViewStudentModal({ isOpen, onClose, studentData: initial
                       style={{ width: `${(studentData.sessions_attended / (studentData.sessions || 1)) * 100}%` }}
                     />
                   </div>
+                  
                 </div>
+                
 
               </div>
+              <div className="flex items-start gap-6 group pt-2 border-t border-gray-100">
+                <div className="p-2.5 rounded-xl bg-gray-50 text-gray-400 group-hover:bg-amber-50 group-hover:text-amber-600 transition-colors shrink-0">
+                  <Trophy className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+                    {language === 'ar' ? 'المرحلة الدراسية' : 'Level'}
+                  </p>
+                  <p className="text-sm font-bold text-gray-800">
+                    {(() => {
+                      const isArabic = language === 'ar';
+                      const rankTranslation = (rank as any)?.translations?.find((t: any) => t.lang === (isArabic ? 'ar' : 'en'));
+                      return rankTranslation?.name || (isArabic ? (rank?.name_ar || rank?.name || rank?.name_en) : (rank?.name_en || rank?.name || rank?.name_ar)) || '---';
+                    })()}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+                    {language === 'ar' ? 'الصف الدراسي' : 'Stage'}
+                  </p>
+                  <p className="text-sm font-bold text-gray-800">
+                    {(() => {
+                      const isArabic = language === 'ar';
+                      const stageTranslation = (studentData.stage as any)?.translations?.find((t: any) => t.lang === (isArabic ? 'ar' : 'en'));
+                      return stageTranslation?.name || (isArabic ? (studentData.stage?.name_ar || studentData.stage?.name || studentData.stage?.name_en) : (studentData.stage?.name_en || studentData.stage?.name || studentData.stage?.name_ar)) || '---';
+                    })()}
+                  </p>
+                </div>
+              </div> 
             </div>
           </div>
 

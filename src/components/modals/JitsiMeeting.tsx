@@ -62,8 +62,11 @@ export default function JitsiMeeting({
     try {
       if (jitsiApi) {
         jitsiApi.executeCommand('hangup');
+        try {
+          jitsiApi.dispose();
+        } catch {
+        }
       }
-      // ONLY Admin / Teacher can trigger ending the session on backend
       if (!isActualStudent && onEndSession) {
         await onEndSession();
       }

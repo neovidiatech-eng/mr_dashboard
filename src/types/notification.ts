@@ -1,34 +1,21 @@
 
-
-
-export interface NotificationRecipientFilter {
-  stageId?: string;
-  gradeId?: string;
-  groupId?: string;
-  courseId?: string;
-}
-
 export interface NotificationTranslation {
-  id?: string;
+  id: string;
   title: string;
   message: string;
-  notificationId?: string;
+  notificationId: string;
   lang: "ar" | "en" | string;
 }
 
 export interface NotificationItem {
   id: string;
-  userId?: string;
+  userId: string;
   type?: string;
   isRead: boolean;
-  createdAt?: string;
-  title?: string;
-  message?: string;
-  translations?: NotificationTranslation[];
-  title_ar?: string;
-  title_en?: string;
-  message_ar?: string;
-  message_en?: string;
+  createdAt: string;
+  title: string;
+  message: string;
+  translations: NotificationTranslation[];
 }
 
 export interface CreateNotificationPayload {
@@ -46,7 +33,7 @@ export type CreateNotification = CreateNotificationPayload;
 export interface CreateNotificationResponse {
   message: string;
   status: number;
-  data: any;
+  data: NotificationItem[];
 }
 
 export interface NotificationPagination {
