@@ -106,13 +106,16 @@ export const useEndExistingLiveSession = () => {
 
 export const useGetStudentUpcomingLiveSessions = (
     page: number = 1,
-    limit: number = 3,
+    limit: number = 10,
     search?: string
 ) => {
     return useQuery({
         queryKey: ['studentUpcomingLiveSessions', page, limit, search],
         queryFn: () => getStudentUpcomingLiveSessions(page, limit, search),
-        refetchInterval: 5000,
+        refetchInterval: 30 * 60 * 1000,
+        staleTime: 15 * 60 * 1000,
+        refetchOnWindowFocus: false,
+        retry: 1,
     });
 };
 
@@ -120,7 +123,10 @@ export const useGetStudentNextLiveSession = () => {
     return useQuery({
         queryKey: ['studentNextLiveSession'],
         queryFn: () => getStudentNextLiveSession(),
-        refetchInterval: 5000,
+        refetchInterval: 30 * 60 * 1000, 
+        staleTime: 15 * 60 * 1000, 
+        refetchOnWindowFocus: false,
+        retry: 1,
     });
 };
 
@@ -145,4 +151,4 @@ export const useJoinLiveSession = () => {
         },
     });
 };
-
+

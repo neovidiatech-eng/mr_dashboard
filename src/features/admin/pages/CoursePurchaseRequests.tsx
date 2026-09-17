@@ -95,22 +95,11 @@ export default function CoursePurchaseRequests() {
   const totalPages = pagination?.totalPages ?? 1;
   const totalItems = pagination?.totalItems ?? 0;
 
-  // Client-side search filter
-  const filteredRequests = requests.filter((request) => {
-    const term = searchTerm.toLowerCase();
-    if (!term) return true;
-    const courseTitle =
-      request.course?.title_ar || request.course?.title || "";
-    return (
-      request.student?.user?.name?.toLowerCase().includes(term) ||
-      courseTitle.toLowerCase().includes(term)
-    );
-  });
 
   const getReceiptUrl = (path: string) => {
     if (!path) return "";
     if (path.startsWith("http")) return path;
-    return `${baseURL}/${path}`;
+    return `${baseURL}${path}`;
   };
 
   const getStatusBadge = (status: string) => {
@@ -204,7 +193,7 @@ export default function CoursePurchaseRequests() {
             <div className="p-8">
               <TableSkeleton rows={8} columns={7} />
             </div>
-          ) : filteredRequests.length === 0 ? (
+          ) : requests.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 bg-slate-50/20">
               <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-300 mb-4">
                 <ShoppingCart size={40} />
@@ -240,7 +229,7 @@ export default function CoursePurchaseRequests() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
-                {filteredRequests.map((request) => (
+                {requests.map((request) => (
                   <tr
                     key={request.id}
                     className="hover:bg-blue-50/30 transition-colors group"
@@ -290,9 +279,9 @@ export default function CoursePurchaseRequests() {
                           height={48}
                           className="rounded-xl object-cover border border-slate-100 cursor-pointer"
                           style={{ borderRadius: 12 }}
-                          fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
+                          // fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
                           preview={{
-                            mask: (
+                            cover: (
                               <span className="text-[10px] font-bold text-white">
                                 {text.hasReceipt[language]}
                               </span>

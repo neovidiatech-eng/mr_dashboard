@@ -177,6 +177,18 @@ export default function EditPlanModal({
                     />
                     {errors.sessionsCount && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.sessionsCount.message}</p>}
                   </div>
+
+                   <div>
+                    <label className="flex items-center gap-2 text-xs font-black text-slate-500 mb-2 uppercase tracking-wider">
+                      {t('liveSessionsCount')}
+                    </label>
+                    <input 
+                      type="number"
+                      {...register('liveSessionsCount', { valueAsNumber: true })}
+                      className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all" 
+                    />
+                    {errors.liveSessionsCount && <p className="text-red-500 text-[10px] font-black mt-2 ml-1 uppercase">{errors.liveSessionsCount.message}</p>}
+                  </div>
                 </div>
               </div>
 

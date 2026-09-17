@@ -9,6 +9,7 @@ import {
 } from "../../features/admin/hooks/useNotifications";
 import { NotificationItem } from "../../types/notification";
 import ViewNotificationModal from "../modals/ViewNotificationModal";
+import { getNotificationDetails } from "../../utils/notificationUtils";
 
 
 export default function NotificationDropdown() {
@@ -151,9 +152,7 @@ export default function NotificationDropdown() {
                 </div>
               ) : (
                 notifications.map((item) => {
-                  const translation = item.translations?.find((t) => t.lang === (isAr ? "ar" : "en"));
-                  const title = translation?.title || item.title || "";
-                  const message = translation?.message || item.message || "";
+                  const { title, message } = getNotificationDetails(item, isAr);
 
                   return (
                     <div

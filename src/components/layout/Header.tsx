@@ -143,7 +143,7 @@ export default function Header({
 
           {isTeacherOrStudent ? (
             <div className="flex items-center gap-2 md:gap-4">
-              <NotificationDropdown userRole={userRole} />
+              <NotificationDropdown/>
               <DesktopProfile
                 navigate={navigate}
                 name={userInfo.name}
@@ -163,7 +163,7 @@ export default function Header({
             </div>
           ) : (
             <div className="flex items-center gap-3 md:gap-6">
-              <NotificationDropdown userRole={userRole} />
+              <NotificationDropdown  />
 
               <div
                 className="flex items-center gap-2 cursor-pointer md:pl-4 md:border-l border-gray-100 group"

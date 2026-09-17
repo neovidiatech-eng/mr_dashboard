@@ -26,6 +26,7 @@ import {
 import Pagination from "../../../components/ui/Pagination";
 import AddNotificationModal from "../../../components/modals/AddNotificationModal";
 import ViewNotificationModal from "../../../components/modals/ViewNotificationModal";
+import { getNotificationDetails } from "../../../utils/notificationUtils";
 
 export default function Notification() {
   const { language } = useLanguage();
@@ -120,41 +121,7 @@ export default function Notification() {
         </div>
 
         <div className="relative z-10 flex flex-wrap items-center gap-3">
-          {allNotifications.length > 0 && (
-            <>
-              <button
-                onClick={() => markAllAsRead()}
-                disabled={isMarkingAll}
-                className="flex items-center gap-2 px-4 py-3 bg-white/20 hover:bg-white/30 text-white font-bold rounded-2xl border border-white/30 backdrop-blur-md transition-all text-sm disabled:opacity-50 shadow-sm"
-                title={isAr ? "تحديد جميع الإشعارات كمقروءة" : "Mark all as read"}
-              >
-                <CheckCheck className="w-4 h-4 text-emerald-300" />
-                <span>{isAr ? "تحديد الكل كمقروء" : "Mark All Read"}</span>
-              </button>
 
-              <Popconfirm
-                title={isAr ? "مسح جميع الإشعارات" : "Clear All Notifications"}
-                description={
-                  isAr
-                    ? "هل أنت متأكد من رغبتك في حذف جميع الإشعارات نهائياً؟"
-                    : "Are you sure you want to delete all notifications?"
-                }
-                onConfirm={() => clearAllNotifications()}
-                okText={isAr ? "نعم، مسح الكل" : "Yes, Clear All"}
-                cancelText={isAr ? "إلغاء" : "Cancel"}
-                okButtonProps={{ danger: true }}
-              >
-                <button
-                  disabled={isClearingAll}
-                  className="flex items-center gap-2 px-4 py-3 bg-rose-500/30 hover:bg-rose-500/40 text-rose-100 font-bold rounded-2xl border border-rose-300/30 backdrop-blur-md transition-all text-sm disabled:opacity-50 shadow-sm"
-                  title={isAr ? "مسح جميع الإشعارات" : "Clear all notifications"}
-                >
-                  <Trash2 className="w-4 h-4 text-rose-200" />
-                  <span>{isAr ? "مسح الكل" : "Clear All"}</span>
-                </button>
-              </Popconfirm>
-            </>
-          )}
 
           <button
             onClick={() => setIsCreateOpen(true)}
@@ -172,24 +139,21 @@ export default function Notification() {
         <button
           type="button"
           onClick={() => handleFilterChange("all")}
-          className={`p-6 rounded-3xl border text-start transition-all relative overflow-hidden group cursor-pointer ${
-            readFilter === "all"
+          className={`p-6 rounded-3xl border text-start transition-all relative overflow-hidden group cursor-pointer ${readFilter === "all"
               ? "bg-white border-primary shadow-md ring-2 ring-primary/20"
               : "bg-white border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200"
-          }`}
+            }`}
         >
           <div className="flex items-center justify-between">
             <div
-              className={`w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform ${
-                readFilter === "all" ? "bg-primary text-white" : "bg-primary/10 text-primary"
-              }`}
+              className={`w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform ${readFilter === "all" ? "bg-primary text-white" : "bg-primary/10 text-primary"
+                }`}
             >
               <Send className="w-6 h-6" />
             </div>
             <span
-              className={`text-xs font-bold px-2.5 py-1 rounded-full ${
-                readFilter === "all" ? "bg-primary text-white" : "bg-primary/10 text-primary"
-              }`}
+              className={`text-xs font-bold px-2.5 py-1 rounded-full ${readFilter === "all" ? "bg-primary text-white" : "bg-primary/10 text-primary"
+                }`}
             >
               {isAr ? "الكل" : "All"}
             </span>
@@ -207,8 +171,8 @@ export default function Notification() {
           type="button"
           onClick={() => handleFilterChange("unread")}
           className={`p-6 rounded-3xl border text-start transition-all relative overflow-hidden group cursor-pointer ${readFilter === "unread"
-              ? "bg-white border-amber-500 shadow-md ring-2 ring-amber-500/20"
-              : "bg-white border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200"
+            ? "bg-white border-amber-500 shadow-md ring-2 ring-amber-500/20"
+            : "bg-white border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200"
             }`}
         >
           <div className="flex items-center justify-between">
@@ -217,8 +181,8 @@ export default function Notification() {
               <Bell className="w-6 h-6" />
             </div>
             <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${readFilter === "unread"
-                ? "bg-amber-500 text-white"
-                : "bg-amber-50 text-amber-600"
+              ? "bg-amber-500 text-white"
+              : "bg-amber-50 text-amber-600"
               }`}>
               {isAr ? "غير مقروءة" : "Unread"}
             </span>
@@ -236,8 +200,8 @@ export default function Notification() {
           type="button"
           onClick={() => handleFilterChange("read")}
           className={`p-6 rounded-3xl border text-start transition-all relative overflow-hidden group cursor-pointer ${readFilter === "read"
-              ? "bg-white border-emerald-500 shadow-md ring-2 ring-emerald-500/20"
-              : "bg-white border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200"
+            ? "bg-white border-emerald-500 shadow-md ring-2 ring-emerald-500/20"
+            : "bg-white border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200"
             }`}
         >
           <div className="flex items-center justify-between">
@@ -246,8 +210,8 @@ export default function Notification() {
               <CheckCheck className="w-6 h-6" />
             </div>
             <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${readFilter === "read"
-                ? "bg-emerald-600 text-white"
-                : "bg-emerald-50 text-emerald-600"
+              ? "bg-emerald-600 text-white"
+              : "bg-emerald-50 text-emerald-600"
               }`}>
               {isAr ? "مقروءة" : "Read"}
             </span>
@@ -265,6 +229,51 @@ export default function Notification() {
 
       {/* Main Content Area */}
       <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        {allNotifications.length > 0 && (
+          <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between gap-4 flex-wrap bg-slate-50/50">
+            <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2">
+              <Bell className="w-4 h-4 text-primary" />
+              <span>{isAr ? "سجل الإشعارات" : "Notifications Log"}</span>
+              <span className="text-xs font-semibold text-slate-400">
+                ({allNotifications.length})
+              </span>
+            </h3>
+
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={() => markAllAsRead()}
+                disabled={isMarkingAll}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold rounded-xl border border-emerald-200/70 transition-all text-xs disabled:opacity-50 shadow-sm cursor-pointer active:scale-95"
+                title={isAr ? "تحديد جميع الإشعارات كمقروءة" : "Mark all as read"}
+              >
+                <CheckCheck className="w-4 h-4 text-emerald-600" />
+                <span>{isAr ? "تحديد الكل كمقروء" : "Mark All Read"}</span>
+              </button>
+
+              <Popconfirm
+                title={isAr ? "مسح جميع الإشعارات" : "Clear All Notifications"}
+                description={
+                  isAr
+                    ? "هل أنت متأكد من رغبتك في حذف جميع الإشعارات نهائياً؟"
+                    : "Are you sure you want to delete all notifications?"
+                }
+                onConfirm={() => clearAllNotifications()}
+                okText={isAr ? "نعم، مسح الكل" : "Yes, Clear All"}
+                cancelText={isAr ? "إلغاء" : "Cancel"}
+                okButtonProps={{ danger: true }}
+              >
+                <button
+                  disabled={isClearingAll}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-xl border border-rose-200/70 transition-all text-xs disabled:opacity-50 shadow-sm cursor-pointer active:scale-95"
+                  title={isAr ? "مسح جميع الإشعارات" : "Clear all notifications"}
+                >
+                  <Trash2 className="w-4 h-4 text-rose-600" />
+                  <span>{isAr ? "مسح الكل" : "Clear All"}</span>
+                </button>
+              </Popconfirm>
+            </div>
+          </div>
+        )}
         {/* Notifications List */}
         <div className="divide-y divide-slate-100">
           {isLoading ? (
@@ -274,36 +283,25 @@ export default function Notification() {
             </div>
           ) : filteredNotifications.length === 0 ? (
             <div className="p-16 text-center space-y-4">
+
               <div className="w-16 h-16 bg-slate-100 text-slate-400 rounded-3xl flex items-center justify-center mx-auto">
                 <Bell className="w-8 h-8" />
               </div>
               <h3 className="text-lg font-bold text-slate-700">
-                {isAr ? "لا توجد إشعارات تطابق البحث" : "No notifications found"}
+                {isAr ? "لا توجد إشعارات" : "No notifications found"}
               </h3>
-              {/* <p className="text-slate-400 text-sm max-w-sm mx-auto">
-                {isAr
-                  ? "لا توجد إشعارات بعد"
-                  : "No notifications yet."}
-              </p> */}
-              {/* <button
-                onClick={() => setIsCreateOpen(true)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white font-bold rounded-xl shadow hover:bg-primary-dark transition-all text-sm"
-              >
-                <Plus className="w-4 h-4" />
-                <span>{isAr ? "إرسال إشعار" : "Send Notification"}</span>
-              </button> */}
             </div>
           ) : (
             filteredNotifications.map((item) => {
-              const translation = item.translations?.find((t) => t.lang === (isAr ? "ar" : "en"));
-              const title = translation?.title || item.title || "";
-              const message = translation?.message || item.message || "";
+              const { title, message, typeLabel } = getNotificationDetails(item, isAr);
 
               return (
+
                 <div
                   key={item.id}
                   className="p-6 hover:bg-slate-50/70 transition-colors flex flex-col md:flex-row items-start md:items-center justify-between gap-6 group"
                 >
+
                   <div className="flex items-start gap-4 flex-1">
                     {/* Icon Badge */}
                     <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border border-indigo-100 bg-indigo-50/60 text-indigo-600">
@@ -320,7 +318,7 @@ export default function Notification() {
                         {/* Type Badge */}
                         {item.type && (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
-                            {item.type}
+                            {typeLabel}
                           </span>
                         )}
 

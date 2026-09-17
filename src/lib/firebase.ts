@@ -30,19 +30,23 @@ if (typeof window !== "undefined" && "Notification" in window && "serviceWorker"
 export const requestFCMToken = async (vapidKey?: string): Promise<string | null> => {
   try {
     if (typeof window === "undefined" || !("Notification" in window)) {
-      console.warn("Notifications are not supported in this environment");
+      console.warn("[FCM] Notifications are not supported in this browser environment");
       return null;
     }
 
     // 1. Request user permission
-    const permission = await Notification.requestPermission();
+    let permission = Notification.permission;
+    if (permission === "default") {
+      permission = await Notification.requestPermission();
+    }
+
     if (permission !== "granted") {
-      console.log("Notification permission was not granted by the user:", permission);
+      console.warn("[FCM] Notification permission was not granted:", permission);
       return null;
     }
 
     if (!messaging) {
-      console.warn("Messaging instance is not available");
+      console.warn("[FCM] Firebase Messaging instance is not available");
       return null;
     }
 
@@ -51,24 +55,31 @@ export const requestFCMToken = async (vapidKey?: string): Promise<string | null>
     if ("serviceWorker" in navigator) {
       try {
         serviceWorkerRegistration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+        await navigator.serviceWorker.ready;
       } catch (swErr) {
-        console.warn("Service worker registration failed, fallback to default registration:", swErr);
+        console.warn("[FCM] Service worker registration error:", swErr);
       }
     }
 
     // 3. Retrieve token from Firebase
     const effectiveVapidKey = vapidKey || import.meta.env.VITE_FIREBASE_VAPID_KEY;
+    const tokenOptions: { serviceWorkerRegistration?: ServiceWorkerRegistration; vapidKey?: string } = {};
 
-    const token = await getToken(messaging, {
-      vapidKey: effectiveVapidKey,
-      serviceWorkerRegistration,
-    });
+    if (serviceWorkerRegistration) {
+      tokenOptions.serviceWorkerRegistration = serviceWorkerRegistration;
+    }
+    if (effectiveVapidKey) {
+      tokenOptions.vapidKey = effectiveVapidKey;
+    }
+
+    const token = await getToken(messaging, tokenOptions);
+    console.log("[FCM] Device Token generated successfully:", token);
 
     if (token) {
-      console.log("[FCM] Device Token retrieved successfully:", token);
+      console.log("[FCM] Device Token generated successfully:", token);
       return token;
     } else {
-      console.warn("[FCM] No registration token available. Request permission to generate one.");
+      console.warn("[FCM] No registration token returned by Firebase.");
       return null;
     }
   } catch (error) {

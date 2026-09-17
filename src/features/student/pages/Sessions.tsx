@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Search, ChevronLeft, CheckCircle2, Play, FileText, Lock } from 'lucide-react';
 import { Schedule } from '../../../types/scheduales';
 import { useUserSessions } from '../../../hooks/useSessions';
@@ -17,7 +17,15 @@ export default function Sessions() {
 
   const { data: allSchedules, isLoading } = useUserSessions(debouncedSearch);
 
-  const scheduleData = allSchedules?.data || [];
+  const scheduleData = useMemo<Schedule[]>(() => {
+    if (!allSchedules?.data) return [];
+    if (Array.isArray(allSchedules.data)) return allSchedules.data;
+    return [
+      ...(allSchedules.data.toDaySchedule || []),
+      ...(allSchedules.data.upcomingSchedule || []),
+      ...(allSchedules.data.previousSchedule || []),
+    ];
+  }, [allSchedules]);
 
   // Filtering logic to show only sessions (similar to original)
   const displaySchedules: Schedule[] = [];
@@ -92,7 +100,6 @@ export default function Sessions() {
         </div>
       </div>
 
-      {/* Search Bar - Optional but good for UX since it was in original */}
       {/* Search Bar - Optional but good for UX since it was in original */}
       <div className="relative group max-w-md">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={20} />

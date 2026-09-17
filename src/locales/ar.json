@@ -184,6 +184,8 @@
   "loadingPlans": "جاري تحميل الباقات...",
   "noPlansAvailable": "لا توجد باقات متاحة حالياً",
   "sessionsCount": "حصة",
+  "liveSessions": "حصة تفاعلية",
+  "liveSessionsCount": "عدد الحصص التفاعلية",
   "registeredSuccess": "تم التسجيل بنجاح",
   "sessionsTitle": "الحصص",
   "searchSessionsPlaceholder": "بحث عن الطالب أو المعلم أو المادة...",
@@ -1017,5 +1019,6 @@
   "view_quiz_btn": "عرض الكويز 📝",
   "total_quizzes": "إجمالي الكويزات",
   "lecture_attached_quiz": "كويز المحاضرة",
-  "view_attached_quiz": "عرض كويز المحاضرة"
+  "view_attached_quiz": "عرض كويز المحاضرة",
+  "live": "مباشر"
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Edit, Trash2, Eye, Package, CheckCircle, Clock } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, Package, CheckCircle, Clock, Video } from "lucide-react";
 import { useLanguage } from "../../../contexts/LanguageContext";
 import AddPlanModal from "../../../components/modals/AddPlanModal";
 import ViewPlanModal from "../../../components/modals/ViewPlanModal";
@@ -36,7 +36,7 @@ export default function Plans() {
   const { mutateAsync: createPlanMutation } = useCreatePlan();
   const { mutateAsync: updatePlanMutation } = useUpdatePlan();
   const { mutateAsync: deletePlanMutation } = useDeletePlan();
-  
+
   const { data: currenciesData } = useCurrency();
   const currencies = currenciesData?.currencies || [];
 
@@ -58,6 +58,8 @@ export default function Plans() {
     maxStudents: item.maxStudents || '1',
   })) || [];
 
+  console.log(plans);
+
   const text = {
     title: { ar: "خطط الاشتراك", en: "Subscription Plans" },
     addPlan: { ar: "إضافة خطة", en: "Add Plan" },
@@ -68,6 +70,7 @@ export default function Plans() {
     inactive: { ar: "غير نشط", en: "Inactive" },
     popular: { ar: "الأكثر شعبية", en: "Most Popular" },
     sessions: { ar: "حصة", en: "sessions" },
+    liveSessions: { ar: "حصة مباشرة", en: "Live sessions" },
     month: { ar: "شهر", en: "month" },
     noPlans: { ar: "لا توجد خطط", en: "No plans found" },
     features: { ar: "المميزات", en: "Features" },
@@ -180,7 +183,7 @@ export default function Plans() {
                 key={plan.id}
                 className="group bg-white rounded-[32px] border-2 border-gray-100 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 flex flex-col overflow-hidden"
               >
-               
+
                 <div className="p-8 flex-1 flex flex-col">
                   <div className="flex items-start justify-between mb-6">
                     <div className="text-start">
@@ -192,7 +195,7 @@ export default function Plans() {
                       </span>
                     </div>
                     <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
-                       <Package className="w-6 h-6" />
+                      <Package className="w-6 h-6" />
                     </div>
                   </div>
 
@@ -207,18 +210,23 @@ export default function Plans() {
                       </div>
                     </div>
                     <div className="mt-4 pt-4 border-t border-gray-200/50 flex items-center justify-center gap-4 text-sm font-bold text-gray-500">
-                       <div className="flex items-center gap-1.5">
-                         <Clock className="w-4 h-4" />
-                         {plan.duration} {text.monthSingular[language]}
-                       </div>
-                       <div className="w-1 h-1 rounded-full bg-gray-300" />
-                       <div className="flex items-center gap-1.5">
-                         <Package className="w-4 h-4" />
-                         {plan.sessionsCount} {text.sessions[language]}
-                       </div>
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="w-4 h-4" />
+                        {plan.duration} {text.monthSingular[language]}
+                      </div>
+                      {(plan.liveSessionsCount > 0 || plan.sessionsCount > 0) && <div className="w-1 h-1 rounded-full bg-gray-300" />}
+                      {plan.sessionsCount > 0 && <div className="flex items-center gap-1.5">
+                        <Package className="w-4 h-4" />
+                        {plan.sessionsCount} {text.sessions[language]}
+                      </div>
+                      }
+                      {plan.liveSessionsCount > 0 && <div className="flex items-center gap-1.5">
+                        <Video className="w-4 h-4" />
+                        {plan.liveSessionsCount} {text.liveSessions[language]}
+                      </div>
+                      }
                     </div>
                   </div>
-
                   <div className="space-y-4 mb-10 flex-1">
                     <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest text-start">
                       {text.includedFeatures[language]}
@@ -243,7 +251,7 @@ export default function Plans() {
                       <Eye className="w-4 h-4" />
                       {text.view[language]}
                     </button>
-                    
+
                     <button
                       onClick={() => { setSelectedPlan(plan); setIsModalOpen(true); }}
                       className="p-4 bg-gray-50 hover:bg-amber-50 text-gray-400 hover:text-amber-600 rounded-2xl transition-all border border-transparent hover:border-amber-100"
@@ -265,21 +273,21 @@ export default function Plans() {
         )}
       </div>
 
-      <AddPlanModal 
-        isOpen={isModalOpen} 
-        onClose={() => { setIsModalOpen(false); setSelectedPlan(null); }} 
-        onSave={handleSavePlan} 
+      <AddPlanModal
+        isOpen={isModalOpen}
+        onClose={() => { setIsModalOpen(false); setSelectedPlan(null); }}
+        onSave={handleSavePlan}
         initialData={selectedPlan}
         currencies={currencies}
       />
       {selectedPlan && (
-        <ViewPlanModal 
-          isOpen={showViewModal} 
-          onClose={() => { setShowViewModal(false); setSelectedPlan(null); }} 
+        <ViewPlanModal
+          isOpen={showViewModal}
+          onClose={() => { setShowViewModal(false); setSelectedPlan(null); }}
           plan={{
             ...selectedPlan,
             currency: selectedPlan.currencyCode
-          }} 
+          }}
         />
       )}
       {ConfirmDialog}

@@ -1,6 +1,6 @@
 import { Plan } from "./plan";
 
-export type StudentStatus = 'pending' | 'approved' | 'rejected';
+export type StudentStatus = 'pending' | 'approved' | 'rejected' | 'active' | 'inactive';
 export type StudentType = "online" | "onsite";
 
 export interface UserDetails {
@@ -11,7 +11,7 @@ export interface UserDetails {
   type?: StudentType;
   phone: string;
   code_country: string;
-  status: string;
+  status: StudentStatus;
   confirmAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -71,7 +71,7 @@ export interface Student {
   sessions_remaining: number;
   planId: string | null;
   country: string;
-  status: StudentStatus;
+  // status: StudentStatus;
   avgRating?: number;
   totalReviews?: number;
   parentNumber?: string | null;
