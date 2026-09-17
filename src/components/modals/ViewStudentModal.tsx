@@ -122,9 +122,14 @@ export default function ViewStudentModal({ isOpen, onClose, studentData: initial
             <div className="mb-2">
               <h3 className="text-2xl font-black text-gray-900 leading-tight">{studentData.user.name}</h3>
               <div className="flex items-center gap-2 mt-0.5">
-                <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold tracking-widest uppercase ${studentData.status === 'approved' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
-                  }`}>
-                  {studentData.status === 'approved' ? t('active') : t('pending')}
+                <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold tracking-widest uppercase ${
+                  (studentData.user?.status === 'approved' || studentData.user?.status === 'active' || (studentData as any).status === 'approved' || (studentData as any).status === 'active')
+                    ? 'bg-emerald-50 text-emerald-600'
+                    : 'bg-amber-50 text-amber-600'
+                }`}>
+                  {(studentData.user?.status === 'approved' || studentData.user?.status === 'active' || (studentData as any).status === 'approved' || (studentData as any).status === 'active')
+                    ? t('active')
+                    : t('pending')}
                 </span>
                 <span className="text-gray-400 text-xs font-bold px-2 border-l border-gray-200">
                   {t('id')}: #{studentData.id.slice(0, 8)}

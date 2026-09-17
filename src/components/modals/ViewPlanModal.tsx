@@ -1,4 +1,4 @@
-import { X, CheckCircle, Package, CreditCard, Clock } from 'lucide-react';
+import { X, CheckCircle, Package, CreditCard, Clock, Video } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 interface ViewPlanModalProps {
@@ -62,7 +62,7 @@ export default function ViewPlanModal({ isOpen, onClose, plan }: ViewPlanModalPr
           </div>
 
           {/* Pricing & Structure Section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="bg-slate-50 rounded-[32px] p-8 border border-slate-100 flex flex-col items-center text-center group hover:bg-white hover:border-indigo-100 transition-all">
               <div className="p-4 bg-white rounded-2xl shadow-sm mb-4 group-hover:scale-110 transition-transform">
                 <CreditCard className="w-6 h-6 text-indigo-600" />
@@ -95,6 +95,17 @@ export default function ViewPlanModal({ isOpen, onClose, plan }: ViewPlanModalPr
                 <span className="text-xs font-bold text-slate-400">Total</span>
               </div>
             </div>
+            <div className="bg-slate-50 rounded-[32px] p-8 border border-slate-100 flex flex-col items-center text-center group hover:bg-white hover:border-[#bfdbfe] transition-all">
+              <div className="p-4 bg-white rounded-2xl shadow-sm mb-4 group-hover:scale-110 transition-transform">
+                <Video className="w-6 h-6 text-[#2563eb]" />
+              </div>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">{t('liveSessions')}</p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-3xl font-black text-slate-900">{plan.liveSessionsCount}</span>
+                <span className="text-xs font-bold text-slate-400">{t('live')}</span>
+              </div>
+            </div>
+
           </div>
 
           {/* Features Section */}

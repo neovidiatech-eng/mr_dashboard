@@ -144,6 +144,8 @@
   "loadingPlans": "Loading plans...",
   "noPlansAvailable": "No plans available at the moment.",
   "sessionsCount": "sessions",
+  "liveSessions": "Live Sessions",
+  "liveSessionsCount": "Live Sessions Count",
   "registeredSuccess": "Registered successfully",
   "sessionsTitle": "Sessions",
   "searchSessionsPlaceholder": "Search for student, teacher or subject...",

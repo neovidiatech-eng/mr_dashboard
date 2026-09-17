@@ -3,6 +3,7 @@ import { Radio, Clock, CalendarDays, Loader2, Play, LogIn } from 'lucide-react';
 import { useGetStudentUpcomingLiveSessions, useJoinLiveSession } from '../../../hooks/useLiveSessions';
 import { useLanguage } from '../../../contexts/LanguageContext';
 import JitsiMeeting from '../../../components/modals/JitsiMeeting';
+import { useDashboardData } from '../hooks/useDashboardData';
 
 function formatSessionDate(dateStr: string) {
     if (!dateStr) return { date: '-', time: '-' };
@@ -31,7 +32,7 @@ export default function UpcomingLiveSessionsCard() {
     const { language } = useLanguage();
     const isAr = language === 'ar';
 
-    const { data, isLoading } = useGetStudentUpcomingLiveSessions(1, 3);
+    const { data, isLoading } = useGetStudentUpcomingLiveSessions(1, 10);
     const { mutate: joinLive, isPending: isJoining } = useJoinLiveSession();
 
     const [joiningSessionId, setJoiningSessionId] = useState<string | null>(null);
@@ -42,7 +43,12 @@ export default function UpcomingLiveSessionsCard() {
         title?: string;
     } | null>(null);
 
+    const { data: dashboardResponse } = useDashboardData();
+    const plan = dashboardResponse?.data?.metadata?.plan;
+
     const sessions = data?.data?.items ?? [];
+
+    if (!plan) return null;
 
     const handleJoin = (session: any) => {
         if (session.status !== 'live') return;

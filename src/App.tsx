@@ -55,12 +55,14 @@ const LoadingFallback = () => (
   </div>
 );
 
-// Create a client with global error handling
+// Create a client with global caching and error handling
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 2, // 2 minutes default stale time to reduce server load
+      gcTime: 1000 * 60 * 10,   // 10 minutes garbage collection time
     },
   },
 });

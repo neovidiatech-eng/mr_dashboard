@@ -37,6 +37,7 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     }
   });
+ console.log("students data", plansData);
 
   const rankIdValue = watch('rankId');
   const { data: coursesData } = useCourses(1, 20, rankIdValue);
@@ -84,7 +85,6 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
 
   const plans = plansData || [];
   const planOptions = [
-    { value: '', label: '' },
     ...plans.map((p: any) => ({
       value: p.id,
       label: isAr ? (p.name_ar || p.name) : (p.name_en || p.name),

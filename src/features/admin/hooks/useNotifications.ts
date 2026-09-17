@@ -24,6 +24,7 @@ export const useGetNotifications = (
     queryKey: ["notifications", params],
     queryFn: () => getNotifications(params),
     enabled: options?.enabled ?? true,
+    staleTime: 1000 * 60 * 2, // 2 minutes
   });
 };
 
@@ -32,7 +33,7 @@ export const useGetUnreadCount = (options?: { enabled?: boolean }) => {
     queryKey: ["notifications", "unread-count"],
     queryFn: () => getUnreadCount(),
     enabled: options?.enabled ?? true,
-    refetchInterval: 30000, // Refresh unread count every 30s
+    staleTime: 1000 * 60 * 5, // 5 minutes cache, real-time updates handled by FCM / invalidation
   });
 };
 

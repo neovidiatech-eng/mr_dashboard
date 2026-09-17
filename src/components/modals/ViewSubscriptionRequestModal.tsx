@@ -228,7 +228,7 @@ export default function ViewSubscriptionRequestModal({ isOpen, onClose, request 
                     alt="Payment Receipt"
                     className="object-contain max-h-80 w-full rounded-xl cursor-pointer"
                     preview={{
-                      mask: (
+                      cover: (
                         <div className="flex items-center gap-2 text-white font-bold text-xs bg-slate-900/60 px-4 py-2 rounded-full backdrop-blur-sm">
                           <Eye size={16} />
                           <span>{text.previewReceipt[language]}</span>

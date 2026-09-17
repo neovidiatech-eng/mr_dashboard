@@ -22,16 +22,31 @@ export function useFCM() {
       const fcmToken = await requestFCMToken();
 
       if (fcmToken) {
-        // 2. Check if we already registered this token recently to avoid duplicate calls
-        const cachedToken = localStorage.getItem("fcm_registered_token");
+        // 2. Check if we already registered this token for current user
+        const userRaw = localStorage.getItem("user") || sessionStorage.getItem("user");
+        let userId = "guest";
+        try {
+          if (userRaw) userId = JSON.parse(userRaw)?.id || "guest";
+        } catch {
+          // ignore json parse error
+        }
+
+        const cacheKey = `fcm_registered_token_${userId}`;
+        const cachedToken = localStorage.getItem(cacheKey);
+
         if (cachedToken !== fcmToken) {
           try {
             await registerFCMToken(fcmToken);
-          } catch {
-            await updateFCMToken(fcmToken);
+          } catch (regErr) {
+            try {
+              await updateFCMToken(fcmToken);
+            } catch (upErr) {
+              console.warn("[FCM] Server registration/update notice:", upErr);
+            }
           }
+          localStorage.setItem(cacheKey, fcmToken);
           localStorage.setItem("fcm_registered_token", fcmToken);
-          console.log("[FCM] Successfully registered token with backend server");
+          console.log("[FCM] Token active and registered for user:", userId);
         }
       }
     } catch (err) {

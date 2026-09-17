@@ -15,7 +15,12 @@ import {
   Receipt,
   Upload,
   X,
-  FileCheck
+  FileCheck,
+  Copy,
+  Wallet,
+  CreditCard,
+  Smartphone,
+  Building2,
 } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
 import { ConfigProvider, DatePicker, Input, Select } from "antd";
@@ -25,12 +30,23 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ar';
 import { usePlans } from "../features/admin/hooks/usePlans";
 import { useGetRanks } from "../features/admin/hooks/useRank";
+import { useSettings } from "../features/admin/hooks/useSettings";
 import { useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getRegisterSchema, RegisterInput } from "../lib/schemas/RegisterSchema";
 import { register as registerService } from "../services/AuthServices";
 import ErrorService from "../utils/ErrorService";
+
+const METHOD_CONFIG: Record<string, { labelKey: string; defaultLabel: string; icon: any; color: string; bg: string; border: string }> = {
+  vodafoneCash: { labelKey: 'vodafoneCash', defaultLabel: 'Vodafone Cash', icon: Smartphone, color: '#dc2626', bg: 'bg-red-50/50', border: 'border-red-100 hover:border-red-200' },
+  instaPay: { labelKey: 'instapay', defaultLabel: 'InstaPay', icon: CreditCard, color: '#7c3aed', bg: 'bg-purple-50/50', border: 'border-purple-100 hover:border-purple-200' },
+  fawry: { labelKey: 'fawry', defaultLabel: 'Fawry', icon: Building2, color: '#d97706', bg: 'bg-amber-50/50', border: 'border-amber-100 hover:border-amber-200' },
+  orangeCash: { labelKey: 'orangeCash', defaultLabel: 'Orange Cash', icon: Smartphone, color: '#ea580c', bg: 'bg-orange-50/50', border: 'border-orange-100 hover:border-orange-200' },
+  etisalatCash: { labelKey: 'etisalatCash', defaultLabel: 'Etisalat Cash', icon: Smartphone, color: '#059669', bg: 'bg-emerald-50/50', border: 'border-emerald-100 hover:border-emerald-200' },
+  wePay: { labelKey: 'wePay', defaultLabel: 'WE Pay', icon: Smartphone, color: '#7e22ce', bg: 'bg-purple-50/50', border: 'border-purple-100 hover:border-purple-200' },
+  bankAccount: { labelKey: 'bankAccount', defaultLabel: 'Bank Account', icon: Building2, color: '#2563eb', bg: 'bg-blue-50/50', border: 'border-blue-100 hover:border-blue-200' },
+};
 
 interface RegisterProps {
   onRegisterSuccess: () => void;
@@ -42,10 +58,23 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
   const [showPassword, setShowPassword] = useState(false);
   const { data: plansData } = usePlans();
   const { data: ranksResponse } = useGetRanks();
+  const { settings: appSettings } = useSettings();
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [selectedFileSize, setSelectedFileSize] = useState<string | null>(null);
+
+  const paymentMethods = appSettings?.paymentMethods || {};
+  const validPaymentMethods = Object.entries(paymentMethods).filter(
+    ([_, val]) => typeof val === 'string' && val.trim() !== ''
+  );
+
+  const handleCopy = (key: string, value: string) => {
+    navigator.clipboard.writeText(value);
+    setCopiedKey(key);
+    setTimeout(() => setCopiedKey(null), 2000);
+  };
 
   const {
     register,
@@ -616,6 +645,91 @@ return (
               </p>
             )}
           </div>
+
+          {/* Available Payment Methods Section */}
+          {validPaymentMethods.length > 0 && (
+            <div className="space-y-4 pt-2">
+              <div className="space-y-1 mx-1">
+                <label className="text-lg font-black text-gray-900 flex items-center gap-2">
+                  <Wallet className="w-5 h-5 text-primary" />
+                  <span>{t("availablePaymentMethods")}</span>
+                </label>
+                <p className="text-xs sm:text-sm text-gray-500 font-medium">
+                  {t("paymentMethodsInstruction")}
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                {validPaymentMethods.map(([key, value]) => {
+                  const config = METHOD_CONFIG[key] || {
+                    labelKey: key,
+                    defaultLabel: key,
+                    icon: Wallet,
+                    color: '#800020',
+                    bg: 'bg-rose-50/40',
+                    border: 'border-rose-100 hover:border-rose-200',
+                  };
+                  const IconComponent = config.icon;
+                  const isCopied = copiedKey === key;
+                  const label = config.labelKey ? t(config.labelKey) : config.defaultLabel;
+
+                  return (
+                    <div
+                      key={key}
+                      className={`w-full p-3 sm:p-4 rounded-2xl border ${config.border} ${config.bg} flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-2xs hover:shadow-xs transition-all bg-white/90 backdrop-blur-xs`}
+                    >
+                      {/* Left side: Icon + Name */}
+                      <div className="flex items-center gap-3 shrink-0">
+                        <div
+                          className="w-10 h-10 rounded-xl flex items-center justify-center border shadow-2xs shrink-0 bg-white"
+                          style={{ borderColor: config.color + '30', color: config.color }}
+                        >
+                          <IconComponent className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <span className="text-sm sm:text-base font-black text-gray-900 block">{label}</span>
+                          <span className="text-[11px] text-gray-400 font-medium">
+                            {language === 'ar' ? 'رقم التحويل / الحساب' : 'Transfer Number / Account'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Right side: Full-width Number + Copy Button in one clean horizontal bar */}
+                      <div className="flex-1 sm:max-w-md lg:max-w-lg flex items-center justify-between gap-3 px-3.5 py-2 bg-white rounded-xl border border-gray-200/90 shadow-2xs">
+                        <span
+                          className="font-mono text-sm sm:text-base md:text-lg font-black text-gray-900 tracking-wider select-all truncate pl-1"
+                          dir="ltr"
+                        >
+                          {value}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(key, value)}
+                          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer shadow-2xs ${
+                            isCopied
+                              ? 'bg-emerald-500 text-white'
+                              : 'bg-[#800020] hover:bg-[#600018] text-white active:scale-95'
+                          }`}
+                        >
+                          {isCopied ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-white" />
+                              <span>{t("copied")}</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5" />
+                              <span>{t("copy")}</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Payment Receipt Upload Section */}
           <div className="space-y-4 pt-2">

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useStudents, useCreateStudent, useUpdateStudent, useDeleteStudent } from '../hooks/useStudents';
 import { usePlans } from '../hooks/usePlans';
 import { Student } from '../../../types/student';
+
 import { useConfirm } from '../../../hooks/useConfirm';
 import { TableSkeleton } from '../../../components/ui/CustomSkeleton';
 import { Table, Dropdown } from 'antd';
@@ -240,12 +241,15 @@ export default function Students() {
     },
     {
       title: t('status'),
-      render: (_: any, record: Student) => (
-        <span className={`inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold tracking-widest uppercase ${record.status === 'approved' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
-          }`}>
-          {record.status === 'approved' ? t('active') : t('pending')}
-        </span>
-      ),
+      render: (_: any, record: Student) => {
+        const isActive = record.user?.status === 'approved' || record.user?.status === 'active';
+        return (
+          <span className={`inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold tracking-widest uppercase ${isActive ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
+            }`}>
+            {isActive ? t('active') : t('pending')}
+          </span>
+        );
+      },
     },
     {
       title: t('actions'),
@@ -444,9 +448,10 @@ export default function Students() {
               phone: studentData.phone,
               phone_code: studentData.phone_code,
               gender: studentData.gender,
+              status: studentData.status,
               type: studentData.type,
               country: studentData.country,
-              active: studentData.status === 'approved',
+              // active: studentData.status === 'approved',
               timezone: studentData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
               ...(studentData.parentNumber ? { parentNumber: studentData.parentNumber } : {}),
             };
@@ -518,7 +523,7 @@ export default function Students() {
               phone: selectedStudent.user.phone,
               phone_code: selectedStudent.user.code_country,
               country: selectedStudent.country ? selectedStudent.country.toLowerCase() : 'egypt',
-              status: (selectedStudent.status || 'pending') as any,
+              status: (selectedStudent.user.status === 'active' ? 'approved' : selectedStudent.user.status) as any,
               gender: selectedStudent.gender || 'male',
               type: selectedStudent.type || 'online',
               plan: selectedStudent.planId || '',
@@ -526,7 +531,7 @@ export default function Students() {
               stageId: selectedStudent.stageId || '',
               password: selectedStudent.user.password || '',
               birthDate: selectedStudent.birth_date ? selectedStudent.birth_date.split('T')[0] : '',
-              parentNumber: selectedStudent.user.parentNumber || '',
+              parentNumber: selectedStudent.user.parentNumber || selectedStudent.parentNumber || '',
             }
             : null
         }
@@ -534,13 +539,13 @@ export default function Students() {
           try {
             const payload: any = {
               name: updatedData.name,
-              // Backend expects separate phone and phone_code
               phone: updatedData.phone,
               phone_code: updatedData.phone_code,
               country: updatedData.country,
               birth_date: (updatedData.birthDate && updatedData.birthDate !== "") ? new Date(updatedData.birthDate).toISOString() : null,
               gender: updatedData.gender,
               type: updatedData.type,
+              status: updatedData.status,
               active: updatedData.status === 'approved',
               ...(updatedData.parentNumber ? { parentNumber: updatedData.parentNumber } : {}),
             };

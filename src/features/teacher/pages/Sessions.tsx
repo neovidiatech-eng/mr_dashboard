@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Search, Eye } from 'lucide-react';
 import Pagination from '../../../components/ui/Pagination';
 import { useTranslation } from 'react-i18next';
@@ -34,7 +34,15 @@ export default function Sessions() {
   }, [searchTerm]);
 
   const itemsPerPage = 5;
-  const scheduleData = sessionResponse?.data || [];
+  const scheduleData = useMemo<Schedule[]>(() => {
+    if (!sessionResponse?.data) return [];
+    if (Array.isArray(sessionResponse.data)) return sessionResponse.data;
+    return [
+      ...(sessionResponse.data.toDaySchedule || []),
+      ...(sessionResponse.data.upcomingSchedule || []),
+      ...(sessionResponse.data.previousSchedule || []),
+    ];
+  }, [sessionResponse]);
 
   const displaySchedules: Schedule[] = [];
   const seenParents = new Set<string>();
