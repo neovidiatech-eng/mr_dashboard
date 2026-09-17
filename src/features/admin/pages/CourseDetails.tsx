@@ -18,11 +18,14 @@ import {
   Award,
   HelpCircle,
   CheckCircle2,
+  ArrowUp,
+  ArrowDown,
+  ListOrdered,
 } from 'lucide-react';
-import { Button, Dropdown, Modal, Empty, Spin } from 'antd';
+import { Button, Dropdown, Modal, Empty, Spin, Tooltip } from 'antd';
 import { useCourseById } from '../../../hooks/useCourses';
 import { useDeleteLecture } from '../../../hooks/useLectures';
-import { useDeleteSection, useRemoveItemFromSection, useSectionsByCourse } from '../../../hooks/useSections';
+import { useDeleteSection, useRemoveItemFromSection, useSectionsByCourse, useReorderSectionItems } from '../../../hooks/useSections';
 import { useQueryClient } from '@tanstack/react-query';
 import AddLectureModal from './AddLectureModal';
 import AddQuizModal from '../../../components/modals/AddQuizModal';
@@ -78,6 +81,7 @@ export default function CourseDetails() {
   const { mutate: deleteSection } = useDeleteSection();
   const { mutate: removeItemFromSection } = useRemoveItemFromSection();
   const { mutate: deleteQuiz } = useDeleteQuiz();
+  const { mutate: reorderSectionItems } = useReorderSectionItems();
 
   const rawSections: Section[] = useMemo(() => {
     if (fetchedSections && Array.isArray(fetchedSections) && fetchedSections.length > 0) {
@@ -272,7 +276,39 @@ export default function CourseDetails() {
     });
   };
 
+  const handleMoveItem = (section: Section, currentIdx: number, direction: 'up' | 'down', e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const rawItems = section.section_items || section.sectionItems || [];
+    const items = [...rawItems];
+    const targetIdx = direction === 'up' ? currentIdx - 1 : currentIdx + 1;
+    if (targetIdx < 0 || targetIdx >= items.length) return;
 
+    const temp = items[currentIdx];
+    items[currentIdx] = items[targetIdx];
+    items[targetIdx] = temp;
+
+    const itemIds = items.map((it: any) => it.item_id || it.details?.id || it.id).filter(Boolean);
+
+    reorderSectionItems({
+      sectionId: section.id,
+      itemIds,
+      courseId,
+    });
+  };
+
+  const handleAutoResequence = (section: Section, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const rawItems = section.section_items || section.sectionItems || [];
+    const itemIds = rawItems.map((it: any) => it.item_id || it.details?.id || it.id).filter(Boolean);
+
+    if (itemIds.length === 0) return;
+
+    reorderSectionItems({
+      sectionId: section.id,
+      itemIds,
+      courseId,
+    });
+  };
 
   if (isLoading) {
     return (
@@ -383,9 +419,26 @@ export default function CourseDetails() {
                           </h4>
                         </div>
                         <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                          <Tooltip title={isAr ? 'إعادة الترقيم تسلسلياً (1..N)' : 'Auto-Sequence (1..N)'}>
+                            <button
+                              onClick={(e) => handleAutoResequence(section, e)}
+                              className="p-1 rounded-lg text-gray-400 hover:text-primary hover:bg-primary/10 transition-all flex items-center"
+                            >
+                              <ListOrdered size={14} />
+                            </button>
+                          </Tooltip>
                           <Dropdown
                             menu={{
                               items: [
+                                {
+                                  key: 'resequence',
+                                  label: isAr ? 'إعادة الترقيم تسلسلياً (1..N)' : 'Auto-Sequence (1..N)',
+                                  icon: <ListOrdered size={14} className="text-primary" />,
+                                  onClick: (info) => handleAutoResequence(section, info.domEvent as any),
+                                },
+                                {
+                                  type: 'divider',
+                                },
                                 {
                                   key: 'add_lecture',
                                   label: isAr ? 'إضافة محاضرة للسكشن' : 'Add Lecture',
@@ -465,7 +518,7 @@ export default function CourseDetails() {
                               return (
                                 <div
                                   key={item.id || itemIdx}
-                                  className={`flex items-center justify-between p-3.5 cursor-pointer transition-all ${
+                                  className={`group flex items-center justify-between p-3.5 cursor-pointer transition-all ${
                                     isSelected
                                       ? 'bg-primary-light/70 border-r-4 border-r-primary'
                                       : 'hover:bg-gray-50/80'
@@ -531,43 +584,83 @@ export default function CourseDetails() {
                                   </div>
 
                                   <div className="flex items-center gap-1 shrink-0 ml-2">
+                                    <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
+                                      <button
+                                        disabled={itemIdx === 0}
+                                        onClick={(e) => handleMoveItem(section, itemIdx, 'up', e)}
+                                        className="p-1 rounded text-gray-400 hover:text-primary hover:bg-white disabled:opacity-20 transition-all"
+                                        title={isAr ? 'تحريك للأعلى' : 'Move up'}
+                                      >
+                                        <ArrowUp size={13} />
+                                      </button>
+                                      <button
+                                        disabled={itemIdx === items.length - 1}
+                                        onClick={(e) => handleMoveItem(section, itemIdx, 'down', e)}
+                                        className="p-1 rounded text-gray-400 hover:text-primary hover:bg-white disabled:opacity-20 transition-all"
+                                        title={isAr ? 'تحريك للأسفل' : 'Move down'}
+                                      >
+                                        <ArrowDown size={13} />
+                                      </button>
+                                    </div>
+
                                     <Dropdown
                                       menu={{
-                                        items: isLecture
-                                          ? [
-                                              {
-                                                key: 'edit',
-                                                label: t('edit'),
-                                                icon: <Edit size={14} />,
-                                                onClick: (info) =>
-                                                  handleEditLecture(details, info.domEvent as any),
-                                              },
-                                              {
-                                                key: 'delete',
-                                                label: isAr ? 'حذف المحاضرة' : 'Delete Lecture',
-                                                icon: <Trash2 size={14} />,
-                                                danger: true,
-                                                onClick: (info) =>
-                                                  handleDeleteLecture(itemId, section.id, item.id, info.domEvent as any),
-                                              },
-                                            ]
-                                          : [
-                                              {
-                                                key: 'edit',
-                                                label: isAr ? 'تعديل الكويز' : 'Edit Quiz',
-                                                icon: <Edit size={14} />,
-                                                onClick: (info) =>
-                                                  handleEditQuiz(details, info.domEvent as any),
-                                              },
-                                              {
-                                                key: 'delete',
-                                                label: isAr ? 'حذف الكويز' : 'Delete Quiz',
-                                                icon: <Trash2 size={14} />,
-                                                danger: true,
-                                                onClick: (info) =>
-                                                  handleDeleteQuizItem(itemId, section.id, item.id, info.domEvent as any),
-                                              },
-                                            ],
+                                        items: [
+                                          {
+                                            key: 'move_up',
+                                            label: isAr ? 'تحريك للأعلى' : 'Move Up',
+                                            icon: <ArrowUp size={14} />,
+                                            disabled: itemIdx === 0,
+                                            onClick: (info: any) =>
+                                              handleMoveItem(section, itemIdx, 'up', info.domEvent),
+                                          },
+                                          {
+                                            key: 'move_down',
+                                            label: isAr ? 'تحريك للأسفل' : 'Move Down',
+                                            icon: <ArrowDown size={14} />,
+                                            disabled: itemIdx === items.length - 1,
+                                            onClick: (info: any) =>
+                                              handleMoveItem(section, itemIdx, 'down', info.domEvent),
+                                          },
+                                          {
+                                            type: 'divider',
+                                          },
+                                          ...(isLecture
+                                            ? [
+                                                {
+                                                  key: 'edit',
+                                                  label: t('edit'),
+                                                  icon: <Edit size={14} />,
+                                                  onClick: (info: any) =>
+                                                    handleEditLecture(details, info.domEvent),
+                                                },
+                                                {
+                                                  key: 'delete',
+                                                  label: isAr ? 'حذف المحاضرة' : 'Delete Lecture',
+                                                  icon: <Trash2 size={14} />,
+                                                  danger: true,
+                                                  onClick: (info: any) =>
+                                                    handleDeleteLecture(itemId, section.id, item.id, info.domEvent),
+                                                },
+                                              ]
+                                            : [
+                                                {
+                                                  key: 'edit',
+                                                  label: isAr ? 'تعديل الكويز' : 'Edit Quiz',
+                                                  icon: <Edit size={14} />,
+                                                  onClick: (info: any) =>
+                                                    handleEditQuiz(details, info.domEvent),
+                                                },
+                                                {
+                                                  key: 'delete',
+                                                  label: isAr ? 'حذف الكويز' : 'Delete Quiz',
+                                                  icon: <Trash2 size={14} />,
+                                                  danger: true,
+                                                  onClick: (info: any) =>
+                                                    handleDeleteQuizItem(itemId, section.id, item.id, info.domEvent),
+                                                },
+                                              ]),
+                                        ],
                                       }}
                                       trigger={['click']}
                                     >

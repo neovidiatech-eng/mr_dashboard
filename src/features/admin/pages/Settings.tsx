@@ -126,11 +126,6 @@ export default function SettingsPage() {
     updatePaymentMethodsFromRows([...paymentRows, newRow]);
   };
 
-  // const handleRemovePaymentRow = (id: string) => {
-  //   const updated = paymentRows.filter(r => r.id !== id);
-  //   updatePaymentMethodsFromRows(updated);
-  // };
-
   const handleRowChange = (id: string, field: keyof PaymentRow, val: string) => {
     const updated = paymentRows.map(r => {
       if (r.id === id) {

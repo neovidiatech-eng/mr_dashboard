@@ -7,6 +7,7 @@ import {
   deleteSection,
   addItemsToSection,
   removeItemFromSection,
+  reorderSectionItems,
   CreateSectionPayload,
   UpdateSectionPayload,
   SectionItemPayload,
@@ -139,3 +140,26 @@ export const useRemoveItemFromSection = () => {
     },
   });
 };
+
+export const useReorderSectionItems = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ sectionId, itemIds }: { sectionId: string; itemIds: string[]; courseId?: string }) =>
+      reorderSectionItems(sectionId, { itemIds }),
+    onSuccess: (_, variables) => {
+      ErrorService.success('Section items reordered successfully');
+      if (variables.courseId) {
+        queryClient.invalidateQueries({ queryKey: ['sections', variables.courseId] });
+        queryClient.invalidateQueries({ queryKey: ['courses', variables.courseId] });
+      }
+      queryClient.invalidateQueries({ queryKey: ['sections'] });
+      queryClient.invalidateQueries({ queryKey: ['courses'] });
+    },
+    onError: (error: any) => {
+      ErrorService.error(
+        error?.response?.data?.message || 'Failed to reorder section items'
+      );
+    },
+  });
+};
+
