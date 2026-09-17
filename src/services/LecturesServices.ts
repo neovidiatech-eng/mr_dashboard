@@ -69,3 +69,16 @@ export const updateLectureProgress = async (
 ): Promise<void> => {
   await api.patch(`/materials/lectures/${id}/progress`, { position, duration });
 };
+
+export interface ReorderLecturesPayload {
+  courseId: string;
+  lectureIds: string[];
+}
+
+export const reorderLectures = async (payload: ReorderLecturesPayload): Promise<Lecture[]> => {
+  const response = await api.patch<{ status: string; message: string; data: Lecture[] }>(
+    `/materials/lectures/reorder`,
+    payload
+  );
+  return response.data?.data || (response.data as any);
+};

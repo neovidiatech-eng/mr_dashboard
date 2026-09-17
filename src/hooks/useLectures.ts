@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { completeLecture, createLecture, deleteLecture, getAllLectures, getLectureById, updateLecture, updateLectureProgress } from "../services/LecturesServices";
+import { completeLecture, createLecture, deleteLecture, getAllLectures, getLectureById, reorderLectures, updateLecture, updateLectureProgress } from "../services/LecturesServices";
 import ErrorService from "../utils/ErrorService";
-import { Lecture, UpdateLecture } from "../types/lectures";
+import { UpdateLecture } from "../types/lectures";
 
 export const useLectures = () => {
   return useQuery({
@@ -49,6 +49,22 @@ export const useDeleteLecture = () => {
   });
 };
 
+export const useReorderLectures = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: { courseId: string; lectureIds: string[] }) => reorderLectures(payload),
+    onSuccess: (_data, variables) => {
+      ErrorService.success("Lectures reordered successfully");
+      queryClient.invalidateQueries({ queryKey: ["courses", variables.courseId] });
+      queryClient.invalidateQueries({ queryKey: ["sections", variables.courseId] });
+      queryClient.invalidateQueries({ queryKey: ["lectures"] });
+    },
+    onError: (error: any) => {
+      ErrorService.error(error?.response?.data?.message || "Failed to reorder lectures");
+    },
+  });
+};
+
 export const useCompleteLecture = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -65,3 +81,4 @@ export const useUpdateLectureProgress = () => {
       updateLectureProgress(id, position, duration),
   });
 };
+

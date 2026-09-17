@@ -160,3 +160,19 @@ export const removeItemFromSection = async (
     return null;
   }
 };
+
+export interface ReorderSectionItemsPayload {
+  itemIds: string[];
+}
+
+export const reorderSectionItems = async (
+  sectionId: string,
+  payload: ReorderSectionItemsPayload
+): Promise<Section> => {
+  const response = await api.patch<{ status: string; message: string; data: Section }>(
+    `/materials/sections/${sectionId}/items/reorder`,
+    payload
+  );
+  return response.data?.data || (response.data as any);
+};
+
