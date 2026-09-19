@@ -26,7 +26,7 @@ jobs:
       - name: Deploy dist to server
         uses: burnett01/rsync-deployments@7.0.1
         with:
-          switches: -avzr --delete --exclude=.user.ini
+          switches: -avzr --delete --exclude=.user.ini --omit-dir-times
           path: dist/
           remote_path: /www/wwwroot/dashboard.mr-mahmoud-academy.net/  # المسار اللي Nginx بيسيرف منه
           remote_host: ${{ secrets.SSH_HOST }}
