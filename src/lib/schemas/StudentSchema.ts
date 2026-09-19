@@ -16,12 +16,13 @@ export const getStudentSchema = (t: TFunc) => z.object({
   rankId: z.string(t("validation.required")),
   stageId: z.string(t("validation.required")),
   password: z.string().min(6, t("validation.min", { count: 6 })),
+  confirmPassword: z.string().min(6, t("validation.min", { count: 6 })),
   timezone: z.string().optional(),
   startingCourseId: z.string().optional(),
   startingLectureId: z.string().optional(),
   parentNumber: z.string().optional(),
 }).superRefine((data, ctx) => {
-  const { phone_code, phone } = data;
+  const { phone_code, phone, password, confirmPassword } = data;
 
   if (!phone) return;
 
@@ -93,6 +94,16 @@ export const getStudentSchema = (t: TFunc) => z.object({
       path: ["startingLectureId"],
     });
   }
+
+  if (password !== confirmPassword) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: t("validation.passwordMatch"),
+      path: ["confirmPassword"],
+    });
+  }
+
+
 });
 
 export type StudentFormData = z.infer<ReturnType<typeof getStudentSchema>>;

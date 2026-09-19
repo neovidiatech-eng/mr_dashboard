@@ -451,7 +451,6 @@ export default function Students() {
               status: studentData.status,
               type: studentData.type,
               country: studentData.country,
-              // active: studentData.status === 'approved',
               timezone: studentData.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
               ...(studentData.parentNumber ? { parentNumber: studentData.parentNumber } : {}),
             };
@@ -530,6 +529,7 @@ export default function Students() {
               rankId: selectedStudent.rankId || '',
               stageId: selectedStudent.stageId || '',
               password: selectedStudent.user.password || '',
+              confirmPassword: selectedStudent.user.password || '',
               birthDate: selectedStudent.birth_date ? selectedStudent.birth_date.split('T')[0] : '',
               parentNumber: selectedStudent.user.parentNumber || selectedStudent.parentNumber || '',
             }
@@ -546,8 +546,8 @@ export default function Students() {
               gender: updatedData.gender,
               type: updatedData.type,
               status: updatedData.status,
-              active: updatedData.status === 'approved',
               ...(updatedData.parentNumber ? { parentNumber: updatedData.parentNumber } : {}),
+              password: updatedData.password,
             };
 
             if (updatedData.plan && updatedData.plan.trim() !== "") {

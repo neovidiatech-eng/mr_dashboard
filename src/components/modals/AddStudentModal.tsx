@@ -37,7 +37,6 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     }
   });
- console.log("students data", plansData);
 
   const rankIdValue = watch('rankId');
   const { data: coursesData } = useCourses(1, 20, rankIdValue);
