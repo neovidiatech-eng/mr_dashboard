@@ -152,7 +152,7 @@ export default function Sessions() {
 
         await createSchedule.mutateAsync(singlePayload);
 
-        console.log("CREATE PAYLOAD", singlePayload);
+      //  console.log("CREATE PAYLOAD", singlePayload);
       } else {
         // Batch Session
         const { formData } = data;

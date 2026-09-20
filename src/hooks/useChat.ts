@@ -44,7 +44,7 @@ export const useChatSocket = (conversationId?: string ) => {
 
     const onMessagesRead = (data: any) => {
       // If we receive a read receipt, the user is definitely online
-      console.log("📨 [Handshake] User is online via read receipt:", data.userId);
+    //  console.log("📨 [Handshake] User is online via read receipt:", data.userId);
       dispatch(setOnlineStatus({ userId: data.userId, status: "online" }));
     };
 

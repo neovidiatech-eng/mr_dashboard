@@ -88,7 +88,7 @@ export default function SubscriptionRequests() {
         }));
         setRequests(formatted);
       } catch (error) {
-        console.log(error);
+      //  console.log(error);
       } finally {
         setIsLoading(false);
       }
@@ -162,7 +162,7 @@ export default function SubscriptionRequests() {
         prev.map((req) => (req.id === selectedRequest.id ? { ...req, status } : req))
       );
     } catch (error) {
-      console.log(error);
+    //  console.log(error);
       throw error;
     }
   };

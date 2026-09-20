@@ -309,8 +309,8 @@ export default function LiveSessions() {
             },
         },
     ];
-    console.log(activeJitsiSession?.roomName);
-    console.log(activeJitsiSession?.token);
+    // console.log(activeJitsiSession?.roomName);
+    // console.log(activeJitsiSession?.token);
 
     return (
         <div className="space-y-6 max-w-[1200px] mx-auto p-2 flex flex-col" dir={language === "ar" ? "rtl" : "ltr"}>

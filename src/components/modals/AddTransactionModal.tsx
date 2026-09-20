@@ -95,15 +95,15 @@ export default function AddTransactionModal({ isOpen, onClose, onSave, currencie
     const total = sessions * (duration / 60) * rate;
     setValue('amount', Number(total.toFixed(2)));
   };
-  console.log(errors)
+ // console.log(errors)
   const onSubmit = async (data: TransactionFormData) => {
     let isSuccess: boolean;
     if (editingTransaction) {
       isSuccess = await onSave({ ...data, id: editingTransaction.id } as Transaction);
-      console.log(data)
+      //console.log(data)
     } else {
       isSuccess = await onSave(data);
-      console.log(data)
+      //console.log(data)
 
     }
     if (isSuccess) {

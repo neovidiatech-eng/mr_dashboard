@@ -102,10 +102,10 @@ export default function EditSubscriptionModal({
 
   const handleSendNotification = () => {
     if (notificationMessage.trim()) {
-      console.log('Sending notification:', {
-        to: subscription.studentName,
-        message: notificationMessage
-      });
+      // console.log('Sending notification:', {
+      //   to: subscription.studentName,
+      //   message: notificationMessage
+      // });
       alert(text.notificationSent[language]);
       setNotificationMessage('');
       setShowNotificationBox(false);

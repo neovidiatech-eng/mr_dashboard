@@ -46,7 +46,7 @@ export function useFCM() {
           }
           localStorage.setItem(cacheKey, fcmToken);
           localStorage.setItem("fcm_registered_token", fcmToken);
-          console.log("[FCM] Token active and registered for user:", userId);
+         // console.log("[FCM] Token active and registered for user:", userId);
         }
       }
     } catch (err) {

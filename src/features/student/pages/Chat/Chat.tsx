@@ -76,7 +76,7 @@ export default function StudentChat() {
     e.preventDefault();
     if (!message.trim() || !conversationId || !socket) return;
 
-    console.log("📤 [Chat] Sending message:", message);
+  //  console.log("📤 [Chat] Sending message:", message);
     socket.emit("message:send", {
       conversationId,
       content: message,

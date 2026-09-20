@@ -249,8 +249,8 @@ export default function StudentDashboard() {
                       },
                       {
                         onSuccess: (data) => {
-                          console.log("📝 Chat Data:", data);
-                          console.log("👨‍🏫 Teacher Object:", nextSession?.teacher);
+                          // console.log("📝 Chat Data:", data);
+                          // console.log("👨‍🏫 Teacher Object:", nextSession?.teacher);
                           navigate("/student-dashboard/chat", {
                             state: {
                               conversationId: data.id,
