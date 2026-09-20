@@ -31,16 +31,24 @@ export default function JitsiMeeting({
 
   // Proactively request browser camera & microphone permissions for the page
   useEffect(() => {
-    if (isOpen && navigator?.mediaDevices?.getUserMedia) {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true, video: true })
-        .then((stream) => {
-          // Release stream tracks immediately so Jitsi can bind to them
-          stream.getTracks().forEach((track) => track.stop());
-        })
-        .catch((err) => {
-          console.warn('Camera/Microphone permission prompt:', err);
-        });
+    if (isOpen) {
+      console.log({
+        userAgent: navigator.userAgent,
+        hasMediaDevices: !!navigator.mediaDevices,
+        hasGetDisplayMedia: !!navigator.mediaDevices?.getDisplayMedia,
+      });
+
+      if (navigator?.mediaDevices?.getUserMedia) {
+        navigator.mediaDevices
+          .getUserMedia({ audio: true, video: true })
+          .then((stream) => {
+            // Release stream tracks immediately so Jitsi can bind to them
+            stream.getTracks().forEach((track) => track.stop());
+          })
+          .catch((err) => {
+            console.warn('Camera/Microphone permission prompt:', err);
+          });
+      }
     }
   }, [isOpen]);
 
@@ -141,13 +149,11 @@ export default function JitsiMeeting({
             startWithAudioMuted: false,
             startWithVideoMuted: false,
             disableThirdPartyRequests: true,
+            disableDesktopSharing: false,
             prejoinPageEnabled: false,
             enableWelcomePage: false,
             disableDeepLinking: true,
             disableInviteFunctions: true,
-            ...(!isActualStudent ? {
-              disableDesktopSharing: false,
-            } : {}),
             
             disableEndConference: isActualStudent,
             disableHangupMenu: isActualStudent,
