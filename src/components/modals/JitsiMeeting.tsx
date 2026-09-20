@@ -145,6 +145,10 @@ export default function JitsiMeeting({
             enableWelcomePage: false,
             disableDeepLinking: true,
             disableInviteFunctions: true,
+            ...(!isActualStudent ? {
+              disableDesktopSharing: false,
+            } : {}),
+            
             disableEndConference: isActualStudent,
             disableHangupMenu: isActualStudent,
             hideEndConferenceButton: isActualStudent,
