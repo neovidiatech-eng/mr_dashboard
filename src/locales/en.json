@@ -18,6 +18,7 @@
   "verifyAndReset": "Verify and Reset",
   "verify": "Verify",
   "resendCode": "Resend Code",
+  "course": "course",
   "validation": {
     "required": "Field is required",
     "email": "Please enter a valid email address",

@@ -1,47 +1,66 @@
-import { useState, useMemo } from 'react';
-import { Search, FileText, Star, Download, Trash2, Eye } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import { Table, Tag, Rate, Modal } from 'antd';
-import { TableSkeleton } from '../../../components/ui/CustomSkeleton';
-import { TeacherReport, TeacherReportsResponse } from '../../../types/reports';
-import dayjs from 'dayjs';
-import { useAdminReports, useDeleteAdminReport } from '../../../hooks/useAdminReports';
-import type { ColumnsType } from 'antd/es/table';
-import ViewReportModal from '../../../components/modals/ViewReportModal';
+import { useState, useMemo } from "react";
+import { Search, FileText, Star, Download, Trash2, Eye } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Table, Tag, Rate, Modal } from "antd";
+import { TableSkeleton } from "../../../components/ui/CustomSkeleton";
+import { TeacherReport, TeacherReportsResponse } from "../../../types/reports";
+import dayjs from "dayjs";
+import {
+  useAdminReports,
+  useDeleteAdminReport,
+} from "../../../hooks/useAdminReports";
+import type { ColumnsType } from "antd/es/table";
+import ViewReportModal from "../../../components/modals/ViewReportModal";
 
 export default function Reports() {
   const { t, i18n } = useTranslation();
-  const language = (i18n.language.split('-')[0] === 'ar' ? 'ar' : 'en') as 'ar' | 'en';
+  const language = (i18n.language.split("-")[0] === "ar" ? "ar" : "en") as
+    | "ar"
+    | "en";
 
   const text = {
-    searchReports: { ar: 'البحث عن تقارير...', en: 'searchReports' },
-    totalReports: { ar: 'إجمالي التقارير', en: 'TOTALREPORTS' },
-    avgRating: { ar: 'متوسط التقييم', en: 'AVGRATING' },
-    teacherLabel: { ar: 'المعلم', en: 'Teacher' },
-    week: { ar: 'الأسبوع', en: 'WEEK' },
-    performance: { ar: 'الأداء', en: 'PERFORMANCE' },
-    classes: { ar: 'الحصص', en: 'CLASSES' },
-    students: { ar: 'الطلاب', en: 'STUDENTS' },
-    summary: { ar: 'الملخص', en: 'SUMMARY' },
-    rating: { ar: 'التقييم', en: 'RATING' },
-    status: { ar: 'الحالة', en: 'Status' },
-    submitted: { ar: 'تم التسليم', en: 'SUBMITTED' },
-    actions: { ar: 'الإجراءات', en: 'Actions' },
-    deleteReportTitle: { ar: 'حذف التقرير', en: 'Delete Report' },
-    deleteReportContent: { ar: 'هل أنت متأكد من حذف هذا التقرير؟ لا يمكن التراجع عن هذا الإجراء.', en: 'Are you sure you want to delete this report? This action cannot be undone.' },
-    yesDelete: { ar: 'نعم، احذف', en: 'Yes, Delete' },
-    cancel: { ar: 'إلغاء', en: 'Cancel' },
-    teacherWeeklyReports: { ar: 'التقارير الأسبوعية للمعلمين', en: 'Teacher Weekly Reports' },
-    manageReportsDescription: { ar: 'مراجعة وتحليل تقارير أداء المعلمين', en: 'Review and analyze teacher performance reports' },
-    download: { ar: 'تحميل', en: 'download' }
+    searchReports: { ar: "البحث عن تقارير...", en: "searchReports" },
+    totalReports: { ar: "إجمالي التقارير", en: "TOTALREPORTS" },
+    avgRating: { ar: "متوسط التقييم", en: "AVGRATING" },
+    teacherLabel: { ar: "المعلم", en: "Teacher" },
+    week: { ar: "الأسبوع", en: "WEEK" },
+    performance: { ar: "الأداء", en: "PERFORMANCE" },
+    classes: { ar: "الحصص", en: "CLASSES" },
+    students: { ar: "الطلاب", en: "STUDENTS" },
+    summary: { ar: "الملخص", en: "SUMMARY" },
+    rating: { ar: "التقييم", en: "RATING" },
+    status: { ar: "الحالة", en: "Status" },
+    submitted: { ar: "تم التسليم", en: "SUBMITTED" },
+    actions: { ar: "الإجراءات", en: "Actions" },
+    deleteReportTitle: { ar: "حذف التقرير", en: "Delete Report" },
+    deleteReportContent: {
+      ar: "هل أنت متأكد من حذف هذا التقرير؟ لا يمكن التراجع عن هذا الإجراء.",
+      en: "Are you sure you want to delete this report? This action cannot be undone.",
+    },
+    yesDelete: { ar: "نعم، احذف", en: "Yes, Delete" },
+    cancel: { ar: "إلغاء", en: "Cancel" },
+    teacherWeeklyReports: {
+      ar: "التقارير الأسبوعية للمعلمين",
+      en: "Teacher Weekly Reports",
+    },
+    manageReportsDescription: {
+      ar: "مراجعة وتحليل تقارير أداء المعلمين",
+      en: "Review and analyze teacher performance reports",
+    },
+    download: { ar: "تحميل", en: "download" },
   };
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [selectedReport, setSelectedReport] = useState<TeacherReport | null>(null);
+  const [selectedReport, setSelectedReport] = useState<TeacherReport | null>(
+    null,
+  );
   const itemsPerPage = 10;
 
-  const { data: reportsResponse, isLoading } = useAdminReports() as { data: TeacherReportsResponse | undefined, isLoading: boolean };
+  const { data: reportsResponse, isLoading } = useAdminReports() as {
+    data: TeacherReportsResponse | undefined;
+    isLoading: boolean;
+  };
   const { mutateAsync: deleteReport } = useDeleteAdminReport();
 
   const reportsList = useMemo((): TeacherReport[] => {
@@ -53,7 +72,11 @@ export default function Reports() {
     }
 
     // If data is an object with items
-    if (reportsResponse.data && 'items' in reportsResponse.data && Array.isArray(reportsResponse.data.items)) {
+    if (
+      reportsResponse.data &&
+      "items" in reportsResponse.data &&
+      Array.isArray(reportsResponse.data.items)
+    ) {
       return reportsResponse.data.items;
     }
 
@@ -63,36 +86,44 @@ export default function Reports() {
   const stats = useMemo(() => {
     if (!reportsList.length) return [];
 
-    const avgRating = reportsList.reduce((acc: number, curr: TeacherReport) => acc + curr.overallRating, 0) / reportsList.length;
-
+    const avgRating =
+      reportsList.reduce(
+        (acc: number, curr: TeacherReport) => acc + curr.overallRating,
+        0,
+      ) / reportsList.length;
 
     return [
       {
-        id: 'total_reports',
+        id: "total_reports",
         label: text.totalReports[language],
         value: reportsList.length,
         icon: FileText,
-        bgColor: 'bg-indigo-50/50',
-        iconBg: 'bg-indigo-100',
-        iconColor: 'text-indigo-600',
+        bgColor: "bg-indigo-50/50",
+        iconBg: "bg-indigo-100",
+        iconColor: "text-indigo-600",
       },
       {
-        id: 'avg_rating',
+        id: "avg_rating",
         label: text.avgRating[language],
         value: avgRating.toFixed(1),
         icon: Star,
-        bgColor: 'bg-amber-50/50',
-        iconBg: 'bg-amber-100',
-        iconColor: 'text-amber-600',
+        bgColor: "bg-amber-50/50",
+        iconBg: "bg-amber-100",
+        iconColor: "text-amber-600",
       },
     ];
   }, [reportsList, language]);
 
   const filteredReports = useMemo(() => {
-    return reportsList.filter((report: TeacherReport) => {
-      const teacherName = report.teacher?.user?.name?.toLowerCase() || '';
-      return teacherName.includes(searchTerm.toLowerCase());
-    }).sort((a: TeacherReport, b: TeacherReport) => dayjs(b.weekStarting).unix() - dayjs(a.weekStarting).unix());
+    return reportsList
+      .filter((report: TeacherReport) => {
+        const teacherName = report.teacher?.user?.name?.toLowerCase() || "";
+        return teacherName.includes(searchTerm.toLowerCase());
+      })
+      .sort(
+        (a: TeacherReport, b: TeacherReport) =>
+          dayjs(b.weekStarting).unix() - dayjs(a.weekStarting).unix(),
+      );
   }, [reportsList, searchTerm]);
 
   const handleDownloadCSV = () => {
@@ -100,39 +131,44 @@ export default function Reports() {
 
     // CSV Header
     const headers = [
-      'Teacher Name',
-      'Teacher Email',
-      'Week Starting',
-      'Week Ending',
-      'Total Classes',
-      'Students Taught',
-      'Overall Rating',
-      'Summary'
+      "Teacher Name",
+      "Teacher Email",
+      "Week Starting",
+      "Week Ending",
+      "Total Classes",
+      "Students Taught",
+      "Overall Rating",
+      "Summary",
     ];
 
     // CSV Rows
-    const rows = filteredReports.map(report => [
-      `"${report.teacher?.user?.name || '---'}"`,
-      `"${report.teacher?.user?.email || '---'}"`,
-      dayjs(report.weekStarting).format('YYYY-MM-DD'),
-      dayjs(report.weekEnding).format('YYYY-MM-DD'),
+    const rows = filteredReports.map((report) => [
+      `"${report.teacher?.user?.name || "---"}"`,
+      `"${report.teacher?.user?.email || "---"}"`,
+      dayjs(report.weekStarting).format("YYYY-MM-DD"),
+      dayjs(report.weekEnding).format("YYYY-MM-DD"),
       report.totalClasses,
       report.studentsTaught,
       report.overallRating,
-      `"${report.teachingSummary.replace(/"/g, '""')}"`
+      `"${report.teachingSummary.replace(/"/g, '""')}"`,
     ]);
 
     const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.join(','))
-    ].join('\n');
+      headers.join(","),
+      ...rows.map((row) => row.join(",")),
+    ].join("\n");
 
     // Create download link
-    const blob = new Blob([`\ufeff${csvContent}`], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([`\ufeff${csvContent}`], {
+      type: "text/csv;charset=utf-8;",
+    });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', `Teacher_Reports_${dayjs().format('YYYY-MM-DD')}.csv`);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute(
+      "download",
+      `Teacher_Reports_${dayjs().format("YYYY-MM-DD")}.csv`,
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -141,46 +177,61 @@ export default function Reports() {
   const columns: ColumnsType<TeacherReport> = [
     {
       title: text.teacherLabel[language],
-      key: 'teacher',
+      key: "teacher",
       render: (_: unknown, record: TeacherReport) => (
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-primary-light flex items-center justify-center text-primary font-bold text-xs">
-            {record.teacher?.user?.name ? record.teacher.user.name.charAt(0).toUpperCase() : '?'}
+            {record.teacher?.user?.name
+              ? record.teacher.user.name.charAt(0).toUpperCase()
+              : "?"}
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-bold text-gray-900">{record.teacher?.user?.name || '---'}</span>
-            <span className="text-[10px] text-gray-400 font-medium">{record.teacher?.user?.email || '---'}</span>
+            <span className="text-sm font-bold text-gray-900">
+              {record.teacher?.user?.name || "---"}
+            </span>
+            <span className="text-[10px] text-gray-400 font-medium">
+              {record.teacher?.user?.email || "---"}
+            </span>
           </div>
         </div>
       ),
     },
     {
       title: text.week[language],
-      key: 'week',
+      key: "week",
       render: (_: unknown, record: TeacherReport) => (
         <div className="flex flex-col">
           <span className="text-sm font-bold text-gray-900">
-            {dayjs(record.weekStarting).format('MMM D')} - {dayjs(record.weekEnding).format('MMM D, YYYY')}
+            {dayjs(record.weekStarting).format("MMM D")} -{" "}
+            {dayjs(record.weekEnding).format("MMM D, YYYY")}
           </span>
           <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">
-            {dayjs(record.createdAt).format('YYYY-MM-DD')}
+            {dayjs(record.createdAt).format("YYYY-MM-DD")}
           </span>
         </div>
       ),
     },
     {
       title: text.performance[language],
-      key: 'performance',
+      key: "performance",
       render: (_: unknown, record: TeacherReport) => (
         <div className="space-y-1">
           <div className="flex items-center gap-4">
             <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">{text.classes[language]}</span>
-              <span className="text-sm font-black text-gray-700">{record.totalClasses}</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">
+                {text.classes[language]}
+              </span>
+              <span className="text-sm font-black text-gray-700">
+                {record.totalClasses}
+              </span>
             </div>
             <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">{text.students[language]}</span>
-              <span className="text-sm font-black text-gray-700">{record.studentsTaught}</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">
+                {text.students[language]}
+              </span>
+              <span className="text-sm font-black text-gray-700">
+                {record.studentsTaught}
+              </span>
             </div>
           </div>
         </div>
@@ -188,8 +239,8 @@ export default function Reports() {
     },
     {
       title: text.summary[language],
-      dataIndex: 'teachingSummary',
-      key: 'teachingSummary',
+      dataIndex: "teachingSummary",
+      key: "teachingSummary",
       width: 300,
       render: (text: string) => (
         <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed font-medium">
@@ -199,17 +250,23 @@ export default function Reports() {
     },
     {
       title: text.rating[language],
-      key: 'rating',
+      key: "rating",
       render: (_: unknown, record: TeacherReport) => (
         <div className="flex flex-col gap-1">
-          <Rate disabled defaultValue={record.overallRating} className="text-xs text-amber-400" />
-          <span className="text-[10px] font-bold text-gray-400 uppercase">{record.overallRating}/5</span>
+          <Rate
+            disabled
+            defaultValue={record.overallRating}
+            className="text-xs text-amber-400"
+          />
+          <span className="text-[10px] font-bold text-gray-400 uppercase">
+            {record.overallRating}/5
+          </span>
         </div>
       ),
     },
     {
       title: text.status[language],
-      key: 'status',
+      key: "status",
       render: () => (
         <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-primary-light text-primary border border-primary/20">
           {text.submitted[language]}
@@ -218,8 +275,8 @@ export default function Reports() {
     },
     {
       title: text.actions[language],
-      key: 'actions',
-      align: 'right' as const,
+      key: "actions",
+      align: "right" as const,
       render: (_: unknown, record: TeacherReport) => (
         <div className="flex justify-end gap-2">
           <button
@@ -239,13 +296,13 @@ export default function Reports() {
                 title: text.deleteReportTitle[language],
                 content: text.deleteReportContent[language],
                 okText: text.yesDelete[language],
-                okType: 'danger',
+                okType: "danger",
                 cancelText: text.cancel[language],
                 onOk: async () => {
                   if (record.id) {
                     await deleteReport(record.id);
                   }
-                }
+                },
               });
             }}
             className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
@@ -258,12 +315,18 @@ export default function Reports() {
   ];
 
   return (
-    <div className="space-y-6 max-w-[1200px] mx-auto p-4 md:p-6 custom-scrollbar" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-
+    <div
+      className="space-y-6 max-w-[1500px] mx-auto p-4 md:p-6 custom-scrollbar"
+      dir={language === "ar" ? "rtl" : "ltr"}
+    >
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">{text.teacherWeeklyReports[language]}</h1>
-          <p className="text-gray-500 text-sm font-medium mt-1">{text.manageReportsDescription[language]}</p>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight">
+            {text.teacherWeeklyReports[language]}
+          </h1>
+          <p className="text-gray-500 text-sm font-medium mt-1">
+            {text.manageReportsDescription[language]}
+          </p>
         </div>
         <button
           onClick={handleDownloadCSV}
@@ -283,12 +346,18 @@ export default function Reports() {
           >
             <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-all" />
             <div className="flex items-center gap-5 relative z-10">
-              <div className={`p-4 rounded-2xl ${stat.iconBg} transition-all group-hover:scale-110 group-hover:rotate-3 duration-300 shadow-sm`}>
+              <div
+                className={`p-4 rounded-2xl ${stat.iconBg} transition-all group-hover:scale-110 group-hover:rotate-3 duration-300 shadow-sm`}
+              >
                 <stat.icon className={`w-6 h-6 ${stat.iconColor}`} />
               </div>
               <div className="text-start">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{stat.label}</p>
-                <p className="text-3xl font-black text-gray-900 leading-none">{stat.value}</p>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">
+                  {stat.label}
+                </p>
+                <p className="text-3xl font-black text-gray-900 leading-none">
+                  {stat.value}
+                </p>
               </div>
             </div>
           </div>
@@ -298,20 +367,24 @@ export default function Reports() {
       <div className="bg-white rounded-[32px] shadow-sm border border-gray-100 overflow-hidden">
         <div className="px-8 py-6 bg-gray-50/30 border-b border-gray-50">
           <div className="relative w-full max-w-md">
-            <Search className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4`} />
+            <Search
+              className={`absolute ${language === "ar" ? "right-4" : "left-4"} top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4`}
+            />
             <input
               type="text"
               placeholder={text.searchReports[language]}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={`w-full ${language === 'ar' ? 'pr-11 pl-4' : 'pl-11 pr-4'} py-3 bg-white border border-gray-100 rounded-2xl text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent transition-all placeholder:text-gray-400 shadow-sm`}
+              className={`w-full ${language === "ar" ? "pr-11 pl-4" : "pl-11 pr-4"} py-3 bg-white border border-gray-100 rounded-2xl text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent transition-all placeholder:text-gray-400 shadow-sm`}
             />
           </div>
         </div>
 
         <div className="overflow-x-auto custom-scrollbar">
           {isLoading ? (
-            <div className="p-8"><TableSkeleton rows={5} columns={5} /></div>
+            <div className="p-8">
+              <TableSkeleton rows={5} columns={5} />
+            </div>
           ) : (
             <Table
               columns={columns}
@@ -321,7 +394,7 @@ export default function Reports() {
                 onClick: () => {
                   setSelectedReport(record);
                   setIsViewModalOpen(true);
-                }
+                },
               })}
               pagination={{
                 pageSize: itemsPerPage,
@@ -343,8 +416,9 @@ export default function Reports() {
         reportData={selectedReport}
       />
 
-      <style dangerouslySetInnerHTML={{
-        __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .ant-table-thead > tr > th {
           background-color: transparent !important;
           color: #9ca3af !important;
@@ -385,7 +459,9 @@ export default function Reports() {
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: #94a3b8;
         }
-      `}} />
+      `,
+        }}
+      />
     </div>
   );
 }
