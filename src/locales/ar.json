@@ -3,7 +3,10 @@
   "orLogin": "أو سجل الدخول",
   "email": "البريد الإلكتروني",
   "password": "كلمة المرور",
+  "confirm_Password":"تأكيد كلمة المرور",
   "rememberMe": "تذكرني",
+    "noPurchasedCourses": "لا يوجد كورسات مشتراة",
+  "confirmPassword": "تأكيد كلمة المرور",
   "forgotPassword": "هل نسيت كلمة المرور؟",
   "forgetPasswordTitle": "نسيت كلمة المرور",
   "forgetPasswordSubtitle": "أدخل بريدك الإلكتروني لتلقي رمز إعادة تعيين كلمة المرور",
@@ -1022,6 +1025,6 @@
   "lecture_attached_quiz": "كويز المحاضرة",
   "view_attached_quiz": "عرض كويز المحاضرة",
   "live": "مباشر",
-  "purchasedCourses": "الكورسات المشتراة",
-  "noPurchasedCourses": "لا يوجد كورسات مشتراة"
+  "purchasedCourses": "الكورسات المشتراة"
+
 }

@@ -9,14 +9,14 @@ export const getStudentSchema = (t: TFunc) => z.object({
   phone: z.string().min(1, t("validation.required")),
   gender: z.enum(['male', 'female']),
   type: z.enum(['online', 'onsite']),
-  birthDate: z.string(t("validation.required")),
-  plan: z.string(t("validation.required")),
+  birthDate: z.string().optional().or(z.literal('')),
+  plan: z.string().optional().or(z.literal('')),
   country: z.string().min(1, t("validation.required")),
   status: z.enum(['approved', 'pending', 'rejected']),
-  rankId: z.string(t("validation.required")),
-  stageId: z.string(t("validation.required")),
-  password: z.string().min(6, t("validation.min", { count: 6 })),
-  confirmPassword: z.string().min(6, t("validation.min", { count: 6 })),
+  rankId: z.string().optional().or(z.literal('')),
+  stageId: z.string().optional().or(z.literal('')),
+  password: z.string().optional().or(z.literal('')),
+  confirmPassword: z.string().optional().or(z.literal('')),
   timezone: z.string().optional(),
   startingCourseId: z.string().optional(),
   startingLectureId: z.string().optional(),
@@ -24,65 +24,53 @@ export const getStudentSchema = (t: TFunc) => z.object({
 }).superRefine((data, ctx) => {
   const { phone_code, phone, password, confirmPassword } = data;
 
-  if (!phone) return;
-
-  if (!/^[0-9]+$/.test(phone)) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: t("validation.invalidPhone"),
-      path: ["phone"],
-    });
-    return;
-  }
-
-  // Egypt
-  if (phone_code === "+20") {
-    if (!/^(01)[0125][0-9]{8}$|^(1)[0125][0-9]{8}$/.test(phone)) {
+  if (phone) {
+    if (!/^[0-9]+$/.test(phone)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: t("validation.invalidPhone"),
         path: ["phone"],
       });
-    }
-  }
-  // Saudi Arabia
-  else if (phone_code === "+966") {
-    if (!/^(05|5)[0-9]{8}$/.test(phone)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: t("validation.invalidPhone"),
-        path: ["phone"],
-      });
-    }
-  }
-  // UAE
-  else if (phone_code === "+971") {
-    if (!/^(05|5)[0-9]{8}$/.test(phone)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: t("validation.invalidPhone"),
-        path: ["phone"],
-      });
-    }
-  }
-  // Kuwait
-  else if (phone_code === "+965") {
-    if (!/^[569][0-9]{7}$/.test(phone)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: t("validation.invalidPhone"),
-        path: ["phone"],
-      });
-    }
-  }
-  // Fallback for other countries
-  else {
-    if (phone.length < 7 || phone.length > 15) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: t("validation.invalidPhone"),
-        path: ["phone"],
-      });
+    } else if (phone_code === "+20") {
+      if (!/^(01)[0125][0-9]{8}$|^(1)[0125][0-9]{8}$/.test(phone)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t("validation.invalidPhone"),
+          path: ["phone"],
+        });
+      }
+    } else if (phone_code === "+966") {
+      if (!/^(05|5)[0-9]{8}$/.test(phone)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t("validation.invalidPhone"),
+          path: ["phone"],
+        });
+      }
+    } else if (phone_code === "+971") {
+      if (!/^(05|5)[0-9]{8}$/.test(phone)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t("validation.invalidPhone"),
+          path: ["phone"],
+        });
+      }
+    } else if (phone_code === "+965") {
+      if (!/^[569][0-9]{7}$/.test(phone)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t("validation.invalidPhone"),
+          path: ["phone"],
+        });
+      }
+    } else {
+      if (phone.length < 7 || phone.length > 15) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t("validation.invalidPhone"),
+          path: ["phone"],
+        });
+      }
     }
   }
 
@@ -95,15 +83,23 @@ export const getStudentSchema = (t: TFunc) => z.object({
     });
   }
 
-  if (password !== confirmPassword) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: t("validation.passwordMatch"),
-      path: ["confirmPassword"],
-    });
+  // Password & confirmPassword matching check
+  if (password && password.trim() !== "") {
+    if (password.length < 6) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: t("validation.min", { count: 6 }),
+        path: ["password"],
+      });
+    }
+    if (password !== confirmPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: t("validation.passwordMatch"),
+        path: ["confirmPassword"],
+      });
+    }
   }
-
-
 });
 
 export type StudentFormData = z.infer<ReturnType<typeof getStudentSchema>>;

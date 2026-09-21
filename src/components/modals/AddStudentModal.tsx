@@ -10,6 +10,7 @@ import { usePlans } from '../../features/admin/hooks/usePlans';
 import { useGetRanks } from '../../features/admin/hooks/useRank';
 import { useCourses } from '../../hooks/useCourses';
 import { FaBuilding, FaComputer, FaPerson, FaPersonDress } from "react-icons/fa6";
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -20,9 +21,11 @@ interface AddStudentModalProps {
 }
 
 export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStudentModalProps) {
-  const { t, language } = useLanguage();
+  const {  language } = useLanguage();
+  const {t} = useTranslation();
   const isAr = language === 'ar';
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const { data: plansData } = usePlans();
   const { data: ranksResponse } = useGetRanks();
@@ -37,6 +40,8 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     }
   });
+  console.log(errors);
+  
 
   const rankIdValue = watch('rankId');
   const { data: coursesData } = useCourses(1, 20, rankIdValue);
@@ -554,6 +559,24 @@ export default function AddStudentModal({ isOpen, onClose, onSubmit }: AddStuden
                   </button>
                 </div>
                 {errors.password && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.password.message}</p>}
+              </div>
+              <div className="text-start relative">
+                <label className="flex items-center gap-2 text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wider">
+                  {t("confirm_Password")} *
+                </label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    {...register('confirmPassword')}
+                    placeholder="••••••••"
+                    className={`w-full pl-4 pr-12 py-3 bg-gray-50 border border-transparent focus:bg-white focus:border-indigo-100 rounded-2xl text-sm font-bold text-gray-700 outline-none ring-2 ${errors.confirmPassword ? 'ring-red-500/20' : 'ring-transparent'} focus:ring-indigo-500/10 transition-all placeholder:text-gray-300`}
+                    dir="ltr"
+                  />
+                  <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {errors.confirmPassword && <p className="text-[10px] text-red-500 mt-1 ml-2 font-bold">{errors.confirmPassword.message}</p>}
               </div>
 
               <Controller

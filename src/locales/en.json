@@ -999,5 +999,6 @@
   "lecture_attached_quiz": "Lecture Quiz",
   "view_attached_quiz": "View Lecture Quiz",
   "purchasedCourses": "Purchased Courses",
-  "noPurchasedCourses": "No purchased courses"
+  "noPurchasedCourses": "No purchased courses",
+  "confirm_Password": "Confirm Password"
 }
