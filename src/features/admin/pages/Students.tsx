@@ -15,6 +15,7 @@ import {
   ChevronRight,
   Copy,
   Check,
+  BookOpen,
 } from "lucide-react";
 import WhatsAppPhone from "../../../components/ui/WhatsAppPhone";
 import { useTranslation } from "react-i18next";
@@ -254,6 +255,7 @@ export default function Students() {
         );
       },
     },
+    
     {
       title: t("password", "Password"),
       align: "center" as const,
@@ -359,6 +361,53 @@ export default function Students() {
         );
       },
     },
+   ...(activeTab === "course") ? [{
+    title: t("lms_courses_title", "Courses"),
+    align: language === "ar" ? ("left" as const) : ("right" as const),
+    render: (_: any, record: Student) => {
+      const purchases = record.coursePurchases || [];
+
+      if (purchases.length > 0) {
+        return (
+          <div className="flex flex-wrap items-center gap-1.5 max-w-xs">
+            {purchases.map((cp) => {
+              const courseTitle = language === "ar"
+                ? (cp.course?.title_ar || cp.course?.title_en || t("course", "Course"))
+                : (cp.course?.title_en || cp.course?.title_ar || t("course", "Course"));
+              return (
+                <span
+                  key={cp.id}
+                  title={courseTitle}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-2xs"
+                >
+                  <BookOpen className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span className="truncate max-w-[140px]">{courseTitle}</span>
+                </span>
+              );
+            })}
+          </div>
+        );
+      }
+
+      return (
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100/80">
+            {language === "ar"
+              ? record.stage?.rank?.name_ar || 'لا يوجد مرحلة دراسية'
+              : record.stage?.rank?.name_en || "No educational stage"}
+          </span>
+          {record.stage && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-100/80">
+              {record.stage?.name_ar ||
+                record.stage?.name_en ||
+                record.stage?.slug}
+            </span>
+          )}
+        </div>
+      );
+    },
+  }] : []
+   ,
     {
       title: t("actions", "Actions"),
       align: language === "ar" ? ("left" as const) : ("right" as const),

@@ -1021,5 +1021,7 @@
   "total_quizzes": "إجمالي الكويزات",
   "lecture_attached_quiz": "كويز المحاضرة",
   "view_attached_quiz": "عرض كويز المحاضرة",
-  "live": "مباشر"
+  "live": "مباشر",
+  "purchasedCourses": "الكورسات المشتراة",
+  "noPurchasedCourses": "لا يوجد كورسات مشتراة"
 }

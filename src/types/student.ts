@@ -55,6 +55,22 @@ export interface StudentQuizItem {
   quiz?: StudentQuizQuizInfo;
 }
 
+export interface CoursePurchase {
+  id: string;
+  studentId: string;
+  courseId: string;
+  purchasedAt: string;
+  course?: {
+    id: string;
+    title_ar: string;
+    title_en: string;
+    price?: number;
+    image?: string;
+    rankId?: string;
+    stageId?: string;
+  };
+}
+
 export interface Student {
   id: string;
   user_id: string;
@@ -83,6 +99,7 @@ export interface Student {
   user: UserDetails;
   plan: Plan | null;
   studentQuizzes?: StudentQuizItem[];
+  coursePurchases?: CoursePurchase[];
 }
 
 export type EditStudentForm = {

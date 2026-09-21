@@ -997,5 +997,7 @@
   "view_quiz_btn": "View Quiz 📝",
   "total_quizzes": "Total Quizzes",
   "lecture_attached_quiz": "Lecture Quiz",
-  "view_attached_quiz": "View Lecture Quiz"
+  "view_attached_quiz": "View Lecture Quiz",
+  "purchasedCourses": "Purchased Courses",
+  "noPurchasedCourses": "No purchased courses"
 }
