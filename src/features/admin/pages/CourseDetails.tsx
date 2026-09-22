@@ -42,7 +42,7 @@ import { baseURL } from '../../../consts';
 const encodePath = (path: string | undefined | null) => {
   if (!path) return '';
   if (path.startsWith('http://') || path.startsWith('https://')) return encodeURI(path).replace(/#/g, '%23');
-  return `${baseURL}/${path.replace(/^\//, '').split('/').map(s => encodeURIComponent(s)).join('/')}`;
+  return `${baseURL}${path.replace(/^\//, '').split('/').map(s => encodeURIComponent(s)).join('/')}`;
 };
 
 
