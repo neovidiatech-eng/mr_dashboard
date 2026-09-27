@@ -76,15 +76,23 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
     setTimeout(() => setCopiedKey(null), 2000);
   };
 
+  const [tab, setTab] = useState<string>('signUpbyEmail');
+
+  const tabs = [
+    { value: 'signUpbyEmail', label: t('signUpbyEmail') },
+    { value: 'signUpbyPhone', label: t('signUpbyPhone') }
+  ];
+
   const {
     register,
     handleSubmit: handleFormSubmit,
     control,
     setValue,
+    clearErrors,
     watch,
     formState: { errors, isSubmitting },
   } = useForm<RegisterInput>({
-    resolver: zodResolver(getRegisterSchema(t)),
+    resolver: zodResolver(getRegisterSchema(t, tab === 'signUpbyEmail')),
     mode: "onChange",
     defaultValues: {
       name: "",
@@ -103,6 +111,13 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
     },
   });
 
+  const handleTabChange = (value: string) => {
+    setTab(value);
+    if (value === 'signUpbyPhone') {
+      setValue('email', '');
+    }
+    clearErrors('email');
+  };
 
   const selectedPackage = watch("plan_id");
   const rankIdValue = watch("rankId");
@@ -117,7 +132,6 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
     { value: "uae", label: t("uae") },
     { value: "kuwait", label: t("kuwait") },
   ];
-
   const genders = [
     { value: "male", label: t("male") },
     { value: "female", label: t("female") },
@@ -175,6 +189,12 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
     try {
       const formData = new FormData();
       Object.entries(data).forEach(([key, value]) => {
+        if (key === "email" && (tab === "signUpbyPhone" || !value || (typeof value === "string" && value.trim() === ""))) {
+          return;
+        }
+        if (key === "plan_id" && (!value || (typeof value === "string" && value.trim() === ""))) {
+          return;
+        }
         if (value !== undefined && value !== null && value !== "") {
           formData.append(key, value);
         }
@@ -182,9 +202,14 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
       const result = await registerService(formData);
       if (result.status === 201 || result.status === 200) {
         ErrorService.success(t("registeredSuccess"));
-        sessionStorage.setItem("verify_email", data.email);
-        onRegisterSuccess();
-        navigate("/verify-account");
+        if (tab === "signUpbyEmail") {
+          if (data.email && data.email.trim() !== "") {
+            sessionStorage.setItem("verify_email", data.email);
+          }
+          navigate("/verify-account");
+        } else {
+          navigate("/login");
+        }
       }
     } catch (error: any) {
       console.error("Registration error:", error);
@@ -235,6 +260,29 @@ return (
           </p>
         </div>
 
+        {/* Registration Method Tabs */}
+        <div className="flex p-1.5 bg-gray-100/80 backdrop-blur-sm rounded-2xl border border-gray-200/60 max-w-md mx-auto w-full gap-2">
+          {tabs.map((item) => {
+            const isActive = tab === item.value;
+            const Icon = item.value === "signUpbyEmail" ? Mail : Phone;
+            return (
+              <button
+                key={item.value}
+                type="button"
+                onClick={() => handleTabChange(item.value)}
+                className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold transition-all duration-300 cursor-pointer ${
+                  isActive
+                    ? "bg-white text-primary shadow-sm shadow-black/5"
+                    : "text-gray-500 hover:text-gray-900 hover:bg-white/50"
+                }`}
+              >
+                <Icon className={`w-4 h-4 transition-colors ${isActive ? "text-primary" : "text-gray-400"}`} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
         <form onSubmit={handleFormSubmit(onSubmit)} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Name */}
@@ -263,30 +311,32 @@ return (
             </div>
 
             {/* Email */}
-            <div className="space-y-2">
-              <label className="block text-sm font-bold text-gray-700 mx-1">
-                {t("email")} *
-              </label>
-              <div className="relative group">
-                <div className={`absolute ${language === "ar" ? "right" : "left"}-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors`}>
-                  <Mail className="w-5 h-5" />
+            {tab === "signUpbyEmail" && (
+              <div className="space-y-2 animate-in fade-in zoom-in-95 duration-300">
+                <label className="block text-sm font-bold text-gray-700 mx-1">
+                  {t("email")} *
+                </label>
+                <div className="relative group">
+                  <div className={`absolute ${language === "ar" ? "right" : "left"}-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors`}>
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <input
+                    type="email"
+                    {...register("email")}
+                    placeholder="admin@example.com"
+                    className={`w-full ${language === "ar" ? "pr-14 pl-5" : "pl-14 pr-5"} py-4 bg-gray-50/50 border ${errors.email ? "border-red-400" : "border-gray-200"
+                      } rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 text-gray-900 font-medium placeholder:text-gray-400`}
+                    dir="ltr"
+                  />
                 </div>
-                <input
-                  type="email"
-                  {...register("email")}
-                  placeholder="admin@example.com"
-                  className={`w-full ${language === "ar" ? "pr-14 pl-5" : "pl-14 pr-5"} py-4 bg-gray-50/50 border ${errors.email ? "border-red-400" : "border-gray-200"
-                    } rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 text-gray-900 font-medium placeholder:text-gray-400`}
-                  dir="ltr"
-                />
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1 font-medium mx-1 flex items-center gap-1">
+                    <span className="w-1 h-1 bg-red-500 rounded-full" />
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
-              {errors.email && (
-                <p className="text-red-500 text-xs mt-1 font-medium mx-1 flex items-center gap-1">
-                  <span className="w-1 h-1 bg-red-500 rounded-full" />
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
+            )}
 
             {/* Phone and Country Code */}
             <div className="space-y-2">
@@ -527,7 +577,7 @@ return (
             </div>
 
             {/* Password */}
-            <div className="space-y-2">
+            <div className={`space-y-2 ${tab === "signUpbyEmail" ? "col-span-full" : ""}`}>
               <label className="block text-sm font-bold text-gray-700 mx-1">
                 {t("password")} *
               </label>

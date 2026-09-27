@@ -4,6 +4,7 @@ import { useGetStudentNextLiveSession, useGetStudentUpcomingLiveSessions, useJoi
 import { useLanguage } from '../../../contexts/LanguageContext';
 import { useServerTime } from '../../../hooks/useServerTime';
 import JitsiMeeting from '../../../components/modals/JitsiMeeting';
+import { useDashboardData } from '../hooks/useDashboardData';
 
 function formatSessionDate(dateStr: string) {
     if (!dateStr) return { date: '-', time: '-' };
@@ -26,8 +27,12 @@ export default function NextLiveSessionCard() {
     const isAr = language === 'ar';
     const { getServerTime } = useServerTime();
 
-    const { data: nextResponse, isLoading: isNextLoading } = useGetStudentNextLiveSession();
-    const { data: upcomingResponse, isLoading: isUpcomingLoading } = useGetStudentUpcomingLiveSessions(1, 10);
+    const { data: dashboardResponse } = useDashboardData();
+    const plan = dashboardResponse?.data?.metadata?.plan || dashboardResponse?.data?.metadata?.planId;
+    const hasPlan = Boolean(plan);
+
+    const { data: nextResponse, isLoading: isNextLoading } = useGetStudentNextLiveSession({ enabled: hasPlan });
+    const { data: upcomingResponse, isLoading: isUpcomingLoading } = useGetStudentUpcomingLiveSessions(1, 10, undefined, { enabled: hasPlan });
     const { mutate: joinLive, isPending: isJoining } = useJoinLiveSession();
 
     const [activeJitsiSession, setActiveJitsiSession] = useState<{
@@ -146,6 +151,8 @@ export default function NextLiveSessionCard() {
             },
         });
     };
+
+    if (!hasPlan) return null;
 
     if (isLoading) {
         return (

@@ -1,5 +1,7 @@
 {
   "createNewStudentAccount": "إنشاء حساب طالب جديد",
+  "signUpbyEmail": "التسجيل بالبريد الإلكتروني",
+  "signUpbyPhone": "التسجيل برقم الهاتف",
   "orLogin": "أو سجل الدخول",
   "email": "البريد الإلكتروني",
   "password": "كلمة المرور",

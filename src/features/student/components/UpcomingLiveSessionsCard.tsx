@@ -32,7 +32,11 @@ export default function UpcomingLiveSessionsCard() {
     const { language } = useLanguage();
     const isAr = language === 'ar';
 
-    const { data, isLoading } = useGetStudentUpcomingLiveSessions(1, 10);
+    const { data: dashboardResponse } = useDashboardData();
+    const plan = dashboardResponse?.data?.metadata?.plan || dashboardResponse?.data?.metadata?.planId;
+    const hasPlan = Boolean(plan);
+
+    const { data, isLoading } = useGetStudentUpcomingLiveSessions(1, 10, undefined, { enabled: hasPlan });
     const { mutate: joinLive, isPending: isJoining } = useJoinLiveSession();
 
     const [joiningSessionId, setJoiningSessionId] = useState<string | null>(null);
@@ -43,12 +47,9 @@ export default function UpcomingLiveSessionsCard() {
         title?: string;
     } | null>(null);
 
-    const { data: dashboardResponse } = useDashboardData();
-    const plan = dashboardResponse?.data?.metadata?.plan;
-
     const sessions = data?.data?.items ?? [];
 
-    if (!plan) return null;
+    if (!hasPlan) return null;
 
     const handleJoin = (session: any) => {
         if (session.status !== 'live') return;
