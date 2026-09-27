@@ -20,6 +20,7 @@
   "verifyAndReset": "Verify and Reset",
   "verify": "Verify",
   "resendCode": "Resend Code",
+  "course": "course",
   "validation": {
     "required": "Field is required",
     "email": "Please enter a valid email address",
@@ -998,5 +999,8 @@
   "view_quiz_btn": "View Quiz 📝",
   "total_quizzes": "Total Quizzes",
   "lecture_attached_quiz": "Lecture Quiz",
-  "view_attached_quiz": "View Lecture Quiz"
+  "view_attached_quiz": "View Lecture Quiz",
+  "purchasedCourses": "Purchased Courses",
+  "noPurchasedCourses": "No purchased courses",
+  "confirm_Password": "Confirm Password"
 }

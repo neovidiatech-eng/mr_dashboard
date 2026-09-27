@@ -58,7 +58,6 @@ export default function Plans() {
     maxStudents: item.maxStudents || '1',
   })) || [];
 
-  console.log(plans);
 
   const text = {
     title: { ar: "خطط الاشتراك", en: "Subscription Plans" },

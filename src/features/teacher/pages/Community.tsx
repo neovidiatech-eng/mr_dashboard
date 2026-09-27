@@ -81,9 +81,9 @@ export default function CommunityPage() {
 
   useEffect(() => {
     if (conversationId) {
-      console.log(`🔍 [Community] Conversation: ${conversationId}`);
-      console.log(`👤 [Community] Student ID: ${studentUserId}`);
-      console.log(`⌨️ [Community] Typing Users for this convo:`, typingUsers[conversationId]);
+      // console.log(`🔍 [Community] Conversation: ${conversationId}`);
+      // console.log(`👤 [Community] Student ID: ${studentUserId}`);
+      // console.log(`⌨️ [Community] Typing Users for this convo:`, typingUsers[conversationId]);
     }
   }, [conversationId, studentUserId, typingUsers]);
 

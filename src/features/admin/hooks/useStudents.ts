@@ -5,10 +5,10 @@ import { StudentFormData } from "../../../lib/schemas/StudentSchema";
 import ErrorService from "../../../utils/ErrorService";
 import { useTranslation } from "react-i18next";
 
-export const useStudents = (page: number = 1, limit: number = 20, search?: string) => {
+export const useStudents = (page: number = 1, limit: number = 20, search?: string, activeTab?: string) => {
     return useQuery({
-        queryKey: ["students", page, limit, search],
-        queryFn: () => getStudents(page, limit, search),
+        queryKey: ["students", page, limit, search, activeTab],
+        queryFn: () => getStudents(page, limit, search, activeTab),
     });
 }
 export const useStudentById = (id: string) => {

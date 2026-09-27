@@ -174,7 +174,7 @@ export default function RescheduleSession() {
 
     if (rawRequests.length === 0) return [];
 
-    console.log("My Requests Raw Data:", rawRequests);
+   // console.log("My Requests Raw Data:", rawRequests);
 
     return rawRequests
       .filter(req => req.type?.toLowerCase().includes('reschedule'))

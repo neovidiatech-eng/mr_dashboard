@@ -5,7 +5,10 @@
   "orLogin": "أو سجل الدخول",
   "email": "البريد الإلكتروني",
   "password": "كلمة المرور",
+  "confirm_Password":"تأكيد كلمة المرور",
   "rememberMe": "تذكرني",
+    "noPurchasedCourses": "لا يوجد كورسات مشتراة",
+  "confirmPassword": "تأكيد كلمة المرور",
   "forgotPassword": "هل نسيت كلمة المرور؟",
   "forgetPasswordTitle": "نسيت كلمة المرور",
   "forgetPasswordSubtitle": "أدخل بريدك الإلكتروني لتلقي رمز إعادة تعيين كلمة المرور",
@@ -41,6 +44,7 @@
     "atLeastOneSessionRequired": "يجب تحديد عدد الحصص العادية أو التفاعلية على الأقل"
   },
   "login": "تسجيل الدخول",
+  "course": "الدورة",
   "academyName": "مستر محمود",
   "academySubtitle": "Mr Mahmoud",
   "academyDescription": "منصة تعليمية متكاملة لإدارة العملية التعليمية",
@@ -837,7 +841,7 @@
   "confirmDeleteTitle": "تأكيد الحذف؟",
   "permissionsList": {
     "DASHBOARD_READ": "قراءة لوحة التحكم",
-    "POLICIES_MANAGE": "إدارة السياسات", 
+    "POLICIES_MANAGE": "إدارة السياسات",
     "POLICIES_READ": "قراءة السياسات",
     "SETTINGS_UPDATE": "تحديث الإعدادات",
     "SETTINGS_READ": "قراءة الإعدادات"
@@ -1022,5 +1026,7 @@
   "total_quizzes": "إجمالي الكويزات",
   "lecture_attached_quiz": "كويز المحاضرة",
   "view_attached_quiz": "عرض كويز المحاضرة",
-  "live": "مباشر"
+  "live": "مباشر",
+  "purchasedCourses": "الكورسات المشتراة"
+
 }

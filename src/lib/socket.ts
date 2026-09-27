@@ -14,31 +14,31 @@ export const connectSocket = (token: string) => {
     });
 
     socket.on("connect", () => {
-      console.log("✅ Socket Connected! ID:", socket?.id);
+     // console.log("✅ Socket Connected! ID:", socket?.id);
     });
 
     // Listen to everything for debugging
     socket.onAny((event, ...args) => {
-      console.log(`📡 [Global Socket Log] ${event}:`, args);
+     // console.log(`📡 [Global Socket Log] ${event}:`, args);
     });
 
     socket.on("disconnect", (reason) => {
-      console.log("❌ Socket Disconnected! Reason:", reason);
+     // console.log("❌ Socket Disconnected! Reason:", reason);
     });
 
     // On reconnect, re-request online statuses so UI doesn't show stale data
     socket.io.on("reconnect", () => {
-      console.log("🔄 Socket Reconnected — re-requesting online statuses");
+     // console.log("🔄 Socket Reconnected — re-requesting online statuses");
       socket?.emit("user:requestOnlineStatuses");
     });
 
     socket.on("connect_error", (error) => {
-      console.error("⚠️ Socket Connection Error:", error.message);
+     // console.error("⚠️ Socket Connection Error:", error.message);
     });
 
     // Single global listener for online status (no duplicates)
     socket.on("user:status", (data) => {
-      console.log("👤 [Global Status] Received:", data);
+   //   console.log("👤 [Global Status] Received:", data);
       store.dispatch(setOnlineStatus(data));
     });
   }

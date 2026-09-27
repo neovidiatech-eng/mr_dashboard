@@ -2,10 +2,13 @@ import api from "../../../lib/axios";
 import { Student, StudentsFetchResponse } from "../../../types/student";
 import { StudentFormData } from "../../../lib/schemas/StudentSchema";
 
-export const getStudents = async (page: number = 1, limit: number = 20, search?: string): Promise<StudentsFetchResponse> => {
+export const getStudents = async (page: number = 1, limit: number = 20, search?: string, activeTab?: string): Promise<StudentsFetchResponse> => {
     let url = `/students/?page=${page}&limit=${limit}`;
     if (search) {
         url += `&search=${search}`;
+    }
+    if (activeTab) {
+        url += `&plans=${activeTab}`;
     }
     try {
         const response = await api.get(url);

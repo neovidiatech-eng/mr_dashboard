@@ -21,7 +21,7 @@ export interface SubscriptionRequestApi {
 export const getSubscriptionRequests = async () => {
   const response = await api.get("/subscription/requests");
   const data = response.data.data;
-  console.log(data);
+ // console.log(data);
 
   return data.subscriptionRequests;
 };

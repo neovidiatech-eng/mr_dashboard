@@ -73,17 +73,17 @@ export const requestFCMToken = async (vapidKey?: string): Promise<string | null>
     }
 
     const token = await getToken(messaging, tokenOptions);
-    console.log("[FCM] Device Token generated successfully:", token);
+  //  console.log("[FCM] Device Token generated successfully:", token);
 
     if (token) {
-      console.log("[FCM] Device Token generated successfully:", token);
+     // console.log("[FCM] Device Token generated successfully:", token);
       return token;
     } else {
-      console.warn("[FCM] No registration token returned by Firebase.");
+      //console.warn("[FCM] No registration token returned by Firebase.");
       return null;
     }
   } catch (error) {
-    console.error("[FCM] An error occurred while retrieving token:", error);
+    //console.error("[FCM] An error occurred while retrieving token:", error);
     return null;
   }
 };

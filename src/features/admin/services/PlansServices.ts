@@ -7,7 +7,7 @@ export const getPlans = async (): Promise<Plan[]> => {
     const response = await api.get("/subscription/plans");
     const data = response.data.data;
 
-    console.log(data);
+   // console.log(data);
     return data;
   } catch (error) {
     console.error("Get plans failed:", error);
@@ -21,7 +21,7 @@ export const deletePlans = async (id: string) => {
     const res = await api.delete(`/subscription/plans/${id}`);
     return res.data;
   } catch (error) {
-    console.log(error);
+   // console.log(error);
     throw error;
   }
 };
