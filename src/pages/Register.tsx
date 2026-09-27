@@ -115,8 +115,8 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
     setTab(value);
     if (value === 'signUpbyPhone') {
       setValue('email', '');
-      clearErrors('email');
     }
+    clearErrors('email');
   };
 
   const selectedPackage = watch("plan_id");
@@ -189,7 +189,10 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
     try {
       const formData = new FormData();
       Object.entries(data).forEach(([key, value]) => {
-        if (key === "email" && (tab === "signUpbyPhone" || !value || value === "")) {
+        if (key === "email" && (tab === "signUpbyPhone" || !value || (typeof value === "string" && value.trim() === ""))) {
+          return;
+        }
+        if (key === "plan_id" && (!value || (typeof value === "string" && value.trim() === ""))) {
           return;
         }
         if (value !== undefined && value !== null && value !== "") {
@@ -199,11 +202,14 @@ export default function Register({ onRegisterSuccess }: RegisterProps) {
       const result = await registerService(formData);
       if (result.status === 201 || result.status === 200) {
         ErrorService.success(t("registeredSuccess"));
-        if (data.email && data.email.trim() !== "") {
-          sessionStorage.setItem("verify_email", data.email);
+        if (tab === "signUpbyEmail") {
+          if (data.email && data.email.trim() !== "") {
+            sessionStorage.setItem("verify_email", data.email);
+          }
+          navigate("/verify-account");
+        } else {
+          navigate("/login");
         }
-        onRegisterSuccess();
-        navigate("/verify-account");
       }
     } catch (error: any) {
       console.error("Registration error:", error);

@@ -27,9 +27,11 @@ export default function ViewSubscriptionRequestModal({ isOpen, onClose, request 
     ? (language === "ar" ? stage.name_ar || stage.name_en : stage.name_en || stage.name_ar)
     : null;
 
-  const receiptImg = request.subscrption_img || request.subscription_img;
+  const receiptImg = request.subscrption_img || request.subscription_img || (request as any).receipt_img || (request as any).receiptImg;
+  const cleanBase = baseURL.replace(/\/+$/, '');
+  const cleanPath = receiptImg ? String(receiptImg).replace(/\\/g, '/').replace(/^\/+/, '') : '';
   const receiptUrl = receiptImg
-    ? (receiptImg.startsWith('http') ? receiptImg : `${baseURL}/${receiptImg.replace(/^\//, '')}`)
+    ? (receiptImg.startsWith('http') ? receiptImg : `${cleanBase}/${cleanPath}`)
     : null;
 
   const text = {

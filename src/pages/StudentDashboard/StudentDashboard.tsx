@@ -46,8 +46,9 @@ export default function StudentDashboard() {
   const { data: dashboardResponse, isLoading: isDashboardLoading, refetch } = useDashboardData();
   const dashboardData = dashboardResponse?.data;
   const metadata = dashboardData?.metadata;
+  const hasPlan = Boolean(metadata?.plan || metadata?.planId);
   
-  const { data: userSessionsData } = useUserSessions("");
+  const { data: userSessionsData } = useUserSessions("", { enabled: hasPlan });
   const nextSession = useMemo(() => {
     if (!userSessionsData?.data) return dashboardData?.nextSchedule || null;
     const sessions = Array.isArray(userSessionsData.data) ? userSessionsData.data : [
@@ -149,147 +150,149 @@ export default function StudentDashboard() {
   const renderStudentHome = () => (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* 1. Main Welcome/Session Banner */}
-      <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-primary to-primary-dark p-8 md:p-12 text-white shadow-2xl shadow-primary/20 group">
-        {/* Background Decorative Circles */}
-        <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl transition-transform group-hover:scale-110 duration-1000" />
-        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-burgundy-light/20 rounded-full blur-3xl transition-transform group-hover:scale-110 duration-1000" />
+      {hasPlan && (
+        <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-primary to-primary-dark p-8 md:p-12 text-white shadow-2xl shadow-primary/20 group">
+          {/* Background Decorative Circles */}
+          <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl transition-transform group-hover:scale-110 duration-1000" />
+          <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-burgundy-light/20 rounded-full blur-3xl transition-transform group-hover:scale-110 duration-1000" />
 
-        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-          <div className="space-y-6 flex-1">
-            <div className="space-y-2">
-              <p className={`font-bold tracking-widest uppercase text-xs ${isSessionOngoing ? "text-red-400" : "text-blue-100"}`}>
-                {isSessionOngoing
-                  ? (language === "ar" ? "الوقت المتبقي لنهاية الحصة" : "Time remaining in session")
-                  : (language === "ar" ? "تبدأ الحصة القادمة خلال" : "Next Session Starts In")}
-              </p>
-              <h2 className={`text-4xl md:text-5xl font-black tracking-tighter flex items-baseline gap-2 ${isSessionOngoing ? "text-red-500" : "text-white"}`}>
-                {countdown.days !== "00" && (
+          <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+            <div className="space-y-6 flex-1">
+              <div className="space-y-2">
+                <p className={`font-bold tracking-widest uppercase text-xs ${isSessionOngoing ? "text-red-400" : "text-blue-100"}`}>
+                  {isSessionOngoing
+                    ? (language === "ar" ? "الوقت المتبقي لنهاية الحصة" : "Time remaining in session")
+                    : (language === "ar" ? "تبدأ الحصة القادمة خلال" : "Next Session Starts In")}
+                </p>
+                <h2 className={`text-4xl md:text-5xl font-black tracking-tighter flex items-baseline gap-2 ${isSessionOngoing ? "text-red-500" : "text-white"}`}>
+                  {countdown.days !== "00" && (
+                    <span className="flex items-baseline gap-1">
+                      {countdown.days}
+                      <span className="text-xl opacity-60 font-bold uppercase">{language === "ar" ? "يوم" : "d"}</span>
+                    </span>
+                  )}
                   <span className="flex items-baseline gap-1">
-                    {countdown.days}
-                    <span className="text-xl opacity-60 font-bold uppercase">{language === "ar" ? "يوم" : "d"}</span>
+                    {countdown.hours}
+                    <span className="text-xl opacity-60 font-bold uppercase">{language === "ar" ? "س" : "h"}</span>
                   </span>
-                )}
-                <span className="flex items-baseline gap-1">
-                  {countdown.hours}
-                  <span className="text-xl opacity-60 font-bold uppercase">{language === "ar" ? "س" : "h"}</span>
-                </span>
-                <span className="flex items-baseline gap-1">
-                  {countdown.minutes}
-                  <span className="text-xl opacity-60 font-bold uppercase">{language === "ar" ? "د" : "m"}</span>
-                </span>
-                <span className="flex items-baseline gap-1">
-                  {countdown.seconds}
-                  <span className="text-xl opacity-60 font-bold uppercase">{language === "ar" ? "ث" : "s"}</span>
-                </span>
-              </h2>
-            </div>
+                  <span className="flex items-baseline gap-1">
+                    {countdown.minutes}
+                    <span className="text-xl opacity-60 font-bold uppercase">{language === "ar" ? "د" : "m"}</span>
+                  </span>
+                  <span className="flex items-baseline gap-1">
+                    {countdown.seconds}
+                    <span className="text-xl opacity-60 font-bold uppercase">{language === "ar" ? "ث" : "s"}</span>
+                  </span>
+                </h2>
+              </div>
 
-            <div className="space-y-4 pt-4">
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-                {nextSession ? nextSession.title : (language === "ar" ? "لا توجد حصص قادمة" : "No upcoming sessions")}
-              </h1>
-              <div className="flex flex-wrap items-center gap-6 text-blue-100/80 font-medium">
-                {nextSession && (
-                  <>
-                    <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full border border-white/10 backdrop-blur-md">
-                      <BookOpen size={16} />
-                      <span className="text-sm">{nextSession?.course?.title || "-"}</span>
-                    </div>
-                    <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full border border-white/10 backdrop-blur-md">
-                      <User size={16} />
-                      <span className="text-sm">{nextSession?.teacher?.user?.name || "-"}</span>
-                    </div>
-                  </>
-                )}
+              <div className="space-y-4 pt-4">
+                <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+                  {nextSession ? nextSession.title : (language === "ar" ? "لا توجد حصص قادمة" : "No upcoming sessions")}
+                </h1>
+                <div className="flex flex-wrap items-center gap-6 text-blue-100/80 font-medium">
+                  {nextSession && (
+                    <>
+                      <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full border border-white/10 backdrop-blur-md">
+                        <BookOpen size={16} />
+                        <span className="text-sm">{nextSession?.course?.title || "-"}</span>
+                      </div>
+                      <div className="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full border border-white/10 backdrop-blur-md">
+                        <User size={16} />
+                        <span className="text-sm">{nextSession?.teacher?.user?.name || "-"}</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-4 pt-6">
+                <button
+                  onClick={async () => {
+                    if (nextSession) {
+                      setHasJoinedSession(true);
+                      joinSession(nextSession.id);
+                      if (nextSession.link) {
+                        window.open(nextSession.link, "_blank", "noopener,noreferrer");
+                      }
+                    }
+                  }}
+                  disabled={!isSessionReady || isJoining}
+                  className={`px-8 py-4 rounded-2xl font-bold shadow-lg transition-all active:scale-95 ${isSessionReady
+                    ? "bg-white text-blue-600 hover:bg-blue-50 hover:-translate-y-1"
+                    : "bg-white/20 text-white/50 cursor-not-allowed"
+                    }`}
+                >
+                  {isJoining
+                    ? (language === "ar" ? "جاري الانضمام..." : "Joining...")
+                    : (isSessionOngoing
+                      ? (hasJoinedSession
+                        ? (language === "ar" ? "إعادة الانضمام للحصة" : "Rejoin Session")
+                        : (language === "ar" ? "انضم للحصة الآن" : "Join Ongoing Session"))
+                      : (isSessionReady
+                        ? (language === "ar" ? "انضم الآن" : "Join Now")
+                        : (language === "ar" ? "انتظر الحصة" : "Wait for Session")))}
+                </button>
+
+                <button
+                  onClick={() => navigate('/student-dashboard/reschedule')}
+                  className="flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md text-white px-8 py-4 rounded-2xl font-bold hover:bg-white/20 transition-all active:scale-95"
+                >
+                  <Calendar size={18} />
+                  Reschedule
+                </button>
+                <button
+                  onClick={() => {
+                    if (nextSession) {
+                      startChat(
+                        {
+                          teacherId: nextSession?.teacher?.id,
+                          studentId: metadata?.id || "",
+                        },
+                        {
+                          onSuccess: (data) => {
+                            // console.log("📝 Chat Data:", data);
+                            // console.log("👨‍🏫 Teacher Object:", nextSession?.teacher);
+                            navigate("/student-dashboard/chat", {
+                              state: {
+                                conversationId: data.id,
+                                teacherId: nextSession?.teacher?.id,
+                                teacherUserId: nextSession?.teacher?.user?.id,
+                                teacherName: nextSession?.teacher?.user?.name || "Instructor",
+                                teacherSubject: nextSession?.course?.title || "General",
+                                sessionTitle: nextSession?.title || "Not scheduled",
+                                sessionTime: nextSession?.start_time,
+                              },
+                            });
+                          },
+                        }
+                      );
+                    }
+                  }}
+                  disabled={isPending || !nextSession}
+                  className={`flex items-center gap-2 px-4 py-4 rounded-2xl font-bold transition-all ${(!nextSession) ? "text-white/40 cursor-not-allowed" : "text-white/80 hover:text-white"
+                    }`}
+                >
+                  <MessageSquare size={18} />
+                  {isPending ? "Opening..." : "Message Instructor"}
+                </button>
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-4 pt-6">
-              <button
-                onClick={async () => {
-                  if (nextSession) {
-                    setHasJoinedSession(true);
-                    joinSession(nextSession.id);
-                    if (nextSession.link) {
-                      window.open(nextSession.link, "_blank", "noopener,noreferrer");
-                    }
-                  }
-                }}
-                disabled={!isSessionReady || isJoining}
-                className={`px-8 py-4 rounded-2xl font-bold shadow-lg transition-all active:scale-95 ${isSessionReady
-                  ? "bg-white text-blue-600 hover:bg-blue-50 hover:-translate-y-1"
-                  : "bg-white/20 text-white/50 cursor-not-allowed"
-                  }`}
-              >
-                {isJoining
-                  ? (language === "ar" ? "جاري الانضمام..." : "Joining...")
-                  : (isSessionOngoing
-                    ? (hasJoinedSession
-                      ? (language === "ar" ? "إعادة الانضمام للحصة" : "Rejoin Session")
-                      : (language === "ar" ? "انضم للحصة الآن" : "Join Ongoing Session"))
-                    : (isSessionReady
-                      ? (language === "ar" ? "انضم الآن" : "Join Now")
-                      : (language === "ar" ? "انتظر الحصة" : "Wait for Session")))}
-              </button>
-
-              <button
-                onClick={() => navigate('/student-dashboard/reschedule')}
-                className="flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-md text-white px-8 py-4 rounded-2xl font-bold hover:bg-white/20 transition-all active:scale-95"
-              >
-                <Calendar size={18} />
-                Reschedule
-              </button>
-              <button
-                onClick={() => {
-                  if (nextSession) {
-                    startChat(
-                      {
-                        teacherId: nextSession?.teacher?.id,
-                        studentId: metadata?.id || "",
-                      },
-                      {
-                        onSuccess: (data) => {
-                          // console.log("📝 Chat Data:", data);
-                          // console.log("👨‍🏫 Teacher Object:", nextSession?.teacher);
-                          navigate("/student-dashboard/chat", {
-                            state: {
-                              conversationId: data.id,
-                              teacherId: nextSession?.teacher?.id,
-                              teacherUserId: nextSession?.teacher?.user?.id,
-                              teacherName: nextSession?.teacher?.user?.name || "Instructor",
-                              teacherSubject: nextSession?.course?.title || "General",
-                              sessionTitle: nextSession?.title || "Not scheduled",
-                              sessionTime: nextSession?.start_time,
-                            },
-                          });
-                        },
-                      }
-                    );
-                  }
-                }}
-                disabled={isPending || !nextSession}
-                className={`flex items-center gap-2 px-4 py-4 rounded-2xl font-bold transition-all ${(!nextSession) ? "text-white/40 cursor-not-allowed" : "text-white/80 hover:text-white"
-                  }`}
-              >
-                <MessageSquare size={18} />
-                {isPending ? "Opening..." : "Message Instructor"}
-              </button>
-            </div>
-          </div>
-
-          <div className="shrink-0 flex flex-col items-center gap-4">
-            <div className="bg-white/10 border border-white/20 backdrop-blur-md px-6 py-2.5 rounded-full text-sm font-bold tracking-wide uppercase">
-              Upcoming
+            <div className="shrink-0 flex flex-col items-center gap-4">
+              <div className="bg-white/10 border border-white/20 backdrop-blur-md px-6 py-2.5 rounded-full text-sm font-bold tracking-wide uppercase">
+                Upcoming
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Next Live Session Feature Card */}
-      <NextLiveSessionCard />
+      {hasPlan && <NextLiveSessionCard />}
 
       {/* Main Content Area: Subscription, Assignments, Upcoming Live & Feedback Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-stretch mb-8">
+      <div className={`grid grid-cols-1 md:grid-cols-2 ${hasPlan ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-8 items-stretch mb-8`}>
         <div className="lg:col-span-1 h-full">
           {/* Your Subscription Card */}
           <div className="bg-white rounded-[32px] p-6 border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-slate-200/50 transition-all group h-full flex flex-col justify-between">
@@ -405,9 +408,11 @@ export default function StudentDashboard() {
         </div>
 
         {/* Upcoming Live Sessions Card */}
-        <div className="lg:col-span-1 h-full">
-          <UpcomingLiveSessionsCard />
-        </div>
+        {hasPlan && (
+          <div className="lg:col-span-1 h-full">
+            <UpcomingLiveSessionsCard />
+          </div>
+        )}
 
         {/* Reviews / Feedback Card */}
         <div className="lg:col-span-1 h-full">

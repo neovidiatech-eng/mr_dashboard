@@ -34,7 +34,7 @@ export const getRegisterSchema = (t: (key: string, options?: any) => string, isE
       .regex(/[A-Z]/, t("validation.passwordUppercase"))
       .regex(/[0-9]/, t("validation.passwordNumber"))
       .regex(/[@$!%*?&^#]/, t("validation.passwordSpecial")),
-    plan_id: z.string().min(1, t("validation.required")),
+    plan_id: z.string().optional(),
     image: z
       .union([z.instanceof(File), z.string()])
       .optional()

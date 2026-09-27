@@ -273,7 +273,7 @@ export default function SubscriptionRequests() {
                     </td>
                     <td className="px-6 py-5">
                       {(() => {
-                        const receiptImg = request.subscrption_img || request.subscription_img;
+                        const receiptImg = request.subscrption_img || request.subscription_img || (request as any).receipt_img || (request as any).receiptImg;
                         if (!receiptImg) {
                           return (
                             <span className="inline-flex items-center gap-1 text-xs text-slate-400 font-medium">
@@ -282,13 +282,17 @@ export default function SubscriptionRequests() {
                             </span>
                           );
                         }
-                        const fullUrl = receiptImg.startsWith("http") ? receiptImg : `${baseURL}/${receiptImg.replace(/^\//, '')}`;
+                        const cleanBase = baseURL.replace(/\/+$/, '');
+                        const cleanPath = String(receiptImg).replace(/\\/g, '/').replace(/^\/+/, '');
+                        const fullUrl = receiptImg.startsWith("http") ? receiptImg : `${cleanBase}/${cleanPath}`;
                         return (
                           <div className="flex items-center gap-2">
                             <div className="w-10 h-10 rounded-xl overflow-hidden bg-white border border-slate-200 shadow-sm flex items-center justify-center flex-shrink-0 cursor-pointer">
                               <Image
                                 src={fullUrl}
                                 alt="Receipt"
+                                width={40}
+                                height={40}
                                 className="w-full h-full object-cover"
                                 preview={{
                                   cover: (

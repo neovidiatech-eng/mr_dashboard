@@ -64,7 +64,8 @@ export interface DashboardMetadata {
     totalReviews: number;
     rank: DashboardRank | null;
     user: DashboardUser;
-    plan: DashboardPlan;
+    plan?: DashboardPlan | null;
+    planId?: string | null;
     joindate: string;
 }
 
