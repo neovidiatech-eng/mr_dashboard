@@ -12,7 +12,7 @@ export const getStudentSchema = (t: TFunc) => z.object({
   birthDate: z.string(t("validation.required")),
   plan: z.string(t("validation.required")),
   country: z.string().min(1, t("validation.required")),
-  status: z.enum(['approved', 'pending', 'rejected']),
+  status: z.enum(['approved', 'pending', 'rejected']).optional(),
   rankId: z.string(t("validation.required")),
   stageId: z.string(t("validation.required")),
   password: z.string().min(6, t("validation.min", { count: 6 })),

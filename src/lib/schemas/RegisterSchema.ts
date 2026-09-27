@@ -1,9 +1,17 @@
 import { z } from "zod";
 
-export const getRegisterSchema = (t: (key: string, options?: any) => string) =>
+export const getRegisterSchema = (t: (key: string, options?: any) => string, isEmailRequired: boolean = true) =>
   z.object({
     name: z.string().min(3, t("validation.min", { count: 3 })),
-    email: z.string().email(t("validation.email")),
+    email: isEmailRequired
+      ? z.string().min(1, t("validation.required")).email(t("validation.email"))
+      : z
+          .string()
+          .optional()
+          .refine(
+            (val) => !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+            { message: t("validation.email") }
+          ),
     codeCountry: z.string().min(1, t("validation.required")),
     phone: z
       .string()

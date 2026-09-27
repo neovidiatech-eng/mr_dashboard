@@ -545,8 +545,7 @@ export default function Students() {
               birth_date: (updatedData.birthDate && updatedData.birthDate !== "") ? new Date(updatedData.birthDate).toISOString() : null,
               gender: updatedData.gender,
               type: updatedData.type,
-              status: updatedData.status,
-              active: updatedData.status === 'approved',
+              ...(updatedData.status ? { status: updatedData.status } : {}),
               ...(updatedData.parentNumber ? { parentNumber: updatedData.parentNumber } : {}),
             };
 

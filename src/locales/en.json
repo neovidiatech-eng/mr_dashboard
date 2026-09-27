@@ -1,5 +1,7 @@
 {
   "createNewStudentAccount": "Create New Student Account",
+  "signUpbyEmail": "Sign Up with Email",
+  "signUpbyPhone": "Sign Up with Phone",
   "orLogin": "Or Login",
   "email": "Email",
   "password": "Password",
