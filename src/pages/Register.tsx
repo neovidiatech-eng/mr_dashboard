@@ -48,11 +48,11 @@ const METHOD_CONFIG: Record<string, { labelKey: string; defaultLabel: string; ic
   bankAccount: { labelKey: 'bankAccount', defaultLabel: 'Bank Account', icon: Building2, color: '#2563eb', bg: 'bg-blue-50/50', border: 'border-blue-100 hover:border-blue-200' },
 };
 
-interface RegisterProps {
-  onRegisterSuccess: () => void;
-}
+// interface RegisterProps {
+//   onRegisterSuccess: () => void;
+// }
 
-export default function Register({ onRegisterSuccess }: RegisterProps) {
+export default function Register() {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
