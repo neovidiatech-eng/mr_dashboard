@@ -12,6 +12,9 @@ export default function Requests() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [adminNotes, setAdminNotes] = useState('');
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
   const { data, isLoading } = useGetRequests();
   const updateStatus = useUpdateRequestStatus();
 
@@ -19,6 +22,39 @@ export default function Requests() {
   const studentRequests = !Array.isArray(requestsData) ? (requestsData?.student_requests || []) : [];
   const teacherRequests = !Array.isArray(requestsData) ? (requestsData?.teachers_requests || []) : [];
   const currentData = activeTab === 'student' ? studentRequests : teacherRequests;
+
+  const totalItems = currentData.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedData = currentData.slice(startIndex, startIndex + pageSize);
+
+  const renderPageNumbers = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(
+        <button
+          key={i}
+          onClick={() => setCurrentPage(i)}
+          className={`w-7 h-7 flex items-center justify-center text-xs font-bold rounded-lg transition-colors ${
+            i === currentPage
+              ? 'text-white bg-[#800020] shadow-sm'
+              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+          }`}
+        >
+          {i}
+        </button>
+      );
+    }
+    return pages;
+  };
 
   // Helper styles
 
@@ -136,13 +172,19 @@ export default function Requests() {
               
               <div className="flex items-center gap-6">
                 <button 
-                  onClick={() => setActiveTab('student')}
+                  onClick={() => {
+                    setActiveTab('student');
+                    setCurrentPage(1);
+                  }}
                   className={`text-sm font-bold pb-4 -mb-[1px] border-b-2 transition-all ${activeTab === 'student' ? 'text-[#800020] border-[#800020]' : 'text-gray-400 border-transparent hover:text-gray-700'}`}
                 >
                   {t('student_requests', 'Student Requests')} ({studentRequests.length})
                 </button>
                 {/* <button 
-                  onClick={() => setActiveTab('teacher')}
+                  onClick={() => {
+                    setActiveTab('teacher');
+                    setCurrentPage(1);
+                  }}
                   className={`text-sm font-bold pb-4 -mb-[1px] border-b-2 transition-all ${activeTab === 'teacher' ? 'text-[#800020] border-[#800020]' : 'text-gray-400 border-transparent hover:text-gray-700'}`}
                 >
                   {t('instructor_requests', 'Instructor Requests')} ({teacherRequests.length})
@@ -155,7 +197,7 @@ export default function Requests() {
             <div className="flex-1 overflow-x-auto overflow-y-auto">
               <Table 
                 columns={columns} 
-                dataSource={currentData} 
+                dataSource={paginatedData} 
                 loading={isLoading}
                 rowKey="id" 
                 pagination={false} 
@@ -209,12 +251,30 @@ export default function Requests() {
 
             {/* Pagination */}
             <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between bg-white rounded-b-2xl">
-              <span className="text-xs font-bold text-gray-400">{t('showing', 'Showing')} {currentData.length} {t('records', 'records')}</span>
-              <div className="flex items-center gap-1">
-                <button className="px-3 py-1.5 text-xs font-bold text-gray-400 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">{t('previous', 'Previous')}</button>
-                <button className="w-7 h-7 flex items-center justify-center text-xs font-bold text-white bg-[#800020] rounded-lg shadow-sm">1</button>
-                <button className="px-3 py-1.5 text-xs font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">{t('next', 'Next')}</button>
-              </div>
+              <span className="text-xs font-bold text-gray-400">
+                {t('showing', 'Showing')}{' '}
+                {totalItems > 0 ? `${startIndex + 1}-${Math.min(startIndex + pageSize, totalItems)}` : 0}{' '}
+                {t('of', 'of')} {totalItems} {t('records', 'records')}
+              </span>
+              {totalItems > 0 && (
+                <div className="flex items-center gap-1">
+                  <button 
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1.5 text-xs font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {t('previous', 'Previous')}
+                  </button>
+                  {renderPageNumbers()}
+                  <button 
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1.5 text-xs font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {t('next', 'Next')}
+                  </button>
+                </div>
+              )}
             </div>
 
           </div>
