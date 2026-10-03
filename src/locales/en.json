@@ -1002,5 +1002,14 @@
   "view_attached_quiz": "View Lecture Quiz",
   "purchasedCourses": "Purchased Courses",
   "noPurchasedCourses": "No purchased courses",
-  "confirm_Password": "Confirm Password"
+  "confirm_Password": "Confirm Password",
+  "parentPhoneNumber": "Parent Phone Number",
+  "academicLevel": "Academic Level",
+  "selectAcademicLevel": "Select Academic Level",
+  "academicYear": "Academic Year",
+  "selectAcademicYear": "Select Academic Year",
+  "transferNumberAccount": "Transfer Number / Account",
+  "newRegister": "New Register",
+  "changeLanguage": "Change Language",
+  "username":"Username"
 }

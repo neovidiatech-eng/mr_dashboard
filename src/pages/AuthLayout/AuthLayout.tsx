@@ -71,7 +71,7 @@ const AuthLayout = () => {
                       : "text-gray-500 hover:text-gray-700 hover:bg-white"
                     }`}
                 >
-                  {language === "ar" ? "تسجيل جديد" : "New Register"}
+                  {t("newRegister")}
                 </button>
               </div>
             </div>

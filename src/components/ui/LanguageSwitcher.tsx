@@ -1,3 +1,4 @@
+import { Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export default function LanguageSwitcher() {
@@ -10,18 +11,21 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    <div className="fixed top-6 right-6 z-50">
-      {/* <button
+    <div className="fixed top-5 right-5 z-50">
+      <button
         onClick={toggleLanguage}
-        className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur border border-gray-200 
-                   rounded-xl shadow-sm hover:shadow-md hover:border-primary transition-all duration-200 
-                   group overflow-hidden relative"
+        title={currentLang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
+        className="flex items-center gap-2 px-3.5 py-2 bg-white/90 backdrop-blur-sm border border-gray-200
+                   rounded-xl shadow-md hover:shadow-lg hover:border-primary/40 hover:bg-white
+                   transition-all duration-200 group"
       >
-        <div className="flex items-center gap-2 font-semibold text-gray-700 group-hover:text-primary">
-          <span className="text-sm ">{currentLang === 'ar' ? 'English' : 'عربي'}</span>
-        </div>
-        <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-      </button> */}
+        <Globe
+          className="w-4 h-4 text-gray-500 group-hover:text-primary transition-colors duration-200"
+        />
+        <span className="text-sm font-bold text-gray-700 group-hover:text-primary transition-colors duration-200">
+          {currentLang === 'ar' ? 'English' : 'عربي'}
+        </span>
+      </button>
     </div>
   );
 }

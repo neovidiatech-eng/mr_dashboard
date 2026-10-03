@@ -56,7 +56,7 @@
   "fullName": "الاسم الكامل",
   "phoneNumber": "رقم الهاتف",
   "choosePackage": "اختر الباقة",
-  "registerNow": "تسجيل الآن",
+  "registerNow": "سجل الآن",
   "afterRegistration": "بعد التسجيل، سيتم مراجعة طلبك من قبل الإدارة وسيتم إشعارك بالموافقة",
   "backToLogin": "العودة لتسجيل الدخول",
   "donthaveanaccount": "ليس لديك حساب؟",
@@ -979,5 +979,14 @@
   "availablePaymentMethods": "طرق الدفع المتاحة",
   "paymentMethodsInstruction": "يرجى التحويل إلى أحد الأرقام أو الحسابات التالية ثم رفع إشعار/إيصال الدفع بالأسفل:",
   "copied": "تم النسخ!",
-  "copy": "نسخ"
+  "copy": "نسخ",
+  "parentPhoneNumber": "رقم هاتف ولي الأمر",
+  "academicLevel": "المرحلة الدراسية",
+  "selectAcademicLevel": "اختر المرحلة الدراسية",
+  "academicYear": "السنة الدراسية",
+  "selectAcademicYear": "اختر السنة الدراسية",
+  "transferNumberAccount": "رقم التحويل / الحساب",
+  "newRegister": "تسجيل جديد",
+  "changeLanguage": "تغيير اللغة",
+  "username":"اسم المستخدم"
 }

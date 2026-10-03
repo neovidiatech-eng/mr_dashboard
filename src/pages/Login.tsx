@@ -129,7 +129,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
               {...register("username")}
               className={`w-full ${language === "ar" ? "pr-14 pl-5" : "pl-14 pr-5"} py-4 bg-gray-50/50 border ${errors.username ? "border-red-400" : "border-gray-200"
                 } rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all duration-300 text-gray-900 font-medium placeholder:text-gray-400`}
-              placeholder="Super Admin_mr_mahmoud"
+              placeholder="01xxxxxxxxx"
               dir="ltr"
             />
           </div>
