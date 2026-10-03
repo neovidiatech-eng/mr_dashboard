@@ -962,5 +962,14 @@
   "availablePaymentMethods": "Available Payment Methods",
   "paymentMethodsInstruction": "Please transfer to one of the following numbers/accounts then upload your payment receipt below:",
   "copied": "Copied!",
-  "copy": "Copy"
+  "copy": "Copy",
+  "parentPhoneNumber": "Parent Phone Number",
+  "academicLevel": "Academic Level",
+  "selectAcademicLevel": "Select Academic Level",
+  "academicYear": "Academic Year",
+  "selectAcademicYear": "Select Academic Year",
+  "transferNumberAccount": "Transfer Number / Account",
+  "newRegister": "New Register",
+  "changeLanguage": "Change Language",
+  "username":"Username"
 }
