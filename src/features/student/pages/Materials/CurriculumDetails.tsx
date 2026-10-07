@@ -234,22 +234,7 @@ export default function CurriculumDetails() {
                     {/* Section Body */}
                     {isSecOpen && (
                       <div className="p-6 pt-2 border-t border-slate-100 space-y-4">
-                        {isSecLocked ? (
-                          /* Locked Section Notice */
-                          <div className="py-8 px-6 text-center bg-amber-50/60 border border-amber-200/60 rounded-2xl space-y-2">
-                            <div className="w-12 h-12 rounded-2xl bg-amber-100 mx-auto flex items-center justify-center text-amber-700">
-                              <Lock size={22} />
-                            </div>
-                            <h4 className="font-bold text-amber-900 text-base">
-                              {isAr ? "هذا السكشن مغلق حالياً" : "This section is currently locked"}
-                            </h4>
-                            <p className="text-xs text-amber-800 max-w-md mx-auto leading-relaxed font-medium">
-                              {isAr
-                                ? "يجب عليك مشاهدة كافة محاضرات السكشن السابق واجتياز الكويز الخاص به أولاً لفتح هذا السكشن والتأهل للدروس القادمة."
-                                : "You must complete all lectures in the previous section and pass its section quiz to unlock this section."}
-                            </p>
-                          </div>
-                        ) : items.length === 0 ? (
+                        {items.length === 0 ? (
                           <div className="py-8 text-center text-slate-400 text-xs font-semibold bg-slate-50 rounded-2xl border border-dashed">
                             {isAr ? "لا توجد عناصر في هذا السكشن بعد." : "No items in this section yet."}
                           </div>
@@ -261,7 +246,7 @@ export default function CurriculumDetails() {
 
                             if (type === "LECTURE") {
                               const isCompleted = item.status === "Completed";
-                              const isPending = item.status === "Pending";
+                              const isPending = item.status === "Pending" || !item.status;
                               const lectTitle = isAr ? details.title_ar || details.title : details.title_en || details.title;
 
                               return (
@@ -312,7 +297,7 @@ export default function CurriculumDetails() {
                                       {isCompleted ? (isAr ? "مكتملة 🟢" : "Completed") : (isAr ? "قيد المشاهدة" : "Pending")}
                                     </span>
 
-                                    {(isCompleted || isPending) && (details.video_path || details.videoUrl) && (
+                                    {(details.video_path || details.videoUrl) && (
                                       <button
                                         onClick={() => {
                                           setSelectedVideoName(lectTitle || `Lecture ${item.order}`);
@@ -381,7 +366,7 @@ export default function CurriculumDetails() {
                                     <div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-xs font-black text-blue-700 uppercase tracking-wide">
-                                          {isAr ? "🏆 كويز السكشن الإجباري" : "🏆 Required Section Quiz"}
+                                          {isAr ? "🏆 كويز السكشن" : "🏆 Section Quiz"}
                                         </span>
                                       </div>
                                       <h4 className="font-black text-base text-slate-800 mt-0.5">
