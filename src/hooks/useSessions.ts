@@ -3,10 +3,11 @@ import { EndSession, getUserSessions, JoinSession, SendFeedBack } from "../servi
 import { SendReviewSchedulePayload } from "../types/scheduales"
 import ErrorService from "../utils/ErrorService"
 
-export const useUserSessions = (search: string) => {
+export const useUserSessions = (search: string, options?: { enabled?: boolean }) => {
     return useQuery({
         queryKey: ["user-sessions", search],
         queryFn: () => getUserSessions(search),
+        enabled: options?.enabled ?? true,
     })
 }
 

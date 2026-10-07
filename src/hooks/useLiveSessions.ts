@@ -107,7 +107,8 @@ export const useEndExistingLiveSession = () => {
 export const useGetStudentUpcomingLiveSessions = (
     page: number = 1,
     limit: number = 10,
-    search?: string
+    search?: string,
+    options?: { enabled?: boolean }
 ) => {
     return useQuery({
         queryKey: ['studentUpcomingLiveSessions', page, limit, search],
@@ -116,10 +117,11 @@ export const useGetStudentUpcomingLiveSessions = (
         staleTime: 15 * 60 * 1000,
         refetchOnWindowFocus: false,
         retry: 1,
+        enabled: options?.enabled ?? true,
     });
 };
 
-export const useGetStudentNextLiveSession = () => {
+export const useGetStudentNextLiveSession = (options?: { enabled?: boolean }) => {
     return useQuery({
         queryKey: ['studentNextLiveSession'],
         queryFn: () => getStudentNextLiveSession(),
@@ -127,6 +129,7 @@ export const useGetStudentNextLiveSession = () => {
         staleTime: 15 * 60 * 1000, 
         refetchOnWindowFocus: false,
         retry: 1,
+        enabled: options?.enabled ?? true,
     });
 };
 

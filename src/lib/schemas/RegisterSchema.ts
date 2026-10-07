@@ -3,7 +3,15 @@ import { z } from "zod";
 export const getRegisterSchema = (t: (key: string, options?: any) => string) =>
   z.object({
     name: z.string().min(3, t("validation.min", { count: 3 })),
-    email: z.string().email(t("validation.email")),
+    // email: isEmailRequired
+    //   z.string().min(1, t("validation.required")).email(t("validation.email"))
+    //   : z
+    //       .string()
+    //       .optional()
+    //       .refine(
+    //         (val) => !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+    //         { message: t("validation.email") }
+    //       ),
     codeCountry: z.string().min(1, t("validation.required")),
     phone: z
       .string()
@@ -26,7 +34,7 @@ export const getRegisterSchema = (t: (key: string, options?: any) => string) =>
       .regex(/[A-Z]/, t("validation.passwordUppercase"))
       .regex(/[0-9]/, t("validation.passwordNumber"))
       .regex(/[@$!%*?&^#]/, t("validation.passwordSpecial")),
-    plan_id: z.string().min(1, t("validation.required")),
+    plan_id: z.string().optional(),
     image: z
       .union([z.instanceof(File), z.string()])
       .optional()
