@@ -332,7 +332,6 @@ export default function CurriculumDetails() {
                                 <div
                                   key={item.id || itemIdx}
                                   className="rounded-2xl p-4 md:p-5 border flex flex-col md:flex-row md:items-center justify-between gap-4 transition bg-slate-50/80 hover:bg-slate-50 border-slate-200/70"
-                                  className="rounded-2xl p-4 md:p-5 border flex flex-col md:flex-row md:items-center justify-between gap-4 transition bg-slate-50/80 hover:bg-slate-50 border-slate-200/70"
                                 >
                                   <div className="flex items-center gap-4">
                                     <div
