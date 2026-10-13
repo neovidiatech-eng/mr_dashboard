@@ -258,6 +258,7 @@ export default function CurriculumDetails() {
 
                             if (type === "LECTURE") {
                               const isCompleted = lectureStatus === "Completed" || item.status === "Completed";
+                              const isLocked = false;
                               const isPending = !isCompleted;
                               const lectTitle = isAr ? details.title_ar || details.title : details.title_en || details.title;
 
@@ -466,7 +467,7 @@ export default function CurriculumDetails() {
               ) : (
                 lecturesFallback.map((lecture: any, index: number) => {
                   const isCompleted = lecture.status === "Completed";
-                  const isPending = lecture.status === "Pending" || !lecture.status;
+                  const isPending = !isCompleted;
                   const lectureOrder = lecture.order || index + 1;
 
                   return (
@@ -496,12 +497,10 @@ export default function CurriculumDetails() {
                         <span
                           className={`px-4 py-1.5 rounded-full text-xs font-bold ${isCompleted
                               ? "bg-green-100 text-green-700"
-                              : isPending
-                                ? "bg-amber-100 text-amber-700"
-                                : "bg-slate-100 text-slate-500"
+                              : "bg-amber-100 text-amber-700"
                             }`}
                         >
-                          {lecture.status || "Pending"}
+                          {isCompleted ? (isAr ? "مكتملة" : "Completed") : (isAr ? "قيد المشاهدة" : "Pending")}
                         </span>
                         {(isCompleted || isPending) && (lecture.video_path || lecture.videoUrl) && (
                           <button
