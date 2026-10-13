@@ -231,22 +231,7 @@ export default function CurriculumDetails() {
                     {/* Section Body */}
                     {isSecOpen && (
                       <div className="p-6 pt-2 border-t border-slate-100 space-y-4">
-                        {isSecLocked ? (
-                          /* Locked Section Notice */
-                          <div className="py-8 px-6 text-center bg-amber-50/60 border border-amber-200/60 rounded-2xl space-y-2">
-                            <div className="w-12 h-12 rounded-2xl bg-amber-100 mx-auto flex items-center justify-center text-amber-700">
-                              <Lock size={22} />
-                            </div>
-                            <h4 className="font-bold text-amber-900 text-base">
-                              {isAr ? "هذا السكشن مغلق حالياً" : "This section is currently locked"}
-                            </h4>
-                            <p className="text-xs text-amber-800 max-w-md mx-auto leading-relaxed font-medium">
-                              {isAr
-                                ? "يجب عليك مشاهدة كافة محاضرات السكشن السابق واجتياز الكويز الخاص به أولاً لفتح هذا السكشن والتأهل للدروس القادمة."
-                                : "You must complete all lectures in the previous section and pass its section quiz to unlock this section."}
-                            </p>
-                          </div>
-                        ) : items.length === 0 ? (
+                        {items.length === 0 ? (
                           <div className="py-8 text-center text-slate-400 text-xs font-semibold bg-slate-50 rounded-2xl border border-dashed">
                             {isAr ? "لا توجد عناصر في هذا السكشن بعد." : "No items in this section yet."}
                           </div>
@@ -280,11 +265,7 @@ export default function CurriculumDetails() {
                               return (
                                 <div
                                   key={item.id || itemIdx}
-                                  className={`rounded-2xl p-4 md:p-5 border flex flex-col md:flex-row md:items-center justify-between gap-4 transition ${
-                                    isLocked
-                                      ? "bg-slate-100/60 border-slate-200/60 opacity-80"
-                                      : "bg-slate-50/80 hover:bg-slate-50 border-slate-200/70"
-                                  }`}
+                                  className="rounded-2xl p-4 md:p-5 border flex flex-col md:flex-row md:items-center justify-between gap-4 transition bg-slate-50/80 hover:bg-slate-50 border-slate-200/70"
                                 >
                                   <div className="flex items-center gap-4">
                                     <div
@@ -298,8 +279,6 @@ export default function CurriculumDetails() {
                                     >
                                       {isCompleted ? (
                                         <Check size={18} strokeWidth={3} />
-                                      ) : isLocked ? (
-                                        <Lock size={18} />
                                       ) : (
                                         <BookOpen size={18} />
                                       )}
@@ -323,21 +302,19 @@ export default function CurriculumDetails() {
                                   </div>
 
                                   <div className="flex items-center gap-3 flex-wrap">
-                                    {!isLocked && (
-                                      <span
-                                        className={`px-3 py-1 rounded-full text-xs font-bold ${
-                                          isCompleted
-                                            ? "bg-emerald-100 text-emerald-700"
-                                            : "bg-amber-100 text-amber-700"
-                                        }`}
-                                      >
-                                        {isCompleted
-                                          ? (isAr ? "مكتملة" : "Completed")
-                                          : (isAr ? "قيد المشاهدة" : "Pending")}
-                                      </span>
-                                    )}
+                                    <span
+                                      className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                        isCompleted
+                                          ? "bg-emerald-100 text-emerald-700"
+                                          : "bg-amber-100 text-amber-700"
+                                      }`}
+                                    >
+                                      {isCompleted
+                                        ? (isAr ? "مكتملة" : "Completed")
+                                        : (isAr ? "قيد المشاهدة" : "Pending")}
+                                    </span>
 
-                                    {(isCompleted || isPending) && (details.video_path || details.videoUrl) && (
+                                    {(details.video_path || details.videoUrl) && (
                                       <button
                                         onClick={() => {
                                           setSelectedVideoName(lectTitle || `Lecture ${item.order}`);
@@ -369,16 +346,6 @@ export default function CurriculumDetails() {
                                         <span>{isAr ? "علامة مكتمل" : "Complete"}</span>
                                       </button>
                                     )}
-
-                                    {isLocked && (
-                                      <button
-                                        disabled
-                                        className="flex items-center gap-1.5 bg-slate-200 text-slate-500 px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-sm cursor-not-allowed opacity-80"
-                                      >
-                                        <Lock size={14} />
-                                        <span>{isAr ? "مقفول" : "Locked"}</span>
-                                      </button>
-                                    )}
                                   </div>
                                 </div>
                               );
@@ -387,7 +354,6 @@ export default function CurriculumDetails() {
                               const attempt = item.attempt;
                               const isPassed = item.status === "Passed";
                               const isFailed = item.status === "Failed";
-                              const isLocked = item.status === "Locked" || (!isPassed && !isFailed && !isPrevCompleted);
                               const quizTitle = isAr ? (quizDetails.title_ar || quizDetails.title) : (quizDetails.title_en || quizDetails.title_ar || quizDetails.title);
 
                               return (
@@ -398,8 +364,6 @@ export default function CurriculumDetails() {
                                       ? "bg-emerald-50/70 border-emerald-200"
                                       : isFailed
                                       ? "bg-red-50/70 border-red-200"
-                                      : isLocked
-                                      ? "bg-slate-100/60 border-slate-200/60 opacity-80"
                                       : "bg-blue-50/60 border-blue-200"
                                   }`}
                                 >
@@ -410,18 +374,16 @@ export default function CurriculumDetails() {
                                           ? "bg-emerald-100 text-emerald-700"
                                           : isFailed
                                           ? "bg-red-100 text-red-700"
-                                          : isLocked
-                                          ? "bg-slate-200 text-slate-500"
                                           : "bg-blue-100 text-blue-700"
                                       }`}
                                     >
-                                      {isLocked ? <Lock size={22} /> : <Award size={24} />}
+                                      <Award size={24} />
                                     </div>
 
                                     <div>
                                       <div className="flex items-center gap-2">
-                                        <span className={`text-xs font-black uppercase tracking-wide ${isLocked ? "text-slate-500" : "text-blue-700"}`}>
-                                          {isAr ? "كويز السكشن الإجباري" : "Required Section Quiz"}
+                                        <span className="text-xs font-black text-blue-700 uppercase tracking-wide">
+                                          {isAr ? "🏆 كويز السكشن" : "🏆 Section Quiz"}
                                         </span>
                                       </div>
                                       <h4 className="font-black text-base text-slate-800 mt-0.5">
@@ -472,14 +434,6 @@ export default function CurriculumDetails() {
                                           <span>{isAr ? "أعد المحاولة" : "Retry Quiz"}</span>
                                         </button>
                                       </div>
-                                    ) : isLocked ? (
-                                      <button
-                                        disabled
-                                        className="bg-slate-200 text-slate-500 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 cursor-not-allowed shadow-none"
-                                      >
-                                        <Lock size={16} />
-                                        <span>{isAr ? "الكويز مغلق" : "Quiz Locked"}</span>
-                                      </button>
                                     ) : (
                                       <button
                                         onClick={() => handleStartQuiz(item.item_id)}
