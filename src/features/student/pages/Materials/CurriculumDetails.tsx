@@ -19,6 +19,9 @@ import TakeQuizModal from "../../../../components/modals/TakeQuizModal";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getStudentProgress } from "../../../../services/CoursesServices";
 import { useCompleteLecture, useUpdateLectureProgress } from "../../../../hooks/useLectures";
+import { getLectureById } from "../../../../services/LecturesServices";
+import { useCourseById } from "../../../../hooks/useCourses";
+import ErrorService from "../../../../utils/ErrorService";
 import { useLanguage } from "../../../../contexts/LanguageContext";
 
 export default function CurriculumDetails() {
@@ -42,11 +45,55 @@ export default function CurriculumDetails() {
   // Accordion open/close state for sections (key = section.id)
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
+  // Local completed lectures map for instant UI feedback
+  const [completedLectures, setCompletedLectures] = useState<Record<string, boolean>>({});
+
   const completeLectureMutation = useCompleteLecture();
   const updateProgressMutation = useUpdateLectureProgress();
 
+  const { data: courseData } = useCourseById(curriculumId || "");
+
+  const handleWatchVideo = async (
+    lectureId: string,
+    title: string,
+    directUrl?: string,
+    startPos: number = 0
+  ) => {
+    if (directUrl) {
+      setSelectedVideoName(title);
+      setSelectedVideoUrl(directUrl);
+      setSelectedLectureId(lectureId);
+      setSelectedStartPosition(startPos);
+      setIsVideoModalOpen(true);
+      return;
+    }
+
+    try {
+      const lec = await getLectureById(lectureId);
+      const fetchedUrl = lec?.video_path || (lec as any)?.videoUrl;
+      if (fetchedUrl) {
+        setSelectedVideoName(title);
+        setSelectedVideoUrl(fetchedUrl);
+        setSelectedLectureId(lectureId);
+        setSelectedStartPosition(startPos);
+        setIsVideoModalOpen(true);
+      } else {
+        ErrorService.error(
+          isAr
+            ? "لا يوجد فيديو متاح لهذه المحاضرة حالياً"
+            : "No video available for this lecture yet"
+        );
+      }
+    } catch {
+      ErrorService.error(
+        isAr ? "تعذر تحميل الفيديو" : "Failed to load lecture video"
+      );
+    }
+  };
+
   const handleVideoEnded = () => {
     if (selectedLectureId) {
+      setCompletedLectures((prev) => ({ ...prev, [selectedLectureId]: true }));
       completeLectureMutation.mutate(selectedLectureId, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["student-progress", curriculumId] });
@@ -272,34 +319,45 @@ export default function CurriculumDetails() {
                             const isPrevCompleted = !prevItem || prevStatus === "Completed" || prevStatus === "Passed";
 
                             if (type === "LECTURE") {
-                              const isCompleted = lectureStatus === "Completed" || item.status === "Completed";
-                              const isLocked = false;
-                              const isPending = !isCompleted;
+                              const lectureId = details.id || item.item_id || item.id;
+                              const isCompleted =
+                                !!completedLectures[lectureId] ||
+                                lectureStatus === "Completed" ||
+                                item.status === "Completed";
                               const lectTitle = isAr ? details.title_ar || details.title : details.title_en || details.title;
+
+                              const courseItemMatch = courseData?.sections
+                                ?.flatMap((s: any) => s.section_items || s.sectionItems || [])
+                                ?.find((it: any) => it.item_id === lectureId || it.id === lectureId || it.details?.id === lectureId);
+                              const courseLectureMatch = courseData?.lectures?.find((l: any) => l.id === lectureId);
+
+                              const videoUrl =
+                                details.video_path ||
+                                details.videoUrl ||
+                                item.video_path ||
+                                item.videoUrl ||
+                                lectureMatch?.video_path ||
+                                lectureMatch?.videoUrl ||
+                                courseItemMatch?.details?.video_path ||
+                                courseItemMatch?.details?.videoUrl ||
+                                courseLectureMatch?.video_path ||
+                                courseLectureMatch?.videoUrl;
 
                               return (
                                 <div
                                   key={item.id || itemIdx}
-                                  className={`rounded-2xl p-4 md:p-5 border flex flex-col md:flex-row md:items-center justify-between gap-4 transition ${
-                                    isLocked
-                                      ? "bg-slate-100/60 border-slate-200/60 opacity-80"
-                                      : "bg-slate-50/80 hover:bg-slate-50 border-slate-200/70"
-                                  }`}
+                                  className="rounded-2xl p-4 md:p-5 border flex flex-col md:flex-row md:items-center justify-between gap-4 transition bg-slate-50/80 hover:bg-slate-50 border-slate-200/70"
                                 >
                                   <div className="flex items-center gap-4">
                                     <div
                                       className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${
                                         isCompleted
                                           ? "bg-emerald-100 text-emerald-700"
-                                          : isPending
-                                          ? "bg-amber-100 text-amber-700"
-                                          : "bg-slate-200 text-slate-500"
+                                          : "bg-amber-100 text-amber-700"
                                       }`}
                                     >
                                       {isCompleted ? (
                                         <Check size={18} strokeWidth={3} />
-                                      ) : isLocked ? (
-                                        <Lock size={18} />
                                       ) : (
                                         <BookOpen size={18} />
                                       )}
@@ -323,60 +381,53 @@ export default function CurriculumDetails() {
                                   </div>
 
                                   <div className="flex items-center gap-3 flex-wrap">
-                                    {!isLocked && (
-                                      <span
-                                        className={`px-3 py-1 rounded-full text-xs font-bold ${
-                                          isCompleted
-                                            ? "bg-emerald-100 text-emerald-700"
-                                            : "bg-amber-100 text-amber-700"
-                                        }`}
-                                      >
-                                        {isCompleted
-                                          ? (isAr ? "مكتملة" : "Completed")
-                                          : (isAr ? "قيد المشاهدة" : "Pending")}
-                                      </span>
-                                    )}
+                                    {/* 1. Status Badge (Pending / Completed) */}
+                                    <span
+                                      className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                        isCompleted
+                                          ? "bg-emerald-100 text-emerald-700"
+                                          : "bg-amber-100 text-amber-700"
+                                      }`}
+                                    >
+                                      {isCompleted
+                                        ? (isAr ? "مكتملة" : "Completed")
+                                        : (isAr ? "قيد المشاهدة" : "Pending")}
+                                    </span>
 
-                                    {(isCompleted || isPending) && (details.video_path || details.videoUrl) && (
+                                    {/* 2. Watch Video Button */}
+                                    <button
+                                      onClick={() =>
+                                        handleWatchVideo(
+                                          lectureId,
+                                          lectTitle || `Lecture ${item.order}`,
+                                          videoUrl,
+                                          item.lastPosition || 0
+                                        )
+                                      }
+                                      className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm"
+                                    >
+                                      <Play size={14} fill="currentColor" />
+                                      <span>{isAr ? "مشاهدة الفيديو" : "Watch Video"}</span>
+                                    </button>
+
+                                    {/* 3. Complete Button */}
+                                    {!isCompleted && (
                                       <button
                                         onClick={() => {
-                                          setSelectedVideoName(lectTitle || `Lecture ${item.order}`);
-                                          setSelectedVideoUrl(details.video_path || details.videoUrl);
-                                          setSelectedLectureId(details.id || item.item_id);
-                                          setSelectedStartPosition(item.lastPosition || 0);
-                                          setIsVideoModalOpen(true);
+                                          if (lectureId) {
+                                            setCompletedLectures((prev) => ({ ...prev, [lectureId]: true }));
+                                            completeLectureMutation.mutate(lectureId, {
+                                              onSuccess: () => {
+                                                queryClient.invalidateQueries({ queryKey: ["student-progress", curriculumId] });
+                                              },
+                                            });
+                                          }
                                         }}
-                                        className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm"
-                                      >
-                                        <Play size={14} fill="currentColor" />
-                                        <span>{isAr ? "مشاهدة الفيديو" : "Watch Video"}</span>
-                                      </button>
-                                    )}
-
-                                    {isPending && (
-                                      <button
-                                        onClick={() =>
-                                          completeLectureMutation.mutate(details.id || item.item_id, {
-                                            onSuccess: () => {
-                                              queryClient.invalidateQueries({ queryKey: ["student-progress", curriculumId] });
-                                            },
-                                          })
-                                        }
                                         disabled={completeLectureMutation.isPending}
                                         className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-sm disabled:opacity-50"
                                       >
                                         <Check size={14} />
                                         <span>{isAr ? "علامة مكتمل" : "Complete"}</span>
-                                      </button>
-                                    )}
-
-                                    {isLocked && (
-                                      <button
-                                        disabled
-                                        className="flex items-center gap-1.5 bg-slate-200 text-slate-500 px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-sm cursor-not-allowed opacity-80"
-                                      >
-                                        <Lock size={14} />
-                                        <span>{isAr ? "مقفول" : "Locked"}</span>
                                       </button>
                                     )}
                                   </div>
@@ -512,9 +563,10 @@ export default function CurriculumDetails() {
                 </div>
               ) : (
                 lecturesFallback.map((lecture: any, index: number) => {
-                  const isCompleted = lecture.status === "Completed";
-                  const isPending = !isCompleted;
+                  const lectureId = lecture.id;
+                  const isCompleted = !!completedLectures[lectureId] || lecture.status === "Completed";
                   const lectureOrder = lecture.order || index + 1;
+                  const videoUrl = lecture.video_path || lecture.videoUrl;
 
                   return (
                     <div
@@ -523,12 +575,11 @@ export default function CurriculumDetails() {
                     >
                       <div className="flex items-center gap-4 md:gap-6">
                         <div
-                          className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold flex-shrink-0 ${isCompleted
+                          className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold flex-shrink-0 ${
+                            isCompleted
                               ? "bg-green-100 text-green-600"
-                              : isPending
-                                ? "bg-amber-100 text-amber-600"
-                                : "bg-slate-50 border border-slate-200 text-slate-500"
-                            }`}
+                              : "bg-amber-100 text-amber-600"
+                          }`}
                         >
                           {isCompleted ? <Check strokeWidth={3} size={20} /> : lectureOrder}
                         </div>
@@ -541,26 +592,46 @@ export default function CurriculumDetails() {
 
                       <div className="flex flex-wrap items-center gap-3">
                         <span
-                          className={`px-4 py-1.5 rounded-full text-xs font-bold ${isCompleted
+                          className={`px-4 py-1.5 rounded-full text-xs font-bold ${
+                            isCompleted
                               ? "bg-green-100 text-green-700"
                               : "bg-amber-100 text-amber-700"
-                            }`}
+                          }`}
                         >
                           {isCompleted ? (isAr ? "مكتملة" : "Completed") : (isAr ? "قيد المشاهدة" : "Pending")}
                         </span>
-                        {(isCompleted || isPending) && (lecture.video_path || lecture.videoUrl) && (
+                        {/* 2. Watch Video Button */}
+                        <button
+                          onClick={() =>
+                            handleWatchVideo(
+                              lectureId,
+                              lecture.title || `Lecture ${lectureOrder}`,
+                              videoUrl,
+                              lecture.lastPosition || 0
+                            )
+                          }
+                          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors shadow-sm shadow-blue-200"
+                        >
+                          <Play size={16} fill="currentColor" />
+                          {isAr ? "مشاهدة الفيديو" : "Watch Video"}
+                        </button>
+                        {!isCompleted && (
                           <button
                             onClick={() => {
-                              setSelectedVideoName(lecture.title || `Lecture ${lectureOrder}`);
-                              setSelectedVideoUrl(lecture.video_path || lecture.videoUrl);
-                              setSelectedLectureId(lecture.id);
-                              setSelectedStartPosition(lecture.lastPosition || 0);
-                              setIsVideoModalOpen(true);
+                              if (lectureId) {
+                                setCompletedLectures((prev) => ({ ...prev, [lectureId]: true }));
+                                completeLectureMutation.mutate(lectureId, {
+                                  onSuccess: () => {
+                                    queryClient.invalidateQueries({ queryKey: ["student-progress", curriculumId] });
+                                  },
+                                });
+                              }
                             }}
-                            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors shadow-sm shadow-blue-200"
+                            disabled={completeLectureMutation.isPending}
+                            className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition shadow-sm disabled:opacity-50"
                           >
-                            <Play size={16} fill="currentColor" />
-                            {isAr ? "مشاهدة الفيديو" : "Watch Video"}
+                            <Check size={14} />
+                            <span>{isAr ? "علامة مكتمل" : "Complete"}</span>
                           </button>
                         )}
                       </div>
